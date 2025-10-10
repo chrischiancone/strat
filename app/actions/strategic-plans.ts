@@ -240,3 +240,278 @@ export async function createStrategicPlan(
 
   return { id: data.id }
 }
+
+export interface StrategicPlanForEdit {
+  id: string
+  department_id: string
+  title: string
+  executive_summary: string | null
+  department_vision: string | null
+  status: string
+  created_by: string
+  department: {
+    id: string
+    name: string
+    director_name: string | null
+    director_email: string | null
+    mission_statement: string | null
+    core_services: string[]
+    current_staffing: {
+      executive_management?: number
+      professional_staff?: number
+      technical_support?: number
+    }
+  }
+}
+
+export async function getStrategicPlanForEdit(
+  planId: string
+): Promise<StrategicPlanForEdit> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Fetch plan with department info
+  const { data, error } = await supabase
+    .from('strategic_plans')
+    .select(`
+      id,
+      department_id,
+      title,
+      executive_summary,
+      department_vision,
+      status,
+      created_by,
+      departments:department_id (
+        id,
+        name,
+        director_name,
+        director_email,
+        mission_statement,
+        core_services,
+        current_staffing
+      )
+    `)
+    .eq('id', planId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching strategic plan:', error)
+    throw new Error('Failed to fetch strategic plan')
+  }
+
+  if (!data) {
+    throw new Error('Plan not found')
+  }
+
+  // Type the response
+  interface PlanEditQueryResult {
+    id: string
+    department_id: string
+    title: string
+    executive_summary: string | null
+    department_vision: string | null
+    status: string
+    created_by: string
+    departments: {
+      id: string
+      name: string
+      director_name: string | null
+      director_email: string | null
+      mission_statement: string | null
+      core_services: unknown
+      current_staffing: unknown
+    } | null
+  }
+
+  const typedData = data as unknown as PlanEditQueryResult
+
+  if (!typedData.departments) {
+    throw new Error('Department data not found')
+  }
+
+  // Transform the data
+  return {
+    id: typedData.id,
+    department_id: typedData.department_id,
+    title: typedData.title,
+    executive_summary: typedData.executive_summary,
+    department_vision: typedData.department_vision,
+    status: typedData.status,
+    created_by: typedData.created_by,
+    department: {
+      id: typedData.departments.id,
+      name: typedData.departments.name,
+      director_name: typedData.departments.director_name,
+      director_email: typedData.departments.director_email,
+      mission_statement: typedData.departments.mission_statement,
+      core_services: Array.isArray(typedData.departments.core_services)
+        ? (typedData.departments.core_services as string[])
+        : [],
+      current_staffing:
+        typeof typedData.departments.current_staffing === 'object' &&
+        typedData.departments.current_staffing !== null
+          ? (typedData.departments.current_staffing as {
+              executive_management?: number
+              professional_staff?: number
+              technical_support?: number
+            })
+          : {},
+    },
+  }
+}
+
+export interface UpdatePlanMetadataInput {
+  id: string
+  title?: string
+  executive_summary?: string | null
+  department_vision?: string | null
+}
+
+export async function updateStrategicPlan(
+  input: UpdatePlanMetadataInput
+): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Check if user has permission to edit this plan
+  const { data: plan } = await supabase
+    .from('strategic_plans')
+    .select('created_by, department_id')
+    .eq('id', input.id)
+    .single<{ created_by: string; department_id: string }>()
+
+  if (!plan) {
+    throw new Error('Plan not found')
+  }
+
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('role, department_id')
+    .eq('id', currentUser.id)
+    .single<{ role: string; department_id: string | null }>()
+
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Check permissions: creator, same department, or admin
+  const canEdit =
+    plan.created_by === currentUser.id ||
+    userProfile.role === 'admin' ||
+    (userProfile.department_id === plan.department_id &&
+      (userProfile.role === 'department_director' || userProfile.role === 'staff'))
+
+  if (!canEdit) {
+    throw new Error('You do not have permission to edit this plan')
+  }
+
+  // Update the plan
+  const updateData: { [key: string]: string | null | undefined } = {}
+  if (input.title !== undefined) updateData.title = input.title
+  if (input.executive_summary !== undefined)
+    updateData.executive_summary = input.executive_summary
+  if (input.department_vision !== undefined)
+    updateData.department_vision = input.department_vision
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('strategic_plans')
+    .update(updateData)
+    .eq('id', input.id)
+
+  if (error) {
+    console.error('Error updating strategic plan:', error)
+    throw new Error('Failed to update strategic plan')
+  }
+
+  // Revalidate paths
+  revalidatePath(`/plans/${input.id}`)
+  revalidatePath(`/plans/${input.id}/edit`)
+  revalidatePath('/plans')
+}
+
+export interface UpdateDepartmentInput {
+  id: string
+  director_name?: string | null
+  director_email?: string | null
+  mission_statement?: string | null
+  core_services?: string[]
+  current_staffing?: {
+    executive_management?: number
+    professional_staff?: number
+    technical_support?: number
+  }
+}
+
+export async function updateDepartmentInfo(
+  input: UpdateDepartmentInput
+): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Check if user has permission to edit this department
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('role, department_id')
+    .eq('id', currentUser.id)
+    .single<{ role: string; department_id: string | null }>()
+
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Check permissions: same department or admin
+  const canEdit =
+    userProfile.role === 'admin' ||
+    (userProfile.department_id === input.id &&
+      (userProfile.role === 'department_director' || userProfile.role === 'staff'))
+
+  if (!canEdit) {
+    throw new Error('You do not have permission to edit this department')
+  }
+
+  // Update the department
+  const updateData: { [key: string]: string | null | unknown } = {}
+  if (input.director_name !== undefined)
+    updateData.director_name = input.director_name
+  if (input.director_email !== undefined)
+    updateData.director_email = input.director_email
+  if (input.mission_statement !== undefined)
+    updateData.mission_statement = input.mission_statement
+  if (input.core_services !== undefined)
+    updateData.core_services = input.core_services
+  if (input.current_staffing !== undefined)
+    updateData.current_staffing = input.current_staffing
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('departments')
+    .update(updateData)
+    .eq('id', input.id)
+
+  if (error) {
+    console.error('Error updating department:', error)
+    throw new Error('Failed to update department')
+  }
+
+  // Revalidate all plan pages for this department
+  revalidatePath('/plans')
+}
