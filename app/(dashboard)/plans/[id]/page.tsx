@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { GoalsDisplay } from '@/components/plans/GoalsDisplay'
 import { ArrowLeft, Pencil } from 'lucide-react'
 
 interface PageProps {
@@ -132,15 +133,8 @@ export default async function PlanDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Placeholder sections for future stories */}
-            <div className="rounded-lg bg-white p-6 shadow">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Strategic Goals
-              </h2>
-              <p className="mt-2 text-sm text-gray-500">
-                No goals defined yet. Edit the plan to add strategic goals.
-              </p>
-            </div>
+            {/* Strategic Goals */}
+            <GoalsDisplay planId={id} />
 
             <div className="rounded-lg bg-white p-6 shadow">
               <h2 className="text-lg font-semibold text-gray-900">
