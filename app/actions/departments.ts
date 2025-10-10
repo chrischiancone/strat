@@ -2,7 +2,12 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
-import { createDepartmentSchema, type CreateDepartmentInput } from '@/lib/validations/department'
+import {
+  createDepartmentSchema,
+  updateDepartmentSchema,
+  type CreateDepartmentInput,
+  type UpdateDepartmentInput
+} from '@/lib/validations/department'
 import { revalidatePath } from 'next/cache'
 
 export interface DepartmentFilters {
@@ -142,6 +147,31 @@ export async function getDepartmentsWithStats(
   return departmentsWithStats
 }
 
+export async function getDepartmentById(departmentId: string) {
+  const supabase = createServerSupabaseClient()
+
+  const { data, error } = await supabase
+    .from('departments')
+    .select(`
+      id,
+      name,
+      slug,
+      director_name,
+      director_email,
+      mission_statement,
+      is_active
+    `)
+    .eq('id', departmentId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching department:', error)
+    return null
+  }
+
+  return data
+}
+
 export async function createDepartment(input: CreateDepartmentInput) {
   try {
     // Validate input
@@ -206,6 +236,78 @@ export async function createDepartment(input: CreateDepartmentInput) {
     return { success: true, departmentId: newDepartment.id }
   } catch (error) {
     console.error('Error in createDepartment:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
+}
+
+export async function updateDepartment(departmentId: string, input: UpdateDepartmentInput) {
+  try {
+    // Validate input
+    const validatedInput = updateDepartmentSchema.parse(input)
+
+    const supabase = createServerSupabaseClient()
+
+    // Get current user's municipality_id
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (!currentUser) {
+      return { error: 'Not authenticated' }
+    }
+
+    const { data: currentUserProfile, error: profileFetchError } = await supabase
+      .from('users')
+      .select('municipality_id')
+      .eq('id', currentUser.id)
+      .single<{ municipality_id: string }>()
+
+    if (profileFetchError || !currentUserProfile) {
+      return { error: 'User profile not found' }
+    }
+
+    const municipalityId = currentUserProfile.municipality_id
+
+    // Check for duplicate slug (excluding current department)
+    const { data: existingDepartment } = await supabase
+      .from('departments')
+      .select('id')
+      .eq('slug', validatedInput.slug)
+      .eq('municipality_id', municipalityId)
+      .neq('id', departmentId)
+      .single()
+
+    if (existingDepartment) {
+      return { error: 'A department with this slug already exists' }
+    }
+
+    // Update department using admin client to bypass RLS
+    const adminClient = createAdminSupabaseClient()
+    const { error: updateError } = await adminClient
+      .from('departments')
+      .update({
+        name: validatedInput.name,
+        slug: validatedInput.slug,
+        director_name: validatedInput.directorName || null,
+        director_email: validatedInput.directorEmail || null,
+        mission_statement: validatedInput.missionStatement || null,
+        is_active: validatedInput.isActive,
+      })
+      .eq('id', departmentId)
+
+    if (updateError) {
+      console.error('Error updating department:', updateError)
+      return { error: 'Failed to update department' }
+    }
+
+    // Revalidate departments pages
+    revalidatePath('/admin/departments')
+    revalidatePath(`/admin/departments/${departmentId}`)
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error in updateDepartment:', error)
     if (error instanceof Error) {
       return { error: error.message }
     }
