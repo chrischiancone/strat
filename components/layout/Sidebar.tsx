@@ -8,6 +8,7 @@ const navigation = [
   { name: 'Users', href: '/admin/users' },
   { name: 'Departments', href: '/admin/departments' },
   { name: 'Fiscal Years', href: '/admin/fiscal-years' },
+  { name: 'Settings', href: '/admin/settings' },
   { name: 'Audit Logs', href: '/admin/audit-logs' },
 ]
 
