@@ -208,6 +208,7 @@ export function InitiativesSection({
                             <InitiativeCard
                               key={initiative.id}
                               initiative={initiative}
+                              fiscalYearId={fiscalYearId}
                               onEdit={() => setEditingInitiative(initiative)}
                               onDelete={handleDelete}
                             />
@@ -227,6 +228,7 @@ export function InitiativesSection({
                             <InitiativeCard
                               key={initiative.id}
                               initiative={initiative}
+                              fiscalYearId={fiscalYearId}
                               onEdit={() => setEditingInitiative(initiative)}
                               onDelete={handleDelete}
                             />
@@ -246,6 +248,7 @@ export function InitiativesSection({
                             <InitiativeCard
                               key={initiative.id}
                               initiative={initiative}
+                              fiscalYearId={fiscalYearId}
                               onEdit={() => setEditingInitiative(initiative)}
                               onDelete={handleDelete}
                             />

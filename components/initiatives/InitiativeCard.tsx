@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -19,26 +19,72 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { deleteInitiative, type Initiative } from '@/app/actions/initiatives'
+import { getFundingSources } from '@/app/actions/initiative-budgets'
+import { InitiativeFinancialForm } from './InitiativeFinancialForm'
 import { useToast } from '@/hooks/use-toast'
-import { ChevronDown, ChevronUp, Edit, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, Edit, Trash2, DollarSign } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
 interface InitiativeCardProps {
   initiative: Initiative
+  fiscalYearId: string
   onEdit: () => void
   onDelete: () => void
 }
 
 export function InitiativeCard({
   initiative,
+  fiscalYearId,
   onEdit,
   onDelete,
 }: InitiativeCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showBudgetDialog, setShowBudgetDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [fundingStatus, setFundingStatus] = useState<{
+    totalFunding: number
+    difference: number
+  } | null>(null)
   const { toast } = useToast()
+
+  const loadFundingStatus = useCallback(async () => {
+    try {
+      const sources = await getFundingSources(initiative.id)
+      const totalFunding = sources.reduce((sum, s) => sum + s.amount, 0)
+      const totalBudget =
+        initiative.total_year_1_cost +
+        initiative.total_year_2_cost +
+        initiative.total_year_3_cost
+
+      setFundingStatus({
+        totalFunding,
+        difference: totalFunding - totalBudget,
+      })
+    } catch (error) {
+      console.error('Error loading funding status:', error)
+    }
+  }, [initiative.id, initiative.total_year_1_cost, initiative.total_year_2_cost, initiative.total_year_3_cost])
+
+  // Load funding status when component mounts or budget changes
+  useEffect(() => {
+    const totalBudget =
+      initiative.total_year_1_cost +
+      initiative.total_year_2_cost +
+      initiative.total_year_3_cost
+
+    if (totalBudget > 0) {
+      loadFundingStatus()
+    }
+  }, [loadFundingStatus, initiative.total_year_1_cost, initiative.total_year_2_cost, initiative.total_year_3_cost])
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -60,6 +106,11 @@ export function InitiativeCard({
       setIsDeleting(false)
       setShowDeleteDialog(false)
     }
+  }
+
+  const handleBudgetDialogClose = () => {
+    setShowBudgetDialog(false)
+    loadFundingStatus() // Refresh funding status when dialog closes
   }
 
   const getPriorityBadgeColor = (priority: string) => {
@@ -99,10 +150,52 @@ export function InitiativeCard({
       .join(' ')
   }
 
+  const getFundingStatusBadge = () => {
+    if (!fundingStatus) return null
+
+    const { difference } = fundingStatus
+    const isBalanced = Math.abs(difference) < 0.01
+    const isUnderFunded = difference < -0.01
+    const isOverFunded = difference > 0.01
+
+    if (isBalanced) {
+      return (
+        <Badge className="bg-green-100 text-green-800">✓ Funded</Badge>
+      )
+    } else if (isUnderFunded) {
+      return (
+        <Badge className="bg-red-100 text-red-800">⚠ Under-funded</Badge>
+      )
+    } else if (isOverFunded) {
+      return (
+        <Badge className="bg-orange-100 text-orange-800">⚠ Over-funded</Badge>
+      )
+    }
+    return null
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount)
+  }
+
   const totalCost =
     initiative.total_year_1_cost +
     initiative.total_year_2_cost +
     initiative.total_year_3_cost
+
+  // Type guard for budget breakdown
+  const budgetBreakdown = (() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const budget = initiative.financial_analysis as any
+    if (!budget || typeof budget !== 'object') return undefined
+    if (!budget.year_1 || !budget.year_2 || !budget.year_3) return undefined
+    return budget
+  })()
 
   return (
     <>
@@ -117,6 +210,7 @@ export function InitiativeCard({
                 <Badge className={getStatusBadgeColor(initiative.status)}>
                   {formatStatus(initiative.status)}
                 </Badge>
+                {totalCost > 0 && getFundingStatusBadge()}
                 {initiative.rank_within_priority > 0 && (
                   <span className="text-xs text-gray-500">
                     Rank: {initiative.rank_within_priority}
@@ -131,13 +225,22 @@ export function InitiativeCard({
                   <span>Responsible: {initiative.responsible_party}</span>
                 )}
                 {totalCost > 0 && (
-                  <span className="ml-2">
-                    • Total Cost: ${totalCost.toLocaleString()}
+                  <span className={initiative.responsible_party ? 'ml-2' : ''}>
+                    {initiative.responsible_party && '• '}
+                    Total Cost: {formatCurrency(totalCost)}
                   </span>
                 )}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowBudgetDialog(true)}
+                title="Manage Budget"
+              >
+                <DollarSign className="h-4 w-4" />
+              </Button>
               <Button variant="ghost" size="sm" onClick={onEdit}>
                 <Edit className="h-4 w-4" />
               </Button>
@@ -226,6 +329,23 @@ export function InitiativeCard({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Budget Management Dialog */}
+      <Dialog open={showBudgetDialog} onOpenChange={handleBudgetDialogClose}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Financial Analysis</DialogTitle>
+            <DialogDescription>
+              Manage budget breakdown and funding sources for {initiative.initiative_number}: {initiative.name}
+            </DialogDescription>
+          </DialogHeader>
+          <InitiativeFinancialForm
+            initiativeId={initiative.id}
+            fiscalYearId={fiscalYearId}
+            initialBudget={budgetBreakdown}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
