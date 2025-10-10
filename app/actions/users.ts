@@ -1,6 +1,9 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
+import { createUserSchema, type CreateUserInput } from '@/lib/validations/user'
+import { revalidatePath } from 'next/cache'
 
 export interface UserFilters {
   role?: string
@@ -155,4 +158,93 @@ export async function getDepartments() {
   }
 
   return data || []
+}
+
+export async function createUser(input: CreateUserInput) {
+  try {
+    // Validate input
+    const validatedInput = createUserSchema.parse(input)
+
+    // Get current user's municipality_id
+    const supabase = createServerSupabaseClient()
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (!currentUser) {
+      return { error: 'Not authenticated' }
+    }
+
+    const { data: currentUserProfile, error: profileFetchError } = await supabase
+      .from('users')
+      .select('municipality_id')
+      .eq('id', currentUser.id)
+      .single<{ municipality_id: string }>()
+
+    if (profileFetchError || !currentUserProfile) {
+      return { error: 'User profile not found' }
+    }
+
+    const municipalityId = currentUserProfile.municipality_id
+
+    // Create admin client for auth operations
+    const adminClient = createAdminSupabaseClient()
+
+    // Create auth user
+    const { data: authUser, error: authError } = await adminClient.auth.admin.createUser({
+      email: validatedInput.email,
+      email_confirm: false,
+      user_metadata: {
+        full_name: validatedInput.fullName,
+      },
+    })
+
+    if (authError || !authUser.user) {
+      console.error('Error creating auth user:', authError)
+      return { error: authError?.message || 'Failed to create user' }
+    }
+
+    // Send invitation email
+    const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(
+      validatedInput.email,
+      {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      }
+    )
+
+    if (inviteError) {
+      console.error('Error sending invitation:', inviteError)
+      // Don't fail - user is created, they just won't get the email
+    }
+
+    // Create public user profile
+    const { error: profileError } = await adminClient
+      .from('users')
+      .insert({
+        id: authUser.user.id,
+        municipality_id: municipalityId,
+        full_name: validatedInput.fullName,
+        email: validatedInput.email,
+        role: validatedInput.role,
+        title: validatedInput.title || null,
+        department_id: validatedInput.departmentId || null,
+        is_active: true,
+      })
+
+    if (profileError) {
+      console.error('Error creating user profile:', profileError)
+      // Try to clean up auth user
+      await adminClient.auth.admin.deleteUser(authUser.user.id)
+      return { error: 'Failed to create user profile' }
+    }
+
+    // Revalidate users list page
+    revalidatePath('/admin/users')
+
+    return { success: true, userId: authUser.user.id }
+  } catch (error) {
+    console.error('Error in createUser:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
 }
