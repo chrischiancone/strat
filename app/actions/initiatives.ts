@@ -21,6 +21,7 @@ export interface Initiative {
   status: InitiativeStatus
   responsible_party: string | null
   financial_analysis: unknown
+  roi_analysis: unknown
   total_year_1_cost: number
   total_year_2_cost: number
   total_year_3_cost: number
@@ -92,6 +93,7 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
       status,
       responsible_party,
       financial_analysis,
+      roi_analysis,
       total_year_1_cost,
       total_year_2_cost,
       total_year_3_cost,
@@ -129,6 +131,7 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
     status: string
     responsible_party: string | null
     financial_analysis: unknown
+    roi_analysis: unknown
     total_year_1_cost: number
     total_year_2_cost: number
     total_year_3_cost: number
@@ -159,6 +162,7 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
     status: init.status as InitiativeStatus,
     responsible_party: init.responsible_party,
     financial_analysis: init.financial_analysis,
+    roi_analysis: init.roi_analysis,
     total_year_1_cost: init.total_year_1_cost,
     total_year_2_cost: init.total_year_2_cost,
     total_year_3_cost: init.total_year_3_cost,
@@ -206,6 +210,7 @@ export async function getInitiativesByGoal(
       status,
       responsible_party,
       financial_analysis,
+      roi_analysis,
       total_year_1_cost,
       total_year_2_cost,
       total_year_3_cost,
@@ -244,6 +249,7 @@ export async function getInitiativesByGoal(
     status: string
     responsible_party: string | null
     financial_analysis: unknown
+    roi_analysis: unknown
     total_year_1_cost: number
     total_year_2_cost: number
     total_year_3_cost: number
@@ -274,6 +280,7 @@ export async function getInitiativesByGoal(
     status: init.status as InitiativeStatus,
     responsible_party: init.responsible_party,
     financial_analysis: init.financial_analysis,
+    roi_analysis: init.roi_analysis,
     total_year_1_cost: init.total_year_1_cost,
     total_year_2_cost: init.total_year_2_cost,
     total_year_3_cost: init.total_year_3_cost,

@@ -197,6 +197,15 @@ export function InitiativeCard({
     return budget
   })()
 
+  // Type guard for ROI analysis
+  const roiAnalysis = (() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const roi = initiative.roi_analysis as any
+    if (!roi || typeof roi !== 'object') return undefined
+    if (!roi.financial || !roi.non_financial) return undefined
+    return roi
+  })()
+
   return (
     <>
       <Card>
@@ -303,6 +312,63 @@ export function InitiativeCard({
                   </ul>
                 </div>
               )}
+
+            {/* ROI Summary */}
+            {roiAnalysis && (
+              <div className="border-t border-gray-200 pt-4">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                  Return on Investment
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Financial ROI */}
+                  {roiAnalysis.financial && (
+                    <div className="rounded-md bg-blue-50 border border-blue-200 p-3">
+                      <p className="text-xs font-semibold text-blue-900 mb-2">
+                        Financial Impact
+                      </p>
+                      <div className="space-y-1 text-sm text-blue-800">
+                        <p>
+                          <span className="font-semibold">3-Year Impact:</span>{' '}
+                          {formatCurrency(roiAnalysis.financial.three_year_impact)}
+                        </p>
+                        {roiAnalysis.financial.payback_months > 0 && (
+                          <p>
+                            <span className="font-semibold">Payback:</span>{' '}
+                            {roiAnalysis.financial.payback_months} months
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Non-Financial ROI */}
+                  {roiAnalysis.non_financial && (
+                    <div className="rounded-md bg-green-50 border border-green-200 p-3">
+                      <p className="text-xs font-semibold text-green-900 mb-2">
+                        Non-Financial Benefits
+                      </p>
+                      <ul className="space-y-1 text-xs text-green-800">
+                        {roiAnalysis.non_financial.service_quality && (
+                          <li>• Service Quality Improvement</li>
+                        )}
+                        {roiAnalysis.non_financial.efficiency_gains && (
+                          <li>• Efficiency Gains</li>
+                        )}
+                        {roiAnalysis.non_financial.risk_reduction && (
+                          <li>• Risk Reduction</li>
+                        )}
+                        {roiAnalysis.non_financial.citizen_satisfaction && (
+                          <li>• Citizen Satisfaction Impact</li>
+                        )}
+                        {roiAnalysis.non_financial.employee_impact && (
+                          <li>• Employee Impact</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </CardContent>
         )}
       </Card>
@@ -343,6 +409,7 @@ export function InitiativeCard({
             initiativeId={initiative.id}
             fiscalYearId={fiscalYearId}
             initialBudget={budgetBreakdown}
+            initialRoi={roiAnalysis}
           />
         </DialogContent>
       </Dialog>

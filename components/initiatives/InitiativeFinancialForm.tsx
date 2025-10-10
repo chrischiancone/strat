@@ -3,12 +3,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { BudgetBreakdownForm, type BudgetBreakdown } from './BudgetBreakdownForm'
 import { FundingSourcesForm, type FundingSource } from './FundingSourcesForm'
+import { RoiAnalysisForm, type RoiAnalysis } from './RoiAnalysisForm'
 import {
   updateInitiativeBudget,
   getFundingSources,
   addFundingSource,
   updateFundingSource,
   deleteFundingSource,
+  updateInitiativeRoi,
   type AddFundingSourceInput,
 } from '@/app/actions/initiative-budgets'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -18,6 +20,7 @@ interface InitiativeFinancialFormProps {
   initiativeId: string
   fiscalYearId: string
   initialBudget?: BudgetBreakdown
+  initialRoi?: RoiAnalysis
   disabled?: boolean
 }
 
@@ -25,6 +28,7 @@ export function InitiativeFinancialForm({
   initiativeId,
   fiscalYearId,
   initialBudget,
+  initialRoi,
   disabled = false,
 }: InitiativeFinancialFormProps) {
   const [fundingSources, setFundingSources] = useState<FundingSource[]>([])
@@ -91,14 +95,23 @@ export function InitiativeFinancialForm({
     await loadFundingSources()
   }
 
+  const handleSaveRoi = async (roi: RoiAnalysis) => {
+    await updateInitiativeRoi(initiativeId, roi)
+    toast({
+      title: 'Saved',
+      description: 'ROI analysis saved successfully',
+    })
+  }
+
   const totalBudget = currentBudget?.grand_total || 0
 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="budget" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="budget">Budget Breakdown</TabsTrigger>
           <TabsTrigger value="funding">Funding Sources</TabsTrigger>
+          <TabsTrigger value="roi">ROI Analysis</TabsTrigger>
         </TabsList>
 
         <TabsContent value="budget" className="mt-6">
@@ -126,6 +139,14 @@ export function InitiativeFinancialForm({
               disabled={disabled}
             />
           )}
+        </TabsContent>
+
+        <TabsContent value="roi" className="mt-6">
+          <RoiAnalysisForm
+            initialRoi={initialRoi}
+            onSave={handleSaveRoi}
+            disabled={disabled}
+          />
         </TabsContent>
       </Tabs>
     </div>

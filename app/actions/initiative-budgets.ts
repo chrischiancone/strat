@@ -63,6 +63,22 @@ export interface UpdateFundingSourceInput {
   notes?: string
 }
 
+export interface RoiAnalysis {
+  financial: {
+    annual_savings: number
+    annual_revenue: number
+    payback_months: number
+    three_year_impact: number
+  }
+  non_financial: {
+    service_quality: string
+    efficiency_gains: string
+    risk_reduction: string
+    citizen_satisfaction: string
+    employee_impact: string
+  }
+}
+
 export async function updateInitiativeBudget(
   initiativeId: string,
   budget: BudgetBreakdown
@@ -429,6 +445,90 @@ export async function deleteFundingSource(id: string): Promise<void> {
 
   // Revalidate paths
   const initiativeId = (fundingSource as { initiative_id: string }).initiative_id
+  const { data: goalData } = await supabase
+    .from('initiatives')
+    .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
+    .eq('id', initiativeId)
+    .single()
+
+  if (goalData) {
+    const planId = (
+      goalData as {
+        strategic_goals: { strategic_plan_id: string }
+      }
+    ).strategic_goals.strategic_plan_id
+
+    revalidatePath(`/plans/${planId}`)
+    revalidatePath(`/plans/${planId}/edit`)
+  }
+}
+
+export async function updateInitiativeRoi(
+  initiativeId: string,
+  roi: RoiAnalysis
+): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Check permissions
+  const { data: initiative } = await supabase
+    .from('initiatives')
+    .select('strategic_goals!inner(strategic_plans!inner(department_id))')
+    .eq('id', initiativeId)
+    .single()
+
+  if (!initiative) {
+    throw new Error('Initiative not found')
+  }
+
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('role, department_id')
+    .eq('id', currentUser.id)
+    .single<{ role: string; department_id: string | null }>()
+
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  const plan = (
+    initiative as {
+      strategic_goals: { strategic_plans: { department_id: string } }
+    }
+  ).strategic_goals.strategic_plans
+
+  const canEdit =
+    userProfile.role === 'admin' ||
+    userProfile.role === 'city_manager' ||
+    userProfile.department_id === plan.department_id
+
+  if (!canEdit) {
+    throw new Error('You do not have permission to edit this initiative ROI')
+  }
+
+  // Update ROI
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('initiatives')
+    .update({
+      roi_analysis: roi,
+    })
+    .eq('id', initiativeId)
+
+  if (error) {
+    console.error('Error updating initiative ROI:', error)
+    throw new Error('Failed to update initiative ROI')
+  }
+
+  // Revalidate paths
   const { data: goalData } = await supabase
     .from('initiatives')
     .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
