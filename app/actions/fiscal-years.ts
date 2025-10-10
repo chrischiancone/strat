@@ -1,6 +1,14 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
+import {
+  createFiscalYearSchema,
+  updateFiscalYearSchema,
+  type CreateFiscalYearInput,
+  type UpdateFiscalYearInput
+} from '@/lib/validations/fiscal-year'
+import { revalidatePath } from 'next/cache'
 
 export interface FiscalYearFilters {
   sortBy?: string
@@ -65,4 +73,164 @@ export async function getFiscalYears(
   }
 
   return (data || []) as FiscalYear[]
+}
+
+export async function getFiscalYearById(fiscalYearId: string) {
+  const supabase = createServerSupabaseClient()
+
+  const { data, error } = await supabase
+    .from('fiscal_years')
+    .select(`
+      id,
+      year_name,
+      start_date,
+      end_date,
+      is_active
+    `)
+    .eq('id', fiscalYearId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching fiscal year:', error)
+    return null
+  }
+
+  return data
+}
+
+export async function createFiscalYear(input: CreateFiscalYearInput) {
+  try {
+    // Validate input
+    const validatedInput = createFiscalYearSchema.parse(input)
+
+    // Get current user's municipality_id
+    const supabase = createServerSupabaseClient()
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (!currentUser) {
+      return { error: 'Not authenticated' }
+    }
+
+    const { data: currentUserProfile, error: profileFetchError } = await supabase
+      .from('users')
+      .select('municipality_id')
+      .eq('id', currentUser.id)
+      .single<{ municipality_id: string }>()
+
+    if (profileFetchError || !currentUserProfile) {
+      return { error: 'User profile not found' }
+    }
+
+    const municipalityId = currentUserProfile.municipality_id
+    const adminClient = createAdminSupabaseClient()
+
+    // If setting this fiscal year to active, deactivate all others
+    if (validatedInput.isActive) {
+      await adminClient
+        .from('fiscal_years')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .update({ is_active: false } as any)
+        .eq('municipality_id', municipalityId)
+        .eq('is_active', true)
+    }
+
+    // Create fiscal year
+    const { data: newFiscalYear, error: insertError } = await adminClient
+      .from('fiscal_years')
+      .insert({
+        municipality_id: municipalityId,
+        year_name: validatedInput.yearName,
+        start_date: validatedInput.startDate,
+        end_date: validatedInput.endDate,
+        is_active: validatedInput.isActive,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error('Error creating fiscal year:', insertError)
+      return { error: 'Failed to create fiscal year' }
+    }
+
+    // Revalidate fiscal years list page
+    revalidatePath('/admin/fiscal-years')
+
+    return { success: true, fiscalYearId: newFiscalYear.id }
+  } catch (error) {
+    console.error('Error in createFiscalYear:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
+}
+
+export async function updateFiscalYear(fiscalYearId: string, input: UpdateFiscalYearInput) {
+  try {
+    // Validate input
+    const validatedInput = updateFiscalYearSchema.parse(input)
+
+    const supabase = createServerSupabaseClient()
+
+    // Get current user's municipality_id
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (!currentUser) {
+      return { error: 'Not authenticated' }
+    }
+
+    const { data: currentUserProfile, error: profileFetchError } = await supabase
+      .from('users')
+      .select('municipality_id')
+      .eq('id', currentUser.id)
+      .single<{ municipality_id: string }>()
+
+    if (profileFetchError || !currentUserProfile) {
+      return { error: 'User profile not found' }
+    }
+
+    const municipalityId = currentUserProfile.municipality_id
+    const adminClient = createAdminSupabaseClient()
+
+    // If setting this fiscal year to active, deactivate all others
+    if (validatedInput.isActive) {
+      await adminClient
+        .from('fiscal_years')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .update({ is_active: false } as any)
+        .eq('municipality_id', municipalityId)
+        .neq('id', fiscalYearId)
+        .eq('is_active', true)
+    }
+
+    // Update fiscal year
+    const { error: updateError } = await adminClient
+      .from('fiscal_years')
+      .update({
+        year_name: validatedInput.yearName,
+        start_date: validatedInput.startDate,
+        end_date: validatedInput.endDate,
+        is_active: validatedInput.isActive,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+      .eq('id', fiscalYearId)
+
+    if (updateError) {
+      console.error('Error updating fiscal year:', updateError)
+      return { error: 'Failed to update fiscal year' }
+    }
+
+    // Revalidate fiscal years pages
+    revalidatePath('/admin/fiscal-years')
+    revalidatePath(`/admin/fiscal-years/${fiscalYearId}`)
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error in updateFiscalYear:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
 }
