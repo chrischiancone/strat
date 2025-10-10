@@ -1,6 +1,9 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
+import { createDepartmentSchema, type CreateDepartmentInput } from '@/lib/validations/department'
+import { revalidatePath } from 'next/cache'
 
 export interface DepartmentFilters {
   status?: 'active' | 'inactive'
@@ -137,4 +140,75 @@ export async function getDepartmentsWithStats(
   }))
 
   return departmentsWithStats
+}
+
+export async function createDepartment(input: CreateDepartmentInput) {
+  try {
+    // Validate input
+    const validatedInput = createDepartmentSchema.parse(input)
+
+    // Get current user's municipality_id
+    const supabase = createServerSupabaseClient()
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (!currentUser) {
+      return { error: 'Not authenticated' }
+    }
+
+    const { data: currentUserProfile, error: profileFetchError } = await supabase
+      .from('users')
+      .select('municipality_id')
+      .eq('id', currentUser.id)
+      .single<{ municipality_id: string }>()
+
+    if (profileFetchError || !currentUserProfile) {
+      return { error: 'User profile not found' }
+    }
+
+    const municipalityId = currentUserProfile.municipality_id
+
+    // Check for duplicate slug
+    const { data: existingDepartment } = await supabase
+      .from('departments')
+      .select('id')
+      .eq('slug', validatedInput.slug)
+      .eq('municipality_id', municipalityId)
+      .single()
+
+    if (existingDepartment) {
+      return { error: 'A department with this slug already exists' }
+    }
+
+    // Create department using admin client to bypass RLS
+    const adminClient = createAdminSupabaseClient()
+    const { data: newDepartment, error: insertError } = await adminClient
+      .from('departments')
+      .insert({
+        municipality_id: municipalityId,
+        name: validatedInput.name,
+        slug: validatedInput.slug,
+        director_name: validatedInput.directorName || null,
+        director_email: validatedInput.directorEmail || null,
+        mission_statement: validatedInput.missionStatement || null,
+        is_active: validatedInput.isActive,
+      })
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error('Error creating department:', insertError)
+      return { error: 'Failed to create department' }
+    }
+
+    // Revalidate departments list page
+    revalidatePath('/admin/departments')
+
+    return { success: true, departmentId: newDepartment.id }
+  } catch (error) {
+    console.error('Error in createDepartment:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
 }
