@@ -244,6 +244,8 @@ export async function createStrategicPlan(
 export interface StrategicPlanForEdit {
   id: string
   department_id: string
+  start_fiscal_year_id: string
+  end_fiscal_year_id: string
   title: string
   executive_summary: string | null
   department_vision: string | null
@@ -282,6 +284,8 @@ export async function getStrategicPlanForEdit(
     .select(`
       id,
       department_id,
+      start_fiscal_year_id,
+      end_fiscal_year_id,
       title,
       executive_summary,
       department_vision,
@@ -313,6 +317,8 @@ export async function getStrategicPlanForEdit(
   interface PlanEditQueryResult {
     id: string
     department_id: string
+    start_fiscal_year_id: string
+    end_fiscal_year_id: string
     title: string
     executive_summary: string | null
     department_vision: string | null
@@ -339,6 +345,8 @@ export async function getStrategicPlanForEdit(
   return {
     id: typedData.id,
     department_id: typedData.department_id,
+    start_fiscal_year_id: typedData.start_fiscal_year_id,
+    end_fiscal_year_id: typedData.end_fiscal_year_id,
     title: typedData.title,
     executive_summary: typedData.executive_summary,
     department_vision: typedData.department_vision,

@@ -3,6 +3,7 @@ import { PlanMetadataForm } from '@/components/plans/PlanMetadataForm'
 import { DepartmentInfoForm } from '@/components/plans/DepartmentInfoForm'
 import { StaffingLevelsForm } from '@/components/plans/StaffingLevelsForm'
 import { GoalsSection } from '@/components/plans/GoalsSection'
+import { InitiativesSection } from '@/components/initiatives/InitiativesSection'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -89,11 +90,18 @@ export default async function PlanEditPage({ params }: PageProps) {
           {/* Strategic Goals */}
           <GoalsSection planId={id} />
 
+          {/* Initiatives */}
+          <InitiativesSection
+            planId={id}
+            departmentId={plan.department_id}
+            fiscalYearId={plan.start_fiscal_year_id}
+          />
+
           {/* Future Sections Placeholder */}
           <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
             <p className="text-sm text-gray-600">
-              Additional sections (SWOT Analysis, Initiatives) will be
-              available in upcoming stories
+              Additional sections (SWOT Analysis, Financial Analysis, ROI) will
+              be available in upcoming stories
             </p>
           </div>
         </div>

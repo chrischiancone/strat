@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { GoalsDisplay } from '@/components/plans/GoalsDisplay'
+import { InitiativesDisplay } from '@/components/initiatives/InitiativesDisplay'
 import { ArrowLeft, Pencil } from 'lucide-react'
 
 interface PageProps {
@@ -136,15 +137,8 @@ export default async function PlanDetailPage({ params }: PageProps) {
             {/* Strategic Goals */}
             <GoalsDisplay planId={id} />
 
-            <div className="rounded-lg bg-white p-6 shadow">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Initiatives
-              </h2>
-              <p className="mt-2 text-sm text-gray-500">
-                No initiatives defined yet. Define goals first, then add
-                initiatives.
-              </p>
-            </div>
+            {/* Initiatives */}
+            <InitiativesDisplay planId={id} />
           </div>
         </div>
       </div>
