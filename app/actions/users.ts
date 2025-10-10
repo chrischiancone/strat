@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
-import { createUserSchema, type CreateUserInput } from '@/lib/validations/user'
+import { createUserSchema, updateUserSchema, type CreateUserInput, type UpdateUserInput } from '@/lib/validations/user'
 import { revalidatePath } from 'next/cache'
 
 export interface UserFilters {
@@ -160,6 +160,34 @@ export async function getDepartments() {
   return data || []
 }
 
+export async function getUserById(userId: string) {
+  const supabase = createServerSupabaseClient()
+
+  const { data, error } = await supabase
+    .from('users')
+    .select(`
+      id,
+      full_name,
+      email,
+      role,
+      title,
+      is_active,
+      department_id,
+      departments:department_id (
+        name
+      )
+    `)
+    .eq('id', userId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching user:', error)
+    return null
+  }
+
+  return data
+}
+
 export async function createUser(input: CreateUserInput) {
   try {
     // Validate input
@@ -242,6 +270,44 @@ export async function createUser(input: CreateUserInput) {
     return { success: true, userId: authUser.user.id }
   } catch (error) {
     console.error('Error in createUser:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
+}
+
+export async function updateUser(userId: string, input: UpdateUserInput) {
+  try {
+    // Validate input
+    const validatedInput = updateUserSchema.parse(input)
+
+    const adminClient = createAdminSupabaseClient()
+
+    // Update user record (use admin client to bypass RLS)
+    const { error: updateError } = await adminClient
+      .from('users')
+      .update({
+        full_name: validatedInput.fullName,
+        role: validatedInput.role,
+        department_id: validatedInput.departmentId || null,
+        title: validatedInput.title || null,
+        is_active: validatedInput.isActive,
+      })
+      .eq('id', userId)
+
+    if (updateError) {
+      console.error('Error updating user:', updateError)
+      return { error: 'Failed to update user' }
+    }
+
+    // Revalidate users list page
+    revalidatePath('/admin/users')
+    revalidatePath(`/admin/users/${userId}`)
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error in updateUser:', error)
     if (error instanceof Error) {
       return { error: error.message }
     }
