@@ -314,3 +314,81 @@ export async function updateUser(userId: string, input: UpdateUserInput) {
     return { error: 'An unexpected error occurred' }
   }
 }
+
+export async function deactivateUser(userId: string) {
+  try {
+    const adminClient = createAdminSupabaseClient()
+
+    // Update public.users to set is_active = false
+    const { error: updateError } = await adminClient
+      .from('users')
+      .update({ is_active: false })
+      .eq('id', userId)
+
+    if (updateError) {
+      console.error('Error deactivating user:', updateError)
+      return { error: 'Failed to deactivate user' }
+    }
+
+    // Ban the auth user so they cannot log in
+    const { error: authError } = await adminClient.auth.admin.updateUserById(userId, {
+      ban_duration: 'none', // Permanent ban
+    })
+
+    if (authError) {
+      console.error('Error banning auth user:', authError)
+      // Don't fail - user is deactivated in public.users
+    }
+
+    // Revalidate users list page
+    revalidatePath('/admin/users')
+    revalidatePath(`/admin/users/${userId}`)
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error in deactivateUser:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
+}
+
+export async function reactivateUser(userId: string) {
+  try {
+    const adminClient = createAdminSupabaseClient()
+
+    // Update public.users to set is_active = true
+    const { error: updateError } = await adminClient
+      .from('users')
+      .update({ is_active: true })
+      .eq('id', userId)
+
+    if (updateError) {
+      console.error('Error reactivating user:', updateError)
+      return { error: 'Failed to reactivate user' }
+    }
+
+    // Unban the auth user so they can log in
+    const { error: authError } = await adminClient.auth.admin.updateUserById(userId, {
+      ban_duration: '0s', // Remove ban
+    })
+
+    if (authError) {
+      console.error('Error unbanning auth user:', authError)
+      // Don't fail - user is reactivated in public.users
+    }
+
+    // Revalidate users list page
+    revalidatePath('/admin/users')
+    revalidatePath(`/admin/users/${userId}`)
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error in reactivateUser:', error)
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+    return { error: 'An unexpected error occurred' }
+  }
+}

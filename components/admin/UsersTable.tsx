@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
+import { UserActionsMenu } from './UserActionsMenu'
 
 interface UsersTableProps {
   users: UserWithDepartment[]
@@ -170,11 +171,19 @@ export function UsersTable({
                   : 'Never'}
               </TableCell>
               <TableCell className="text-right">
-                <Link href={`/admin/users/${user.id}`}>
-                  <Button variant="outline" size="sm">
-                    Edit
-                  </Button>
-                </Link>
+                <div className="flex items-center justify-end gap-2">
+                  <Link href={`/admin/users/${user.id}`}>
+                    <Button variant="outline" size="sm">
+                      Edit
+                    </Button>
+                  </Link>
+                  <UserActionsMenu
+                    userId={user.id}
+                    userName={user.full_name || 'Unknown User'}
+                    userEmail={user.email || 'No email'}
+                    isActive={user.is_active ?? true}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}
