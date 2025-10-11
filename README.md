@@ -156,3 +156,5 @@ Proprietary - Municipal Government Internal Use
 ## Support
 
 For questions or issues, contact the development team.
+
+claude --dangerously-skip-permissions
