@@ -28,7 +28,15 @@ import {
 } from '@/components/ui/dialog'
 import { deleteInitiative, type Initiative } from '@/app/actions/initiatives'
 import { getFundingSources } from '@/app/actions/initiative-budgets'
+import {
+  getInitiativeKpis,
+  createInitiativeKpi,
+  updateInitiativeKpi,
+  deleteInitiativeKpi,
+  type InitiativeKpi,
+} from '@/app/actions/initiative-kpis'
 import { InitiativeFinancialForm } from './InitiativeFinancialForm'
+import { InitiativeKpisForm } from './InitiativeKpisForm'
 import { useToast } from '@/hooks/use-toast'
 import { ChevronDown, ChevronUp, Edit, Trash2, DollarSign } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -54,7 +62,9 @@ export function InitiativeCard({
     totalFunding: number
     difference: number
   } | null>(null)
-  const { toast } = useToast()
+  const [kpis, setKpis] = useState<InitiativeKpi[]>([])
+  const [isLoadingKpis, setIsLoadingKpis] = useState(false)
+  const { toast} = useToast()
 
   const loadFundingStatus = useCallback(async () => {
     try {
@@ -74,6 +84,18 @@ export function InitiativeCard({
     }
   }, [initiative.id, initiative.total_year_1_cost, initiative.total_year_2_cost, initiative.total_year_3_cost])
 
+  const loadKpis = useCallback(async () => {
+    setIsLoadingKpis(true)
+    try {
+      const kpisData = await getInitiativeKpis(initiative.id)
+      setKpis(kpisData)
+    } catch (error) {
+      console.error('Error loading KPIs:', error)
+    } finally {
+      setIsLoadingKpis(false)
+    }
+  }, [initiative.id])
+
   // Load funding status when component mounts or budget changes
   useEffect(() => {
     const totalBudget =
@@ -85,6 +107,13 @@ export function InitiativeCard({
       loadFundingStatus()
     }
   }, [loadFundingStatus, initiative.total_year_1_cost, initiative.total_year_2_cost, initiative.total_year_3_cost])
+
+  // Load KPIs when card is expanded
+  useEffect(() => {
+    if (isExpanded) {
+      loadKpis()
+    }
+  }, [isExpanded, loadKpis])
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -111,6 +140,54 @@ export function InitiativeCard({
   const handleBudgetDialogClose = () => {
     setShowBudgetDialog(false)
     loadFundingStatus() // Refresh funding status when dialog closes
+  }
+
+  const handleAddKpi = async (kpi: Omit<InitiativeKpi, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      await createInitiativeKpi({
+        initiative_id: kpi.initiative_id,
+        metric_name: kpi.metric_name,
+        measurement_frequency: kpi.measurement_frequency,
+        baseline_value: kpi.baseline_value,
+        year_1_target: kpi.year_1_target,
+        year_2_target: kpi.year_2_target,
+        year_3_target: kpi.year_3_target,
+        data_source: kpi.data_source,
+        responsible_party: kpi.responsible_party,
+      })
+      await loadKpis()
+      return { id: '' } // Return value not used, but required by interface
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const handleUpdateKpi = async (id: string, kpi: Partial<InitiativeKpi>) => {
+    try {
+      await updateInitiativeKpi({
+        id,
+        metric_name: kpi.metric_name,
+        measurement_frequency: kpi.measurement_frequency,
+        baseline_value: kpi.baseline_value,
+        year_1_target: kpi.year_1_target,
+        year_2_target: kpi.year_2_target,
+        year_3_target: kpi.year_3_target,
+        data_source: kpi.data_source,
+        responsible_party: kpi.responsible_party,
+      })
+      await loadKpis()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const handleDeleteKpi = async (id: string) => {
+    try {
+      await deleteInitiativeKpi(id)
+      await loadKpis()
+    } catch (error) {
+      throw error
+    }
   }
 
   const getPriorityBadgeColor = (priority: string) => {
@@ -367,6 +444,19 @@ export function InitiativeCard({
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* KPIs Section */}
+            {!isLoadingKpis && (
+              <div className="border-t border-gray-200 pt-4">
+                <InitiativeKpisForm
+                  initiativeId={initiative.id}
+                  kpis={kpis}
+                  onAdd={handleAddKpi}
+                  onUpdate={handleUpdateKpi}
+                  onDelete={handleDeleteKpi}
+                />
               </div>
             )}
           </CardContent>
