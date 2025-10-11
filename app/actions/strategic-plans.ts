@@ -248,6 +248,14 @@ export interface SwotAnalysis {
   threats: string[]
 }
 
+export interface EnvironmentalScan {
+  demographic_trends: string[]
+  economic_factors: string[]
+  regulatory_changes: string[]
+  technology_trends: string[]
+  community_expectations: string[]
+}
+
 export interface StrategicPlanForEdit {
   id: string
   department_id: string
@@ -257,6 +265,7 @@ export interface StrategicPlanForEdit {
   executive_summary: string | null
   department_vision: string | null
   swot_analysis: SwotAnalysis | null
+  environmental_scan: EnvironmentalScan | null
   status: string
   created_by: string
   department: {
@@ -298,6 +307,7 @@ export async function getStrategicPlanForEdit(
       executive_summary,
       department_vision,
       swot_analysis,
+      environmental_scan,
       status,
       created_by,
       departments:department_id (
@@ -332,6 +342,7 @@ export async function getStrategicPlanForEdit(
     executive_summary: string | null
     department_vision: string | null
     swot_analysis: unknown
+    environmental_scan: unknown
     status: string
     created_by: string
     departments: {
@@ -363,6 +374,10 @@ export async function getStrategicPlanForEdit(
     swot_analysis:
       typeof typedData.swot_analysis === 'object' && typedData.swot_analysis !== null
         ? (typedData.swot_analysis as SwotAnalysis)
+        : null,
+    environmental_scan:
+      typeof typedData.environmental_scan === 'object' && typedData.environmental_scan !== null
+        ? (typedData.environmental_scan as EnvironmentalScan)
         : null,
     status: typedData.status,
     created_by: typedData.created_by,
@@ -597,6 +612,73 @@ export async function updateSwotAnalysis(
   if (error) {
     console.error('Error updating SWOT analysis:', error)
     throw new Error('Failed to update SWOT analysis')
+  }
+
+  // Revalidate paths
+  revalidatePath(`/plans/${planId}`)
+  revalidatePath(`/plans/${planId}/edit`)
+  revalidatePath('/plans')
+}
+
+export async function updateEnvironmentalScan(
+  planId: string,
+  scan: EnvironmentalScan
+): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Check if user has permission to edit this plan
+  const { data: plan } = await supabase
+    .from('strategic_plans')
+    .select('created_by, department_id')
+    .eq('id', planId)
+    .single<{ created_by: string; department_id: string }>()
+
+  if (!plan) {
+    throw new Error('Plan not found')
+  }
+
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('role, department_id')
+    .eq('id', currentUser.id)
+    .single<{ role: string; department_id: string | null }>()
+
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Check permissions: creator, same department, or admin
+  const canEdit =
+    plan.created_by === currentUser.id ||
+    userProfile.role === 'admin' ||
+    (userProfile.department_id === plan.department_id &&
+      (userProfile.role === 'department_director' || userProfile.role === 'staff'))
+
+  if (!canEdit) {
+    throw new Error('You do not have permission to edit this plan')
+  }
+
+  // Update environmental scan
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('strategic_plans')
+    .update({
+      environmental_scan: scan,
+    })
+    .eq('id', planId)
+
+  if (error) {
+    console.error('Error updating environmental scan:', error)
+    throw new Error('Failed to update environmental scan')
   }
 
   // Revalidate paths

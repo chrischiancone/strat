@@ -1,7 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import type { SwotAnalysis } from './strategic-plans'
+import type { SwotAnalysis, EnvironmentalScan } from './strategic-plans'
 
 export interface DashboardData {
   plan: {
@@ -12,6 +12,7 @@ export interface DashboardData {
     fiscal_year_end: string
     department_name: string
     swot_analysis: SwotAnalysis | null
+    environmental_scan: EnvironmentalScan | null
   }
 
   goalCount: number
@@ -68,7 +69,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
   // Get plan metadata with department info
   const { data: plan, error: planError } = await supabase
     .from('strategic_plans')
-    .select('id, title, status, fiscal_year_start, fiscal_year_end, swot_analysis, departments(name)')
+    .select('id, title, status, fiscal_year_start, fiscal_year_end, swot_analysis, environmental_scan, departments(name)')
     .eq('id', planId)
     .single()
 
@@ -83,6 +84,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     fiscal_year_start: string
     fiscal_year_end: string
     swot_analysis: unknown
+    environmental_scan: unknown
     departments: { name: string }
   }
   const typedPlan = plan as PlanData
@@ -301,6 +303,10 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
       swot_analysis:
         typeof typedPlan.swot_analysis === 'object' && typedPlan.swot_analysis !== null
           ? (typedPlan.swot_analysis as SwotAnalysis)
+          : null,
+      environmental_scan:
+        typeof typedPlan.environmental_scan === 'object' && typedPlan.environmental_scan !== null
+          ? (typedPlan.environmental_scan as EnvironmentalScan)
           : null,
     },
     goalCount,

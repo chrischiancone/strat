@@ -3,6 +3,7 @@ import { PlanMetadataForm } from '@/components/plans/PlanMetadataForm'
 import { DepartmentInfoForm } from '@/components/plans/DepartmentInfoForm'
 import { StaffingLevelsForm } from '@/components/plans/StaffingLevelsForm'
 import { SwotAnalysisSection } from '@/components/plans/SwotAnalysisSection'
+import { EnvironmentalScanSection } from '@/components/plans/EnvironmentalScanSection'
 import { GoalsSection } from '@/components/plans/GoalsSection'
 import { InitiativesSection } from '@/components/initiatives/InitiativesSection'
 import { notFound } from 'next/navigation'
@@ -92,6 +93,12 @@ export default async function PlanEditPage({ params }: PageProps) {
           <SwotAnalysisSection
             planId={id}
             initialSwot={plan.swot_analysis || undefined}
+          />
+
+          {/* Environmental Scan */}
+          <EnvironmentalScanSection
+            planId={id}
+            initialScan={plan.environmental_scan || undefined}
           />
 
           {/* Strategic Goals */}

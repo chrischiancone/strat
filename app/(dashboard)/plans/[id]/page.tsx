@@ -8,6 +8,7 @@ import { BudgetByYearChart } from '@/components/dashboard/BudgetByYearChart'
 import { BudgetBySourceChart } from '@/components/dashboard/BudgetBySourceChart'
 import { KpiProgressList } from '@/components/dashboard/KpiProgressList'
 import { SwotAnalysisDisplay } from '@/components/plans/SwotAnalysisDisplay'
+import { EnvironmentalScanDisplay } from '@/components/plans/EnvironmentalScanDisplay'
 
 interface PageProps {
   params: Promise<{
@@ -79,6 +80,11 @@ export default async function PlanDashboardPage({ params }: PageProps) {
             {/* SWOT Analysis */}
             {dashboardData.plan.swot_analysis && (
               <SwotAnalysisDisplay swot={dashboardData.plan.swot_analysis} />
+            )}
+
+            {/* Environmental Scan */}
+            {dashboardData.plan.environmental_scan && (
+              <EnvironmentalScanDisplay scan={dashboardData.plan.environmental_scan} />
             )}
 
             {/* Budget Charts */}
