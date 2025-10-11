@@ -2,6 +2,7 @@ import { getStrategicPlanForEdit } from '@/app/actions/strategic-plans'
 import { PlanMetadataForm } from '@/components/plans/PlanMetadataForm'
 import { DepartmentInfoForm } from '@/components/plans/DepartmentInfoForm'
 import { StaffingLevelsForm } from '@/components/plans/StaffingLevelsForm'
+import { SwotAnalysisSection } from '@/components/plans/SwotAnalysisSection'
 import { GoalsSection } from '@/components/plans/GoalsSection'
 import { InitiativesSection } from '@/components/initiatives/InitiativesSection'
 import { notFound } from 'next/navigation'
@@ -87,6 +88,12 @@ export default async function PlanEditPage({ params }: PageProps) {
             initialData={plan.department.current_staffing}
           />
 
+          {/* SWOT Analysis */}
+          <SwotAnalysisSection
+            planId={id}
+            initialSwot={plan.swot_analysis || undefined}
+          />
+
           {/* Strategic Goals */}
           <GoalsSection planId={id} />
 
@@ -96,14 +103,6 @@ export default async function PlanEditPage({ params }: PageProps) {
             departmentId={plan.department_id}
             fiscalYearId={plan.start_fiscal_year_id}
           />
-
-          {/* Future Sections Placeholder */}
-          <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
-            <p className="text-sm text-gray-600">
-              Additional sections (SWOT Analysis, Financial Analysis, ROI) will
-              be available in upcoming stories
-            </p>
-          </div>
         </div>
       </div>
     </div>

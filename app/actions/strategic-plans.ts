@@ -241,6 +241,13 @@ export async function createStrategicPlan(
   return { id: data.id }
 }
 
+export interface SwotAnalysis {
+  strengths: string[]
+  weaknesses: string[]
+  opportunities: string[]
+  threats: string[]
+}
+
 export interface StrategicPlanForEdit {
   id: string
   department_id: string
@@ -249,6 +256,7 @@ export interface StrategicPlanForEdit {
   title: string
   executive_summary: string | null
   department_vision: string | null
+  swot_analysis: SwotAnalysis | null
   status: string
   created_by: string
   department: {
@@ -289,6 +297,7 @@ export async function getStrategicPlanForEdit(
       title,
       executive_summary,
       department_vision,
+      swot_analysis,
       status,
       created_by,
       departments:department_id (
@@ -322,6 +331,7 @@ export async function getStrategicPlanForEdit(
     title: string
     executive_summary: string | null
     department_vision: string | null
+    swot_analysis: unknown
     status: string
     created_by: string
     departments: {
@@ -350,6 +360,10 @@ export async function getStrategicPlanForEdit(
     title: typedData.title,
     executive_summary: typedData.executive_summary,
     department_vision: typedData.department_vision,
+    swot_analysis:
+      typeof typedData.swot_analysis === 'object' && typedData.swot_analysis !== null
+        ? (typedData.swot_analysis as SwotAnalysis)
+        : null,
     status: typedData.status,
     created_by: typedData.created_by,
     department: {
@@ -521,5 +535,72 @@ export async function updateDepartmentInfo(
   }
 
   // Revalidate all plan pages for this department
+  revalidatePath('/plans')
+}
+
+export async function updateSwotAnalysis(
+  planId: string,
+  swot: SwotAnalysis
+): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Check if user has permission to edit this plan
+  const { data: plan } = await supabase
+    .from('strategic_plans')
+    .select('created_by, department_id')
+    .eq('id', planId)
+    .single<{ created_by: string; department_id: string }>()
+
+  if (!plan) {
+    throw new Error('Plan not found')
+  }
+
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('role, department_id')
+    .eq('id', currentUser.id)
+    .single<{ role: string; department_id: string | null }>()
+
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Check permissions: creator, same department, or admin
+  const canEdit =
+    plan.created_by === currentUser.id ||
+    userProfile.role === 'admin' ||
+    (userProfile.department_id === plan.department_id &&
+      (userProfile.role === 'department_director' || userProfile.role === 'staff'))
+
+  if (!canEdit) {
+    throw new Error('You do not have permission to edit this plan')
+  }
+
+  // Update SWOT analysis
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('strategic_plans')
+    .update({
+      swot_analysis: swot,
+    })
+    .eq('id', planId)
+
+  if (error) {
+    console.error('Error updating SWOT analysis:', error)
+    throw new Error('Failed to update SWOT analysis')
+  }
+
+  // Revalidate paths
+  revalidatePath(`/plans/${planId}`)
+  revalidatePath(`/plans/${planId}/edit`)
   revalidatePath('/plans')
 }

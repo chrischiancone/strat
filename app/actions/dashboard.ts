@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import type { SwotAnalysis } from './strategic-plans'
 
 export interface DashboardData {
   plan: {
@@ -10,6 +11,7 @@ export interface DashboardData {
     fiscal_year_start: string
     fiscal_year_end: string
     department_name: string
+    swot_analysis: SwotAnalysis | null
   }
 
   goalCount: number
@@ -66,7 +68,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
   // Get plan metadata with department info
   const { data: plan, error: planError } = await supabase
     .from('strategic_plans')
-    .select('id, title, status, fiscal_year_start, fiscal_year_end, departments(name)')
+    .select('id, title, status, fiscal_year_start, fiscal_year_end, swot_analysis, departments(name)')
     .eq('id', planId)
     .single()
 
@@ -80,6 +82,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     status: string
     fiscal_year_start: string
     fiscal_year_end: string
+    swot_analysis: unknown
     departments: { name: string }
   }
   const typedPlan = plan as PlanData
@@ -295,6 +298,10 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
       fiscal_year_start: typedPlan.fiscal_year_start,
       fiscal_year_end: typedPlan.fiscal_year_end,
       department_name: typedPlan.departments.name,
+      swot_analysis:
+        typeof typedPlan.swot_analysis === 'object' && typedPlan.swot_analysis !== null
+          ? (typedPlan.swot_analysis as SwotAnalysis)
+          : null,
     },
     goalCount,
     initiativesByPriority,

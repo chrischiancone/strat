@@ -7,6 +7,7 @@ import { DashboardStats } from '@/components/dashboard/DashboardStats'
 import { BudgetByYearChart } from '@/components/dashboard/BudgetByYearChart'
 import { BudgetBySourceChart } from '@/components/dashboard/BudgetBySourceChart'
 import { KpiProgressList } from '@/components/dashboard/KpiProgressList'
+import { SwotAnalysisDisplay } from '@/components/plans/SwotAnalysisDisplay'
 
 interface PageProps {
   params: Promise<{
@@ -74,6 +75,11 @@ export default async function PlanDashboardPage({ params }: PageProps) {
           <div className="space-y-6">
             {/* Key Metrics and Initiative Breakdown */}
             <DashboardStats data={dashboardData} />
+
+            {/* SWOT Analysis */}
+            {dashboardData.plan.swot_analysis && (
+              <SwotAnalysisDisplay swot={dashboardData.plan.swot_analysis} />
+            )}
 
             {/* Budget Charts */}
             <div className="grid gap-6 md:grid-cols-2">
