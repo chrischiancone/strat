@@ -256,6 +256,19 @@ export interface EnvironmentalScan {
   community_expectations: string[]
 }
 
+export interface BenchmarkingMetric {
+  metric_name: string
+  carrollton_current: string
+  peer_average: string
+  gap_analysis: string
+}
+
+export interface BenchmarkingData {
+  peer_municipalities: string[]
+  metrics: BenchmarkingMetric[]
+  key_findings: string[]
+}
+
 export interface StrategicPlanForEdit {
   id: string
   department_id: string
@@ -266,6 +279,7 @@ export interface StrategicPlanForEdit {
   department_vision: string | null
   swot_analysis: SwotAnalysis | null
   environmental_scan: EnvironmentalScan | null
+  benchmarking_data: BenchmarkingData | null
   status: string
   created_by: string
   department: {
@@ -308,6 +322,7 @@ export async function getStrategicPlanForEdit(
       department_vision,
       swot_analysis,
       environmental_scan,
+      benchmarking_data,
       status,
       created_by,
       departments:department_id (
@@ -343,6 +358,7 @@ export async function getStrategicPlanForEdit(
     department_vision: string | null
     swot_analysis: unknown
     environmental_scan: unknown
+    benchmarking_data: unknown
     status: string
     created_by: string
     departments: {
@@ -378,6 +394,10 @@ export async function getStrategicPlanForEdit(
     environmental_scan:
       typeof typedData.environmental_scan === 'object' && typedData.environmental_scan !== null
         ? (typedData.environmental_scan as EnvironmentalScan)
+        : null,
+    benchmarking_data:
+      typeof typedData.benchmarking_data === 'object' && typedData.benchmarking_data !== null
+        ? (typedData.benchmarking_data as BenchmarkingData)
         : null,
     status: typedData.status,
     created_by: typedData.created_by,
@@ -679,6 +699,73 @@ export async function updateEnvironmentalScan(
   if (error) {
     console.error('Error updating environmental scan:', error)
     throw new Error('Failed to update environmental scan')
+  }
+
+  // Revalidate paths
+  revalidatePath(`/plans/${planId}`)
+  revalidatePath(`/plans/${planId}/edit`)
+  revalidatePath('/plans')
+}
+
+export async function updateBenchmarkingData(
+  planId: string,
+  data: BenchmarkingData
+): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Check if user has permission to edit this plan
+  const { data: plan } = await supabase
+    .from('strategic_plans')
+    .select('created_by, department_id')
+    .eq('id', planId)
+    .single<{ created_by: string; department_id: string }>()
+
+  if (!plan) {
+    throw new Error('Plan not found')
+  }
+
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('role, department_id')
+    .eq('id', currentUser.id)
+    .single<{ role: string; department_id: string | null }>()
+
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Check permissions: creator, same department, or admin
+  const canEdit =
+    plan.created_by === currentUser.id ||
+    userProfile.role === 'admin' ||
+    (userProfile.department_id === plan.department_id &&
+      (userProfile.role === 'department_director' || userProfile.role === 'staff'))
+
+  if (!canEdit) {
+    throw new Error('You do not have permission to edit this plan')
+  }
+
+  // Update benchmarking data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('strategic_plans')
+    .update({
+      benchmarking_data: data,
+    })
+    .eq('id', planId)
+
+  if (error) {
+    console.error('Error updating benchmarking data:', error)
+    throw new Error('Failed to update benchmarking data')
   }
 
   // Revalidate paths

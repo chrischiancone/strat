@@ -4,6 +4,7 @@ import { DepartmentInfoForm } from '@/components/plans/DepartmentInfoForm'
 import { StaffingLevelsForm } from '@/components/plans/StaffingLevelsForm'
 import { SwotAnalysisSection } from '@/components/plans/SwotAnalysisSection'
 import { EnvironmentalScanSection } from '@/components/plans/EnvironmentalScanSection'
+import { BenchmarkingDataSection } from '@/components/plans/BenchmarkingDataSection'
 import { GoalsSection } from '@/components/plans/GoalsSection'
 import { InitiativesSection } from '@/components/initiatives/InitiativesSection'
 import { notFound } from 'next/navigation'
@@ -99,6 +100,12 @@ export default async function PlanEditPage({ params }: PageProps) {
           <EnvironmentalScanSection
             planId={id}
             initialScan={plan.environmental_scan || undefined}
+          />
+
+          {/* Benchmarking Data */}
+          <BenchmarkingDataSection
+            planId={id}
+            initialData={plan.benchmarking_data || undefined}
           />
 
           {/* Strategic Goals */}

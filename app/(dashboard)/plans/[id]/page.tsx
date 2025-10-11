@@ -9,6 +9,7 @@ import { BudgetBySourceChart } from '@/components/dashboard/BudgetBySourceChart'
 import { KpiProgressList } from '@/components/dashboard/KpiProgressList'
 import { SwotAnalysisDisplay } from '@/components/plans/SwotAnalysisDisplay'
 import { EnvironmentalScanDisplay } from '@/components/plans/EnvironmentalScanDisplay'
+import { BenchmarkingDataDisplay } from '@/components/plans/BenchmarkingDataDisplay'
 
 interface PageProps {
   params: Promise<{
@@ -85,6 +86,11 @@ export default async function PlanDashboardPage({ params }: PageProps) {
             {/* Environmental Scan */}
             {dashboardData.plan.environmental_scan && (
               <EnvironmentalScanDisplay scan={dashboardData.plan.environmental_scan} />
+            )}
+
+            {/* Benchmarking Data */}
+            {dashboardData.plan.benchmarking_data && (
+              <BenchmarkingDataDisplay data={dashboardData.plan.benchmarking_data} />
             )}
 
             {/* Budget Charts */}
