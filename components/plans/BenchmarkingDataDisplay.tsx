@@ -10,14 +10,19 @@ import {
 import type { BenchmarkingData } from '@/app/actions/strategic-plans'
 
 interface BenchmarkingDataDisplayProps {
-  data: BenchmarkingData
+  data: BenchmarkingData | null
 }
 
 export function BenchmarkingDataDisplay({ data }: BenchmarkingDataDisplayProps) {
+  // Return null if data is null/undefined
+  if (!data) {
+    return null
+  }
+
   const hasContent =
-    data.peer_municipalities.length > 0 ||
-    data.metrics.length > 0 ||
-    data.key_findings.length > 0
+    (data.peer_municipalities?.length || 0) > 0 ||
+    (data.metrics?.length || 0) > 0 ||
+    (data.key_findings?.length || 0) > 0
 
   if (!hasContent) {
     return null
@@ -31,13 +36,13 @@ export function BenchmarkingDataDisplay({ data }: BenchmarkingDataDisplayProps) 
       <CardContent>
         <div className="space-y-6">
           {/* Peer Municipalities */}
-          {data.peer_municipalities.length > 0 && (
+          {(data.peer_municipalities?.length || 0) > 0 && (
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">
                 Peer Municipalities Compared
               </h3>
               <ul className="space-y-1">
-                {data.peer_municipalities.map((municipality, index) => (
+                {data.peer_municipalities?.map((municipality, index) => (
                   <li key={index} className="text-sm text-gray-700">
                     • {municipality}
                   </li>
@@ -47,7 +52,7 @@ export function BenchmarkingDataDisplay({ data }: BenchmarkingDataDisplayProps) 
           )}
 
           {/* Benchmarking Metrics */}
-          {data.metrics.length > 0 && (
+          {(data.metrics?.length || 0) > 0 && (
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">Performance Comparison</h3>
               <div className="rounded-md border border-gray-200 overflow-auto">
@@ -61,7 +66,7 @@ export function BenchmarkingDataDisplay({ data }: BenchmarkingDataDisplayProps) 
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.metrics.map((metric, index) => (
+                    {data.metrics?.map((metric, index) => (
                       <TableRow key={index}>
                         <TableCell className="font-medium">{metric.metric_name}</TableCell>
                         <TableCell>{metric.carrollton_current}</TableCell>
@@ -76,11 +81,11 @@ export function BenchmarkingDataDisplay({ data }: BenchmarkingDataDisplayProps) 
           )}
 
           {/* Key Findings */}
-          {data.key_findings.length > 0 && (
+          {(data.key_findings?.length || 0) > 0 && (
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">Key Findings</h3>
               <ul className="space-y-2">
-                {data.key_findings.map((finding, index) => (
+                {data.key_findings?.map((finding, index) => (
                   <li key={index} className="text-sm text-gray-700">
                     • {finding}
                   </li>

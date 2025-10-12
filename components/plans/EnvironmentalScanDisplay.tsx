@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { EnvironmentalScan } from '@/app/actions/strategic-plans'
 
 interface EnvironmentalScanDisplayProps {
-  scan: EnvironmentalScan
+  scan: EnvironmentalScan | null
 }
 
 const CATEGORY_LABELS = {
@@ -22,12 +22,17 @@ const CATEGORY_COLORS = {
 }
 
 export function EnvironmentalScanDisplay({ scan }: EnvironmentalScanDisplayProps) {
+  // Return null if scan is null/undefined
+  if (!scan) {
+    return null
+  }
+
   const hasContent =
-    scan.demographic_trends.length > 0 ||
-    scan.economic_factors.length > 0 ||
-    scan.regulatory_changes.length > 0 ||
-    scan.technology_trends.length > 0 ||
-    scan.community_expectations.length > 0
+    (scan.demographic_trends?.length || 0) > 0 ||
+    (scan.economic_factors?.length || 0) > 0 ||
+    (scan.regulatory_changes?.length || 0) > 0 ||
+    (scan.technology_trends?.length || 0) > 0 ||
+    (scan.community_expectations?.length || 0) > 0
 
   if (!hasContent) {
     return null
@@ -51,7 +56,7 @@ export function EnvironmentalScanDisplay({ scan }: EnvironmentalScanDisplayProps
       <CardContent>
         <div className="space-y-6">
           {categories.map((category) => {
-            const items = scan[category]
+            const items = scan[category] || []
             if (items.length === 0) return null
 
             const colors = CATEGORY_COLORS[category]
