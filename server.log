@@ -9,583 +9,554 @@
     · optimizeCss
 
  ✓ Starting...
- ✓ Ready in 1032ms
- ✓ Compiled /middleware in 346ms (486 modules)
+ ✓ Ready in 1096ms
+ ✓ Compiled /middleware in 318ms (486 modules)
  ○ Compiling /admin/fiscal-years ...
-(node:49531) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(node:76168) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
- ✓ Compiled /admin/fiscal-years in 1852ms (1607 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-No authenticated user found in getFiscalYears
- GET /admin/fiscal-years 307 in 1985ms
- ✓ Compiled in 188ms (326 modules)
+ ✓ Compiled /admin/fiscal-years in 1813ms (1607 modules)
+ GET /admin/fiscal-years 307 in 1926ms
+ ✓ Compiled in 165ms (326 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (118kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
- ✓ Compiled / in 127ms (1588 modules)
- HEAD / 307 in 207ms
- GET / 307 in 35ms
- ✓ Compiled /dashboard in 219ms (1642 modules)
- GET /dashboard 200 in 329ms
- ✓ Compiled /admin/departments in 167ms (1657 modules)
-getDepartmentsWithStats called with filters: {
-  status: undefined,
-  search: undefined,
-  sortBy: undefined,
-  sortOrder: undefined
-}
-Authenticated user ID: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result: {
-  userProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing departments query for municipality_id: 00000000-0000-0000-0000-000000000001
-Raw departments query result: { count: null, error: null }
-DepartmentsPage - departments count: 6
-DepartmentsPage - departments: [
-  {
-    id: '00000000-0000-0000-0000-000000000104',
-    name: 'Finance',
-    slug: 'finance',
-    director_name: 'Amanda Rodriguez',
-    director_email: 'arodriguez@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To ensure fiscal responsibility and provide financial expertise supporting city operations.'
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000103',
-    name: 'Information Technology',
-    slug: 'information-technology',
-    director_name: 'Michael Chen',
-    director_email: 'mchen@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To deliver innovative technology solutions that enable efficient city operations and excellent citizen services.'
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000102',
-    name: 'Parks & Recreation',
-    slug: 'parks-recreation',
-    director_name: 'Sarah Johnson',
-    director_email: 'sjohnson@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To enhance quality of life through exceptional parks, recreation programs, and community spaces.'
-  },
-  {
-    id: '912d395e-73af-4086-acff-d57124923abe',
-    name: 'Strategic Services',
-    slug: 'strategic-services',
-    director_name: 'Krystal Bose',
-    director_email: 'krystle.boise@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: null
-  },
-  {
-    id: 'e15e2d63-0298-4245-a09c-dafb02f46a38',
-    name: 'Test Department 1760268016374',
-    slug: 'test-department-1760268016374',
-    director_name: 'Test Director',
-    director_email: 'test@example.com',
-    is_active: true,
-    mission_statement: 'Test mission statement'
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000101',
-    name: 'Water & Field Services',
-    slug: 'water-field-services',
-    director_name: 'John Smith',
-    director_email: 'jsmith@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To provide safe, reliable water services and maintain quality field operations for Carrollton residents.'
-  }
-]
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 0, error: null }
-Fiscal years data: []
- ✓ Compiled /signup in 124ms (1665 modules)
- HEAD /signup 200 in 153ms
- ✓ Compiled /login in 130ms (1670 modules)
- POST /admin/fiscal-years 303 in 219ms
- POST /login 200 in 133ms
-getDepartmentsWithStats called with filters: {
-  status: undefined,
-  search: undefined,
-  sortBy: undefined,
-  sortOrder: undefined
-}
-Authenticated user ID: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result: {
-  userProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing departments query for municipality_id: 00000000-0000-0000-0000-000000000001
-Raw departments query result: { count: null, error: null }
-DepartmentsPage - departments count: 6
-DepartmentsPage - departments: [
-  {
-    id: '00000000-0000-0000-0000-000000000104',
-    name: 'Finance',
-    slug: 'finance',
-    director_name: 'Amanda Rodriguez',
-    director_email: 'arodriguez@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To ensure fiscal responsibility and provide financial expertise supporting city operations.'
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000103',
-    name: 'Information Technology',
-    slug: 'information-technology',
-    director_name: 'Michael Chen',
-    director_email: 'mchen@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To deliver innovative technology solutions that enable efficient city operations and excellent citizen services.'
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000102',
-    name: 'Parks & Recreation',
-    slug: 'parks-recreation',
-    director_name: 'Sarah Johnson',
-    director_email: 'sjohnson@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To enhance quality of life through exceptional parks, recreation programs, and community spaces.'
-  },
-  {
-    id: '912d395e-73af-4086-acff-d57124923abe',
-    name: 'Strategic Services',
-    slug: 'strategic-services',
-    director_name: 'Krystal Bose',
-    director_email: 'krystle.boise@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: null
-  },
-  {
-    id: 'e15e2d63-0298-4245-a09c-dafb02f46a38',
-    name: 'Test Department 1760268016374',
-    slug: 'test-department-1760268016374',
-    director_name: 'Test Director',
-    director_email: 'test@example.com',
-    is_active: true,
-    mission_statement: 'Test mission statement'
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000101',
-    name: 'Water & Field Services',
-    slug: 'water-field-services',
-    director_name: 'John Smith',
-    director_email: 'jsmith@cityofcarrollton.com',
-    is_active: true,
-    mission_statement: 'To provide safe, reliable water services and maintain quality field operations for Carrollton residents.'
-  }
-]
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 0, error: null }
-Fiscal years data: []
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-No authenticated user found in getFiscalYears
- GET /admin/fiscal-years 307 in 27ms
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-No authenticated user found in getFiscalYears
- GET /admin/fiscal-years 307 in 22ms
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 0, error: null }
-Fiscal years data: []
- GET /admin/fiscal-years 200 in 65ms
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 0, error: null }
-Fiscal years data: []
- GET /admin/fiscal-years 200 in 47ms
- ✓ Compiled in 386ms (1679 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-No authenticated user found in getFiscalYears
- ✓ Compiled in 153ms (1679 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 3, error: null }
-Fiscal years data: [
-  {
-    id: '00000000-0000-0000-0000-000000000203',
-    year: 2027,
-    start_date: '2026-10-01',
-    end_date: '2027-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000202',
-    year: 2026,
-    start_date: '2025-10-01',
-    end_date: '2026-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000201',
-    year: 2025,
-    start_date: '2024-10-01',
-    end_date: '2025-09-30',
-    is_current: false
-  }
-]
- ✓ Compiled in 127ms (1679 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 3, error: null }
-Fiscal years data: [
-  {
-    id: '00000000-0000-0000-0000-000000000203',
-    year: 2027,
-    start_date: '2026-10-01',
-    end_date: '2027-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000202',
-    year: 2026,
-    start_date: '2025-10-01',
-    end_date: '2026-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000201',
-    year: 2025,
-    start_date: '2024-10-01',
-    end_date: '2025-09-30',
-    is_current: false
-  }
-]
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-No authenticated user found in getFiscalYears
- GET /admin/fiscal-years 307 in 41ms
- ✓ Compiled in 145ms (1679 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
- ⨯ app/actions/fiscal-years.ts (39:43) @ getFiscalYears
- ⨯ ReferenceError: serverSupabase is not defined
-    at getFiscalYears (./app/actions/fiscal-years.ts:28:45)
-    at FiscalYearsPage (admin/fiscal-years/page.tsx:21:104)
-digest: "2595599414"
-[0m [90m 37 |[39m[0m
-[0m [90m 38 |[39m   [90m// Get current user to fetch their municipality_id[39m[0m
-[0m[31m[1m>[22m[39m[90m 39 |[39m   [36mconst[39m { data[33m:[39m { user[33m:[39m currentUser } } [33m=[39m [36mawait[39m serverSupabase[33m.[39mauth[33m.[39mgetUser()[0m
-[0m [90m    |[39m                                           [31m[1m^[22m[39m[0m
-[0m [90m 40 |[39m[0m
-[0m [90m 41 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
-[0m [90m 42 |[39m     console[33m.[39mlog([32m'No authenticated user found in getFiscalYears'[39m)[0m
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 145ms (1679 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 0, error: null }
-Fiscal years data: []
- GET /admin/fiscal-years 200 in 186ms
- ✓ Compiled in 125ms (1679 modules)
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
-User profile query result in getFiscalYears: {
-  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
-  profileError: null
-}
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 3, error: null }
-Fiscal years data: [
-  {
-    id: '00000000-0000-0000-0000-000000000203',
-    year: 2027,
-    start_date: '2026-10-01',
-    end_date: '2027-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000202',
-    year: 2026,
-    start_date: '2025-10-01',
-    end_date: '2026-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000201',
-    year: 2025,
-    start_date: '2024-10-01',
-    end_date: '2025-09-30',
-    is_current: false
-  }
-]
-getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
-No authenticated user found in getFiscalYears
- GET /admin/fiscal-years 307 in 25ms
- ✓ Compiled in 135ms (1679 modules)
-Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
-Fiscal years query result: { data: 3, error: null }
-Fiscal years data: [
-  {
-    id: '00000000-0000-0000-0000-000000000203',
-    year: 2027,
-    start_date: '2026-10-01',
-    end_date: '2027-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000202',
-    year: 2026,
-    start_date: '2025-10-01',
-    end_date: '2026-09-30',
-    is_current: false
-  },
-  {
-    id: '00000000-0000-0000-0000-000000000201',
-    year: 2025,
-    start_date: '2024-10-01',
-    end_date: '2025-09-30',
-    is_current: false
-  }
-]
- ✓ Compiled in 132ms (1679 modules)
- ✓ Compiled in 161ms (1679 modules)
- ✓ Compiled in 143ms (1679 modules)
- ✓ Compiled /plans in 378ms (1813 modules)
- ✓ Compiled in 221ms (1827 modules)
- ✓ Compiled in 152ms (1827 modules)
- ✓ Compiled in 146ms (1827 modules)
- ✓ Compiled in 173ms (1827 modules)
- ✓ Compiled in 353ms (1827 modules)
- GET /admin/fiscal-years 307 in 39ms
- ✓ Compiled /admin/fiscal-years/[id] in 351ms (1850 modules)
-Error fetching fiscal year: {
+ ✓ Compiled / in 138ms (1588 modules)
+ GET / 307 in 230ms
+ ✓ Compiled /dashboard in 178ms (1642 modules)
+ GET /dashboard 200 in 287ms
+ ✓ Compiled /plans in 370ms (1790 modules)
+ POST /plans 200 in 79ms
+ ○ Compiling /plans/[id] ...
+ ✓ Compiled /plans/[id] in 1199ms (3227 modules)
+Error loading plan: {
   code: 'PGRST116',
   details: 'The result contains 0 rows',
   hint: null,
   message: 'Cannot coerce the result to a single JSON object'
 }
- ✓ Compiled in 170ms (1864 modules)
- POST /admin/fiscal-years/00000000-0000-0000-0000-000000000203 200 in 58ms
- GET /admin/fiscal-years/00000000-0000-0000-0000-000000000201 307 in 39ms
- ✓ Compiled in 217ms (1836 modules)
- ✓ Compiled in 148ms (1836 modules)
- ✓ Compiled in 161ms (1836 modules)
-Error creating strategic plan: {
-  code: '42501',
+Error loading dashboard: Error: Plan not found
+    at getDashboardData (webpack-internal:///(rsc)/./app/actions/dashboard.ts:36:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanDashboardPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/page.tsx:48:25)
+ ✓ Compiled /_not-found in 244ms (3230 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 286ms
+Error loading dashboard: Error: Unauthorized
+    at getDashboardData (webpack-internal:///(rsc)/./app/actions/dashboard.ts:19:15)
+    at async PlanDashboardPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/page.tsx:48:25)
+ GET /plans/4e3bfa44-2726-448a-a430-938ac2adb8b5 307 in 48ms
+ ✓ Compiled in 312ms (3220 modules)
+Error loading plan: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+Error loading dashboard: Error: Plan not found
+    at getDashboardData (webpack-internal:///(rsc)/./app/actions/dashboard.ts:36:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanDashboardPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/page.tsx:48:25)
+ ✓ Compiled in 166ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ✓ Compiled in 187ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ✓ Compiled in 151ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ✓ Compiled in 188ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ✓ Compiled in 145ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ✓ Compiled in 226ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ✓ Compiled in 170ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+Error loading dashboard: Error: Unauthorized
+    at getDashboardData (webpack-internal:///(rsc)/./app/actions/dashboard.ts:22:15)
+    at async PlanDashboardPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/page.tsx:48:25)
+ GET /plans/4e3bfa44-2726-448a-a430-938ac2adb8b5 307 in 41ms
+ POST /plans 200 in 59ms
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/BenchmarkingDataDisplay.tsx (18:30) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at BenchmarkingDataDisplay (./components/plans/BenchmarkingDataDisplay.tsx:13:49)
+    at stringify (<anonymous>)
+digest: "2215890011"
+[0m [90m 16 |[39m [36mexport[39m [36mfunction[39m [33mBenchmarkingDataDisplay[39m({ data }[33m:[39m [33mBenchmarkingDataDisplayProps[39m) {[0m
+[0m [90m 17 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m     data[33m.[39mpeer_municipalities[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m     data[33m.[39mmetrics[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 20 |[39m     data[33m.[39mkey_findings[33m.[39mlength [33m>[39m [35m0[39m[0m
+[0m [90m 21 |[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 432ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ GET /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 500 in 460ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 198ms (3220 modules)
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ ⨯ components/plans/EnvironmentalScanDisplay.tsx (26:29) @ length
+ ⨯ TypeError: Cannot read properties of undefined (reading 'length')
+    at EnvironmentalScanDisplay (./components/plans/EnvironmentalScanDisplay.tsx:45:48)
+    at stringify (<anonymous>)
+digest: "614778265"
+[0m [90m 24 |[39m [36mexport[39m [36mfunction[39m [33mEnvironmentalScanDisplay[39m({ scan }[33m:[39m [33mEnvironmentalScanDisplayProps[39m) {[0m
+[0m [90m 25 |[39m   [36mconst[39m hasContent [33m=[39m[0m
+[0m[31m[1m>[22m[39m[90m 26 |[39m     scan[33m.[39mdemographic_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+[0m [90m 27 |[39m     scan[33m.[39meconomic_factors[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 28 |[39m     scan[33m.[39mregulatory_changes[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+[0m [90m 29 |[39m     scan[33m.[39mtechnology_trends[33m.[39mlength [33m>[39m [35m0[39m [33m||[39m[0m
+ GET /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 500 in 224ms
+ ✓ Compiled in 161ms (3220 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 124ms
+Error fetching approval history: {
+  code: '42703',
   details: null,
   hint: null,
-  message: 'new row violates row-level security policy for table "strategic_plans"'
+  message: 'column audit_logs.entity_id does not exist'
 }
- ⨯ app/actions/strategic-plans.ts (236:11) @ createStrategicPlan
- ⨯ Error: Failed to create strategic plan
-    at createStrategicPlan (./app/actions/strategic-plans.ts:150:15)
-digest: "2164936402"
-[0m [90m 234 |[39m   [36mif[39m (error) {[0m
-[0m [90m 235 |[39m     console[33m.[39merror([32m'Error creating strategic plan:'[39m[33m,[39m error)[0m
-[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to create strategic plan'[39m)[0m
-[0m [90m     |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 237 |[39m   }[0m
-[0m [90m 238 |[39m[0m
-[0m [90m 239 |[39m   [36mif[39m ([33m![39mdata) {[0m
- POST /plans 500 in 33ms
-Error creating strategic plan: {
-  code: '42501',
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 49ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 12ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 8ms
+Error fetching approval history: {
+  code: '42703',
   details: null,
   hint: null,
-  message: 'new row violates row-level security policy for table "strategic_plans"'
+  message: 'column audit_logs.entity_id does not exist'
 }
- ⨯ app/actions/strategic-plans.ts (236:11) @ createStrategicPlan
- ⨯ Error: Failed to create strategic plan
-    at createStrategicPlan (./app/actions/strategic-plans.ts:150:15)
-digest: "2164936402"
-[0m [90m 234 |[39m   [36mif[39m (error) {[0m
-[0m [90m 235 |[39m     console[33m.[39merror([32m'Error creating strategic plan:'[39m[33m,[39m error)[0m
-[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to create strategic plan'[39m)[0m
-[0m [90m     |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 237 |[39m   }[0m
-[0m [90m 238 |[39m[0m
-[0m [90m 239 |[39m   [36mif[39m ([33m![39mdata) {[0m
- POST /plans 500 in 35ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 409ms (1836 modules)
- ⨯ components/plans/CreatePlanDialog.tsx (162:24) @ startFiscalYearId
- ⨯ ReferenceError: startFiscalYearId is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:215:52)
-digest: "3331038547"
-[0m [90m 160 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
-[0m [90m 161 |[39m               [33m<[39m[33mSelect[39m[0m
-[0m[31m[1m>[22m[39m[90m 162 |[39m                 value[33m=[39m{startFiscalYearId}[0m
-[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
-[0m [90m 163 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
-[0m [90m 164 |[39m                 disabled[33m=[39m{isSubmitting}[0m
-[0m [90m 165 |[39m               [33m>[39m[0m
- GET /plans 200 in 264ms
- ✓ Compiled in 169ms (1836 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ components/plans/CreatePlanDialog.tsx (147:24) @ startFiscalYearId
- ⨯ ReferenceError: startFiscalYearId is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:202:52)
-digest: "3606218165"
-[0m [90m 145 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
-[0m [90m 146 |[39m               [33m<[39m[33mSelect[39m[0m
-[0m[31m[1m>[22m[39m[90m 147 |[39m                 value[33m=[39m{startFiscalYearId}[0m
-[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
-[0m [90m 148 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
-[0m [90m 149 |[39m                 disabled[33m=[39m{isSubmitting}[0m
-[0m [90m 150 |[39m               [33m>[39m[0m
- GET /plans 200 in 90ms
- ✓ Compiled in 170ms (1836 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ components/plans/CreatePlanDialog.tsx (138:24) @ startFiscalYearId
- ⨯ ReferenceError: startFiscalYearId is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:195:52)
-digest: "1099648024"
-[0m [90m 136 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
-[0m [90m 137 |[39m               [33m<[39m[33mSelect[39m[0m
-[0m[31m[1m>[22m[39m[90m 138 |[39m                 value[33m=[39m{startFiscalYearId}[0m
-[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
-[0m [90m 139 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
-[0m [90m 140 |[39m                 disabled[33m=[39m{isSubmitting}[0m
-[0m [90m 141 |[39m               [33m>[39m[0m
- GET /plans 200 in 55ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 173ms (1836 modules)
- ⨯ components/plans/CreatePlanDialog.tsx (138:24) @ startFiscalYearId
- ⨯ ReferenceError: startFiscalYearId is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:195:52)
-digest: "1099648024"
-[0m [90m 136 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
-[0m [90m 137 |[39m               [33m<[39m[33mSelect[39m[0m
-[0m[31m[1m>[22m[39m[90m 138 |[39m                 value[33m=[39m{startFiscalYearId}[0m
-[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
-[0m [90m 139 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
-[0m [90m 140 |[39m                 disabled[33m=[39m{isSubmitting}[0m
-[0m [90m 141 |[39m               [33m>[39m[0m
- GET /plans 200 in 147ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 174ms (1836 modules)
- GET /plans 200 in 179ms
-Error creating strategic plan: {
-  code: '42501',
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 11ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 14ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 8ms
+ ✓ Compiled in 157ms (3220 modules)
+ ○ Compiling /plans/[id]/edit ...
+ ✓ Compiled /plans/[id]/edit in 554ms (3309 modules)
+Error fetching strategic plan: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+Error loading plan: Error: Failed to fetch strategic plan
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:208:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+Error fetching approval history: {
+  code: '42703',
   details: null,
   hint: null,
-  message: 'new row violates row-level security policy for table "strategic_plans"'
+  message: 'column audit_logs.entity_id does not exist'
 }
- ⨯ app/actions/strategic-plans.ts (236:11) @ createStrategicPlan
- ⨯ Error: Failed to create strategic plan
-    at createStrategicPlan (./app/actions/strategic-plans.ts:150:15)
-digest: "2164936402"
-[0m [90m 234 |[39m   [36mif[39m (error) {[0m
-[0m [90m 235 |[39m     console[33m.[39merror([32m'Error creating strategic plan:'[39m[33m,[39m error)[0m
-[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to create strategic plan'[39m)[0m
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 57ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 12ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 7ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 13ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 8ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 7ms
+ ✓ Compiled in 190ms (3323 modules)
+ ✓ Compiled in 192ms (3323 modules)
+ ✓ Compiled /admin/fiscal-years in 113ms (2180 modules)
+ GET /admin/fiscal-years 307 in 154ms
+ GET /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 142ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 32ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 15ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 8ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 13ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 13ms
+ POST /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec 200 in 9ms
+ ○ Compiling /finance ...
+ ✓ Compiled /finance in 897ms (3315 modules)
+Would fetch finance budgets: {
+  filters: {},
+  page: 1,
+  pageSize: 50,
+  sortBy: 'total_cost',
+  sortOrder: 'desc'
+}
+ POST /finance 200 in 12ms
+Would fetch finance budgets: {
+  filters: {},
+  page: 1,
+  pageSize: 50,
+  sortBy: 'total_cost',
+  sortOrder: 'desc'
+}
+ POST /finance 200 in 6ms
+ ✓ Compiled /plans/[id]/edit in 201ms (2205 modules)
+Error loading plan: Error: Unauthorized
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:180:15)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+ GET /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec/edit 307 in 279ms
+ GET /plans 200 in 93ms
+ GET /dashboard 200 in 76ms
+ ✓ Compiled in 243ms (3389 modules)
+Error loading plan: Error: Unauthorized
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:181:15)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+ GET /plans/4baca38f-3cc7-4bd1-8570-9ba80b9856ec/edit 307 in 44ms
+ ✓ Compiled /finance/categories in 279ms (3400 modules)
+ POST /finance/categories 200 in 38ms
+ POST /finance/categories 200 in 14ms
+ POST /finance/categories 200 in 37ms
+ POST /plans 200 in 56ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245 200 in 17ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245 200 in 12ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245 200 in 6ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245 200 in 9ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245 200 in 12ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245 200 in 8ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 14ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 12ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 13ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 10ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 11ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 12ms
+ ⨯ app/actions/strategic-plans.ts (478:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:254:15)
+digest: "3490871311"
+[0m [90m 476 |[39m[0m
+[0m [90m 477 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 478 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
 [0m [90m     |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 237 |[39m   }[0m
-[0m [90m 238 |[39m[0m
-[0m [90m 239 |[39m   [36mif[39m ([33m![39mdata) {[0m
- POST /plans 500 in 52ms
- ✓ Compiled in 277ms (1836 modules)
- ✓ Compiled in 142ms (1836 modules)
- ✓ Compiled in 155ms (1836 modules)
- ✓ Compiled in 141ms (1836 modules)
- ✓ Compiled in 182ms (1836 modules)
- ✓ Compiled in 180ms (1836 modules)
- ⨯ app/actions/strategic-plans.ts (44:11) @ getStrategicPlans
- ⨯ Error: Unauthorized
-    at getStrategicPlans (./app/actions/strategic-plans.ts:32:15)
-    at async Promise.all (index 0)
-    at async PlansContent (plans/page.tsx:91:60)
-digest: "1652746578"
-[0m [90m 42 |[39m[0m
-[0m [90m 43 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
-[0m[31m[1m>[22m[39m[90m 44 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Unauthorized'[39m)[0m
-[0m [90m    |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 45 |[39m   }[0m
-[0m [90m 46 |[39m[0m
-[0m [90m 47 |[39m   [90m// Get user's municipality and role[39m[0m
- GET /plans 307 in 42ms
- ✓ Compiled in 176ms (1836 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 263ms (1836 modules)
- ⨯ components/plans/CreatePlanDialog.tsx (51:3) @ useEffect
- ⨯ ReferenceError: useEffect is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:34:5)
-digest: "2608333840"
-[0m [90m 49 |[39m   [0m
-[0m [90m 50 |[39m   [90m// Set default to current fiscal year if available[39m[0m
-[0m[31m[1m>[22m[39m[90m 51 |[39m   useEffect(() [33m=>[39m {[0m
-[0m [90m    |[39m   [31m[1m^[22m[39m[0m
-[0m [90m 52 |[39m     [36mconst[39m currentFiscalYear [33m=[39m fiscalYears[33m.[39mfind(fy [33m=>[39m fy[33m.[39mis_current)[0m
-[0m [90m 53 |[39m     [36mif[39m (currentFiscalYear [33m&&[39m [33m![39mfiscalYearId) {[0m
-[0m [90m 54 |[39m       setFiscalYearId(currentFiscalYear[33m.[39mid)[0m
- GET /plans 200 in 111ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 143ms (1836 modules)
- ⨯ components/plans/CreatePlanDialog.tsx (147:24) @ fiscalYearId
- ⨯ ReferenceError: fiscalYearId is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:203:52)
-digest: "1622792596"
-[0m [90m 145 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"fiscal-year"[39m[33m>[39m[33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
-[0m [90m 146 |[39m               [33m<[39m[33mSelect[39m[0m
-[0m[31m[1m>[22m[39m[90m 147 |[39m                 value[33m=[39m{fiscalYearId}[0m
-[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
-[0m [90m 148 |[39m                 onValueChange[33m=[39m{setFiscalYearId}[0m
-[0m [90m 149 |[39m                 disabled[33m=[39m{isSubmitting}[0m
-[0m [90m 150 |[39m               [33m>[39m[0m
- GET /plans 200 in 150ms
- ✓ Compiled in 147ms (1836 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⨯ components/plans/CreatePlanDialog.tsx (162:24) @ fiscalYearId
- ⨯ ReferenceError: fiscalYearId is not defined
-    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:216:52)
-digest: "3065747824"
-[0m [90m 160 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"fiscal-year"[39m[33m>[39m[33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
-[0m [90m 161 |[39m               [33m<[39m[33mSelect[39m[0m
-[0m[31m[1m>[22m[39m[90m 162 |[39m                 value[33m=[39m{fiscalYearId}[0m
-[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
-[0m [90m 163 |[39m                 onValueChange[33m=[39m{setFiscalYearId}[0m
-[0m [90m 164 |[39m                 disabled[33m=[39m{isSubmitting}[0m
-[0m [90m 165 |[39m               [33m>[39m[0m
- GET /plans 200 in 46ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 169ms (1836 modules)
- GET /plans 200 in 163ms
- ✓ Compiled in 133ms (1836 modules)
- ⨯ app/actions/strategic-plans.ts (44:11) @ getStrategicPlans
- ⨯ Error: Unauthorized
-    at getStrategicPlans (./app/actions/strategic-plans.ts:32:15)
-    at async Promise.all (index 0)
-    at async PlansContent (plans/page.tsx:91:60)
-digest: "2114528784"
-[0m [90m 42 |[39m[0m
-[0m [90m 43 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
-[0m[31m[1m>[22m[39m[90m 44 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Unauthorized'[39m)[0m
-[0m [90m    |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 45 |[39m   }[0m
-[0m [90m 46 |[39m[0m
-[0m [90m 47 |[39m   [90m// Get user's municipality and role[39m[0m
- GET /plans 307 in 26ms
+[0m [90m 479 |[39m   }[0m
+[0m [90m 480 |[39m[0m
+[0m [90m 481 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 500 in 32ms
+ ✓ Compiled in 271ms (3414 modules)
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 500 in 39ms
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 500 in 31ms
+ ✓ Compiled /_not-found in 211ms (3378 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 236ms
+ GET /plans 200 in 128ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 15ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 31ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 12ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 14ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 12ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 10ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 12ms
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 500 in 34ms
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 500 in 21ms
+ ✓ Compiled in 234ms (3393 modules)
+ ✓ Compiled in 188ms (3393 modules)
+ GET /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 58ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 20ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 11ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 14ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 11ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 11ms
+ POST /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 200 in 12ms
+ ✓ Compiled in 219ms (3393 modules)
+ ✓ Compiled in 194ms (3393 modules)
+ ✓ Compiled in 196ms (3390 modules)
+Error fetching strategic plan: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+Error loading plan: Error: Failed to fetch strategic plan
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:212:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+ ✓ Compiled in 187ms (3390 modules)
+Error fetching strategic plan: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+Error loading plan: Error: Failed to fetch strategic plan
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:212:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+ ✓ Compiled in 89ms (1193 modules)
+Error fetching strategic plan: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+Error loading plan: Error: Failed to fetch strategic plan
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:212:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)

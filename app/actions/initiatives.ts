@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export type PriorityLevel = 'NEED' | 'WANT' | 'NICE_TO_HAVE'
@@ -64,6 +65,7 @@ export interface UpdateInitiativeInput {
 
 export async function getInitiatives(planId: string): Promise<Initiative[]> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -74,8 +76,8 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
     throw new Error('Unauthorized')
   }
 
-  // Fetch initiatives with goal info
-  const { data, error } = await supabase
+  // Fetch initiatives with goal info using admin client to bypass RLS
+  const { data, error } = await adminSupabase
     .from('initiatives')
     .select(
       `
@@ -181,6 +183,7 @@ export async function getInitiativesByGoal(
   goalId: string
 ): Promise<Initiative[]> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -191,8 +194,8 @@ export async function getInitiativesByGoal(
     throw new Error('Unauthorized')
   }
 
-  // Fetch initiatives for this goal
-  const { data, error } = await supabase
+  // Fetch initiatives for this goal using admin client to bypass RLS
+  const { data, error } = await adminSupabase
     .from('initiatives')
     .select(
       `
@@ -299,6 +302,7 @@ export async function createInitiative(
   input: CreateInitiativeInput
 ): Promise<{ id: string }> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -309,8 +313,8 @@ export async function createInitiative(
     throw new Error('Unauthorized')
   }
 
-  // Get goal and plan info for permission checking
-  const { data: goal } = await supabase
+  // Get goal and plan info for permission checking using admin client
+  const { data: goal } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plans!inner(department_id)')
     .eq('id', input.strategic_goal_id)
@@ -320,7 +324,7 @@ export async function createInitiative(
     throw new Error('Goal not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -343,14 +347,14 @@ export async function createInitiative(
   }
 
   // Check for duplicate initiative number in the plan
-  const { data: existingInitiatives } = await supabase
+  const { data: existingInitiatives } = await adminSupabase
     .from('initiatives')
     .select('id, strategic_goals!inner(strategic_plan_id)')
     .eq('initiative_number', input.initiative_number)
 
   if (existingInitiatives && existingInitiatives.length > 0) {
     // Check if any are in the same plan
-    const { data: goalPlanData } = await supabase
+    const { data: goalPlanData } = await adminSupabase
       .from('strategic_goals')
       .select('strategic_plan_id')
       .eq('id', input.strategic_goal_id)
@@ -404,7 +408,7 @@ export async function createInitiative(
   }
 
   // Revalidate paths
-  const { data: goalData } = await supabase
+  const { data: goalData } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plan_id')
     .eq('id', input.strategic_goal_id)
@@ -422,6 +426,7 @@ export async function updateInitiative(
   input: UpdateInitiativeInput
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -432,8 +437,8 @@ export async function updateInitiative(
     throw new Error('Unauthorized')
   }
 
-  // Get initiative, goal, and plan info
-  const { data: initiative } = await supabase
+  // Get initiative, goal, and plan info using admin client
+  const { data: initiative } = await adminSupabase
     .from('initiatives')
     .select('strategic_goal_id, strategic_goals!inner(strategic_plans!inner(department_id))')
     .eq('id', input.id)
@@ -443,7 +448,7 @@ export async function updateInitiative(
     throw new Error('Initiative not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -506,7 +511,7 @@ export async function updateInitiative(
 
   // Revalidate paths
   const goalId = (initiative as { strategic_goal_id: string }).strategic_goal_id
-  const { data: goalData } = await supabase
+  const { data: goalData } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plan_id')
     .eq('id', goalId)
@@ -520,6 +525,7 @@ export async function updateInitiative(
 
 export async function deleteInitiative(initiativeId: string): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -530,8 +536,8 @@ export async function deleteInitiative(initiativeId: string): Promise<void> {
     throw new Error('Unauthorized')
   }
 
-  // Get initiative, goal, and plan info
-  const { data: initiative } = await supabase
+  // Get initiative, goal, and plan info using admin client
+  const { data: initiative } = await adminSupabase
     .from('initiatives')
     .select('strategic_goal_id, strategic_goals!inner(strategic_plans!inner(department_id))')
     .eq('id', initiativeId)
@@ -541,7 +547,7 @@ export async function deleteInitiative(initiativeId: string): Promise<void> {
     throw new Error('Initiative not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -579,7 +585,7 @@ export async function deleteInitiative(initiativeId: string): Promise<void> {
 
   // Revalidate paths
   const goalId = (initiative as { strategic_goal_id: string }).strategic_goal_id
-  const { data: goalData } = await supabase
+  const { data: goalData } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plan_id')
     .eq('id', goalId)

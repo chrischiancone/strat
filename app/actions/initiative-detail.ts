@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 
 export interface InitiativeDetailData {
   id: string
@@ -47,6 +48,7 @@ export interface InitiativeDetailData {
 
 export async function getInitiativeDetail(initiativeId: string): Promise<InitiativeDetailData> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -57,8 +59,8 @@ export async function getInitiativeDetail(initiativeId: string): Promise<Initiat
     throw new Error('Unauthorized')
   }
 
-  // Get user profile
-  const { data: profile } = await supabase
+  // Get user profile using admin client
+  const { data: profile } = await adminSupabase
     .from('users')
     .select('role, department_id, municipality_id')
     .eq('id', user.id)
@@ -76,8 +78,8 @@ export async function getInitiativeDetail(initiativeId: string): Promise<Initiat
 
   const typedProfile = profile as unknown as Profile
 
-  // Fetch initiative with all related data
-  const { data: initiative, error } = await supabase
+  // Fetch initiative with all related data using admin client to bypass RLS
+  const { data: initiative, error } = await adminSupabase
     .from('initiatives')
     .select(
       `

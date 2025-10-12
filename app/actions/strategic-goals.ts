@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export interface StrategicGoal {
@@ -43,6 +44,7 @@ export async function getStrategicGoals(
   planId: string
 ): Promise<StrategicGoal[]> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -53,8 +55,8 @@ export async function getStrategicGoals(
     throw new Error('Unauthorized')
   }
 
-  // Fetch goals with initiative count
-  const { data, error } = await supabase
+  // Fetch goals with initiative count using admin client to bypass RLS
+  const { data, error } = await adminSupabase
     .from('strategic_goals')
     .select(
       `
@@ -99,7 +101,7 @@ export async function getStrategicGoals(
   // For each goal, fetch initiative count
   const goalsWithCounts: StrategicGoal[] = await Promise.all(
     (data as unknown as GoalQueryResult[] || []).map(async (goal) => {
-      const { count } = await supabase
+      const { count } = await adminSupabase
         .from('initiatives')
         .select('id', { count: 'exact', head: true })
         .eq('strategic_goal_id', goal.id)
@@ -133,6 +135,7 @@ export async function createStrategicGoal(
   input: CreateGoalInput
 ): Promise<{ id: string }> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -144,7 +147,7 @@ export async function createStrategicGoal(
   }
 
   // Check if user has permission to edit this plan
-  const { data: plan } = await supabase
+  const { data: plan } = await adminSupabase
     .from('strategic_plans')
     .select('department_id')
     .eq('id', input.strategic_plan_id)
@@ -154,7 +157,7 @@ export async function createStrategicGoal(
     throw new Error('Plan not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -175,7 +178,7 @@ export async function createStrategicGoal(
   }
 
   // Check if plan already has 5 goals
-  const { count } = await supabase
+  const { count } = await adminSupabase
     .from('strategic_goals')
     .select('id', { count: 'exact', head: true })
     .eq('strategic_plan_id', input.strategic_plan_id)
@@ -185,7 +188,7 @@ export async function createStrategicGoal(
   }
 
   // Get the next display_order
-  const { data: maxOrderData } = await supabase
+  const { data: maxOrderData } = await adminSupabase
     .from('strategic_goals')
     .select('display_order')
     .eq('strategic_plan_id', input.strategic_plan_id)
@@ -235,6 +238,7 @@ export async function updateStrategicGoal(
   input: UpdateGoalInput
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -246,7 +250,7 @@ export async function updateStrategicGoal(
   }
 
   // Get goal and plan info
-  const { data: goal } = await supabase
+  const { data: goal } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plan_id, strategic_plans!inner(department_id)')
     .eq('id', input.id)
@@ -256,7 +260,7 @@ export async function updateStrategicGoal(
     throw new Error('Goal not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -309,6 +313,7 @@ export async function updateStrategicGoal(
 
 export async function deleteStrategicGoal(goalId: string): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -320,7 +325,7 @@ export async function deleteStrategicGoal(goalId: string): Promise<void> {
   }
 
   // Get goal and plan info
-  const { data: goal } = await supabase
+  const { data: goal } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plan_id, strategic_plans!inner(department_id)')
     .eq('id', goalId)
@@ -330,7 +335,7 @@ export async function deleteStrategicGoal(goalId: string): Promise<void> {
     throw new Error('Goal not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -353,7 +358,7 @@ export async function deleteStrategicGoal(goalId: string): Promise<void> {
   }
 
   // Check if goal has initiatives
-  const { count } = await supabase
+  const { count } = await adminSupabase
     .from('initiatives')
     .select('id', { count: 'exact', head: true })
     .eq('strategic_goal_id', goalId)
@@ -386,6 +391,7 @@ export async function reorderStrategicGoals(
   goalIds: string[]
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -397,7 +403,7 @@ export async function reorderStrategicGoals(
   }
 
   // Check if user has permission to edit this plan
-  const { data: plan } = await supabase
+  const { data: plan } = await adminSupabase
     .from('strategic_plans')
     .select('department_id')
     .eq('id', planId)
@@ -407,7 +413,7 @@ export async function reorderStrategicGoals(
     throw new Error('Plan not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
