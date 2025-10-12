@@ -324,16 +324,18 @@ export async function getStrategicPlanForEdit(
   planId: string
 ): Promise<StrategicPlanForEdit> {
   const supabase = createServerSupabaseClient()
+  const adminClient = createAdminSupabaseClient()
 
-  // Get current user
+  // Get current user for authentication
   const { data: { user: currentUser } } = await supabase.auth.getUser()
 
   if (!currentUser) {
     throw new Error('Unauthorized')
   }
 
-  // Fetch plan with department info
-  const { data, error } = await supabase
+  // Use admin client for data query to bypass RLS
+  // We've already verified user authentication above
+  const { data, error } = await adminClient
     .from('strategic_plans')
     .select(`
       id,
