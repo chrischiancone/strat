@@ -1414,7 +1414,7 @@ ${goalsData?.map(goal => {
   }).join('\n') || 'Strategic goals are currently being developed based on the completed strategic analysis.'}
 
 **EXECUTIVE SUMMARY REQUIREMENTS:**
-Write a comprehensive, professional executive summary (800-1000 words) that:
+Write a comprehensive, professional executive summary (600-800 words) that:
 
 1. **Opening**: Establish the department's critical role and mission within the municipality
 2. **Council Alignment**: EXPLICITLY reference and demonstrate alignment with the City Council's established core values (${coreValues.map(cv => cv.title).join(', ') || 'being developed'})
@@ -1437,18 +1437,43 @@ Write a comprehensive, professional executive summary (800-1000 words) that:
 
 Use professional, confident language appropriate for city leadership and elected officials. Focus on demonstrating clear value, measurable impact, and strategic alignment with established council priorities.
 
-**RESPONSE FORMAT**: Return ONLY the Markdown-formatted executive summary text. Do not include any preamble, explanations, or additional commentary.`
+**RESPONSE FORMAT**: Return ONLY the Markdown-formatted executive summary text. Do not include any preamble, explanations, or additional commentary.
+
+**CRITICAL**: Ensure your response is complete and ends with a proper conclusion. Do not cut off mid-sentence.`
 
   console.log('AI Research (Executive Summary): Calling Perplexity API...')
   const response = await callPerplexityApi([
     { 
       role: 'system', 
-      content: 'You are an expert strategic planning consultant specializing in municipal government strategic plans. Write professional, compelling executive summaries that effectively communicate strategic value to city leadership.' 
+      content: 'You are an expert strategic planning consultant specializing in municipal government strategic plans. Write professional, compelling executive summaries that effectively communicate strategic value to city leadership. ALWAYS complete your response with a proper conclusion - never cut off mid-sentence.' 
     },
     { role: 'user', content: prompt }
   ])
 
-  return response.content
+  // Check for truncated response
+  const content = response.content.trim()
+  if (content.length > 0 && !content.match(/[.!]\s*$/) && !content.endsWith('.')) {
+    console.warn('Executive Summary appears to be truncated, attempting to complete...')
+    
+    // Try to get a completion for the truncated response
+    const completionPrompt = `Please complete this executive summary that was cut off mid-sentence. Here is the incomplete text:
+
+${content}
+
+Please provide ONLY the missing completion text to finish the summary properly with a strong conclusion. Do not repeat the existing text.`
+    
+    const completionResponse = await callPerplexityApi([
+      { 
+        role: 'system', 
+        content: 'You are completing a municipal strategic plan executive summary. Provide only the missing conclusion text.' 
+      },
+      { role: 'user', content: completionPrompt }
+    ])
+    
+    return content + ' ' + completionResponse.content.trim()
+  }
+
+  return content
 }
 
 export interface StrategicGoalSuggestion {
