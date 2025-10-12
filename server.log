@@ -1022,3 +1022,210 @@ Require stack:
  ✓ Compiled in 762ms (3615 modules)
  ✓ Compiled in 210ms (3615 modules)
  ✓ Compiled in 213ms (3615 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled /_not-found in 318ms (3604 modules)
+ GET /plans 404 in 570ms
+ GET /_next/static/css/app/layout.css?v=1760272277995 404 in 10ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 14ms
+ GET /_next/static/chunks/main-app.js?v=1760272277995 404 in 16ms
+ GET /_next/static/chunks/app/layout.js 404 in 13ms
+ ✓ Compiled / in 131ms (2241 modules)
+ GET / 307 in 196ms
+ ✓ Compiled /dashboard in 174ms (2266 modules)
+ GET /_next/static/css/app/layout.css?v=1760272282481 404 in 13ms
+ GET /dashboard 200 in 288ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 15ms
+ GET /_next/static/chunks/main-app.js?v=1760272282481 404 in 15ms
+ GET /_next/static/chunks/app/layout.js 404 in 14ms
+ GET /_next/static/chunks/app/(dashboard)/layout.js 404 in 14ms
+ GET /_next/static/chunks/app/(dashboard)/dashboard/page.js 404 in 15ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 804ms (3615 modules)
+ ✓ Compiled in 195ms (3615 modules)
+ ✓ Compiled in 86ms (1378 modules)
+ ✓ Compiled in 91ms (1378 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 93ms (1378 modules)
+ ✓ Compiled in 380ms (1378 modules)
+ ✓ Compiled in 90ms (1378 modules)
+ ✓ Compiled in 88ms (1378 modules)
+ ✓ Compiled in 84ms (1378 modules)
+ ✓ Compiled in 91ms (1378 modules)
+ ⨯ ./components/plans/SwotAnalysisForm.tsx
+Error: 
+  [31mx[0m Expression expected
+     ,-[[36;1;4m/Users/cchiancone/Desktop/Stratic Plan/components/plans/SwotAnalysisForm.tsx[0m:365:1]
+ [2m365[0m |   }
+ [2m366[0m | 
+ [2m367[0m |   return (
+ [2m368[0m |     <>
+     : [31;1m     ^[0m
+ [2m369[0m |       <div className="space-y-6">
+ [2m370[0m |         <div className="grid gap-6 md:grid-cols-2">
+ [2m371[0m |           {renderCategory('strengths')}
+     `----
+
+  [31mx[0m Expected ',', got '{'
+     ,-[[36;1;4m/Users/cchiancone/Desktop/Stratic Plan/components/plans/SwotAnalysisForm.tsx[0m:381:1]
+ [2m381[0m |         </div>
+ [2m382[0m |       </div>
+ [2m383[0m | 
+ [2m384[0m |       {/* Add/Edit Dialog */}
+     : [31;1m      ^[0m
+ [2m385[0m |       <Dialog open={showDialog} onOpenChange={setShowDialog}>
+ [2m386[0m |         <DialogContent>
+ [2m387[0m |           <DialogHeader>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/plans/SwotAnalysisForm.tsx
+./components/plans/SwotAnalysisSection.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ⨯ ./components/plans/SwotAnalysisForm.tsx
+Error: Failed to read source code from /Users/cchiancone/Desktop/Stratic Plan/components/plans/SwotAnalysisForm.tsx
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./components/plans/SwotAnalysisForm.tsx
+./components/plans/SwotAnalysisSection.tsx
+ ⨯ ./components/plans/SwotAnalysisForm.tsx
+Error: Failed to read source code from /Users/cchiancone/Desktop/Stratic Plan/components/plans/SwotAnalysisForm.tsx
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./components/plans/SwotAnalysisForm.tsx
+./components/plans/SwotAnalysisSection.tsx
+ ✓ Compiled in 213ms (3615 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 840ms (3615 modules)
+ ✓ Compiled in 203ms (3615 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 367ms (1378 modules)
+ ✓ Compiled in 516ms (3618 modules)
+ ✓ Compiled in 218ms (3618 modules)
+ ✓ Compiled in 205ms (3618 modules)
+ ✓ Compiled in 273ms (3618 modules)
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js'
+   Reload env: .env.local
+ ✓ Compiled in 1022ms (4090 modules)
+ ✓ Compiled in 211ms (3619 modules)
+ ✓ Compiled in 268ms (3619 modules)
+ ✓ Compiled in 196ms (3619 modules)
+ ✓ Compiled in 93ms (1379 modules)

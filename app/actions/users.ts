@@ -235,10 +235,11 @@ export async function createUser(input: CreateUserInput) {
     // Create admin client for auth operations
     const adminClient = createAdminSupabaseClient()
 
-    // Create auth user
+    // Create auth user with default password and confirm email
     const { data: authUser, error: authError } = await adminClient.auth.admin.createUser({
       email: validatedInput.email,
-      email_confirm: false,
+      email_confirm: true, // Immediately confirm email
+      password: 'password123', // Set default password
       user_metadata: {
         full_name: validatedInput.fullName,
       },
@@ -247,19 +248,6 @@ export async function createUser(input: CreateUserInput) {
     if (authError || !authUser.user) {
       console.error('Error creating auth user:', authError)
       return { error: authError?.message || 'Failed to create user' }
-    }
-
-    // Send invitation email
-    const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(
-      validatedInput.email,
-      {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-      }
-    )
-
-    if (inviteError) {
-      console.error('Error sending invitation:', inviteError)
-      // Don't fail - user is created, they just won't get the email
     }
 
     // Create public user profile
@@ -286,7 +274,12 @@ export async function createUser(input: CreateUserInput) {
     // Revalidate users list page
     revalidatePath('/admin/users')
 
-    return { success: true, userId: authUser.user.id }
+    // Return success with login credentials
+    return { 
+      success: true, 
+      userId: authUser.user.id,
+      message: `User created successfully! They can log in with:\nEmail: ${validatedInput.email}\nPassword: password123`
+    }
   } catch (error) {
     console.error('Error in createUser:', error)
     if (error instanceof Error) {

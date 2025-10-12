@@ -100,6 +100,7 @@ export default async function PlanEditPage({ params }: PageProps) {
           <EnvironmentalScanSection
             planId={id}
             initialScan={plan.environmental_scan || undefined}
+            department_id={plan.department.id}
           />
 
           {/* Benchmarking Data */}

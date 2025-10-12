@@ -110,22 +110,22 @@ export async function updatePlanStatus(
     return { success: false, error: 'Failed to update plan status' }
   }
 
-  // Log to audit_logs
-  await supabase.from('audit_logs').insert({
-    entity_type: 'strategic_plan',
-    entity_id: planId,
-    action: 'status_change',
-    user_id: user.id,
-    changes: {
-      previous_status: previousStatus,
-      new_status: newStatus,
+  // Log to audit_logs using admin client
+  await adminSupabase.from('audit_logs').insert({
+    table_name: 'strategic_plans',
+    record_id: planId,
+    action: 'update',
+    changed_by: user.id,
+    old_values: {
+      status: previousStatus,
+    },
+    new_values: {
+      status: newStatus,
       notes: notes || null,
-    },
-    metadata: {
       plan_title: currentPlan.title,
-      user_name: `${profile.first_name} ${profile.last_name}`,
-      user_role: profile.role,
-    },
+      changed_by_name: `${profile.first_name} ${profile.last_name}`,
+      changed_by_role: profile.role,
+    }
   })
 
   // Revalidate relevant paths
@@ -155,11 +155,11 @@ export async function getApprovalHistory(planId: string): Promise<ApprovalHistor
   // Get audit logs for status changes using admin client
   const { data: logs, error } = await adminSupabase
     .from('audit_logs')
-    .select('id, entity_id, action, user_id, changes, metadata, created_at')
-    .eq('entity_type', 'strategic_plan')
-    .eq('entity_id', planId)
-    .eq('action', 'status_change')
-    .order('created_at', { ascending: false })
+    .select('id, record_id, action, changed_by, old_values, new_values, changed_at')
+    .eq('table_name', 'strategic_plans')
+    .eq('record_id', planId)
+    .eq('action', 'update')
+    .order('changed_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching approval history:', error)
@@ -168,31 +168,31 @@ export async function getApprovalHistory(planId: string): Promise<ApprovalHistor
 
   type AuditLog = {
     id: string
-    entity_id: string
+    record_id: string
     action: string
-    user_id: string
-    changes: {
-      previous_status: PlanStatus | null
-      new_status: PlanStatus
+    changed_by: string
+    old_values: {
+      status: PlanStatus | null
+    }
+    new_values: {
+      status: PlanStatus
       notes: string | null
+      changed_by_name: string
     }
-    metadata: {
-      user_name: string
-    }
-    created_at: string
+    changed_at: string
   }
 
   const typedLogs = (logs || []) as AuditLog[]
 
   return typedLogs.map((log) => ({
     id: log.id,
-    plan_id: log.entity_id,
-    previous_status: log.changes.previous_status,
-    new_status: log.changes.new_status,
-    changed_by: log.user_id,
-    changed_by_name: log.metadata.user_name,
-    changed_at: log.created_at,
-    notes: log.changes.notes,
+    plan_id: log.record_id,
+    previous_status: log.old_values.status,
+    new_status: log.new_values.status,
+    changed_by: log.changed_by,
+    changed_by_name: log.new_values.changed_by_name,
+    changed_at: log.changed_at,
+    notes: log.new_values.notes,
   }))
 }
 

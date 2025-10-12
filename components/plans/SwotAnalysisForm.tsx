@@ -93,54 +93,127 @@ export function SwotAnalysisForm({
   const handleSaveItem = () => {
     if (!editingCategory) return
 
-    const trimmedText = editingText.trim()
+    // Split input by newlines and handle each item
+    const items = editingText
+      .split('\n')
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0)
 
-    // Validation
-    if (trimmedText.length < 10) {
-      toast({
-        title: 'Validation Error',
-        description: 'Item must be at least 10 characters',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    if (trimmedText.length > 500) {
-      toast({
-        title: 'Validation Error',
-        description: 'Item must be 500 characters or less',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    // Check for duplicates (case-insensitive)
-    const isDuplicate = swot[editingCategory].some(
-      (item, idx) =>
-        idx !== editingIndex && item.toLowerCase() === trimmedText.toLowerCase()
-    )
-
-    if (isDuplicate) {
-      toast({
-        title: 'Warning',
-        description: 'Similar item already exists in this category',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    // Update or add item
-    const newItems = [...swot[editingCategory]]
+    // If we're editing, just handle the single item
     if (editingIndex !== null) {
-      newItems[editingIndex] = trimmedText
-    } else {
-      newItems.push(trimmedText)
-    }
+      const trimmedText = items[0] // Only consider first item when editing
 
-    setSwot({
-      ...swot,
-      [editingCategory]: newItems,
-    })
+      // Validation for single item edit
+      if (trimmedText.length < 10) {
+        toast({
+          title: 'Validation Error',
+          description: 'Item must be at least 10 characters',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      if (trimmedText.length > 500) {
+        toast({
+          title: 'Validation Error',
+          description: 'Item must be 500 characters or less',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Check for duplicates when editing
+      const isDuplicate = swot[editingCategory].some(
+        (item, idx) =>
+          idx !== editingIndex &&
+          item.toLowerCase() === trimmedText.toLowerCase()
+      )
+
+      if (isDuplicate) {
+        toast({
+          title: 'Warning',
+          description: 'Similar item already exists in this category',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      const newItems = [...swot[editingCategory]]
+      newItems[editingIndex] = trimmedText
+      setSwot({
+        ...swot,
+        [editingCategory]: newItems,
+      })
+    } else {
+      // Handle bulk items for new entries
+      const validItems: string[] = []
+      const errors: string[] = []
+      const duplicates: string[] = []
+
+      items.forEach((item) => {
+        // Validate length
+        if (item.length < 10) {
+          errors.push(
+            `"${item.slice(0, 20)}..." is too short (min 10 characters)`
+          )
+          return
+        }
+        if (item.length > 500) {
+          errors.push(
+            `"${item.slice(0, 20)}..." is too long (max 500 characters)`
+          )
+          return
+        }
+
+        // Check duplicates against existing items and previously processed valid items
+        const isDuplicate =
+          swot[editingCategory].some(
+            (existing) => existing.toLowerCase() === item.toLowerCase()
+          ) ||
+          validItems.some((valid) => valid.toLowerCase() === item.toLowerCase())
+
+        if (isDuplicate) {
+          duplicates.push(item)
+          return
+        }
+
+        validItems.push(item)
+      })
+
+      // Show validation messages if any
+      if (errors.length > 0) {
+        toast({
+          title: 'Validation Errors',
+          description: errors.join('\n'),
+          variant: 'destructive',
+        })
+        return
+      }
+
+      if (duplicates.length > 0) {
+        toast({
+          title: 'Duplicate Items',
+          description: `${duplicates.length} duplicate items were skipped`,
+          variant: 'default',
+        })
+      }
+
+      // Save valid items
+      if (validItems.length > 0) {
+        const newItems = [...swot[editingCategory], ...validItems]
+        setSwot({
+          ...swot,
+          [editingCategory]: newItems,
+        })
+
+        if (validItems.length > 1) {
+          toast({
+            title: 'Success',
+            description: `Added ${validItems.length} items to ${CATEGORY_LABELS[editingCategory]}`,
+          })
+        }
+      }
+    }
 
     setShowDialog(false)
     setEditingCategory(null)
@@ -205,7 +278,8 @@ export function SwotAnalysisForm({
     } catch (error) {
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to save SWOT analysis',
+        description:
+          error instanceof Error ? error.message : 'Failed to save SWOT analysis',
         variant: 'destructive',
       })
     } finally {
@@ -235,7 +309,7 @@ export function SwotAnalysisForm({
         <CardContent>
           {items.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No items added yet. Click &quot;Add Item&quot; to begin.
+              No items added yet. Click "Add Item" to begin.
             </p>
           ) : (
             <div className="space-y-2">
@@ -295,83 +369,85 @@ export function SwotAnalysisForm({
     )
   }
 
-  return (
-    <>
-      <div className="space-y-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          {renderCategory('strengths')}
-          {renderCategory('weaknesses')}
-          {renderCategory('opportunities')}
-          {renderCategory('threats')}
-        </div>
-
-        <div className="flex justify-end border-t border-gray-200 pt-4">
-          <Button onClick={handleSave} disabled={disabled || isSaving}>
-            {isSaving ? 'Saving...' : 'Save SWOT Analysis'}
-          </Button>
-        </div>
+  return <>
+    <div className="space-y-6">
+      <div className="grid gap-6 md:grid-cols-2">
+        {renderCategory('strengths')}
+        {renderCategory('weaknesses')}
+        {renderCategory('opportunities')}
+        {renderCategory('threats')}
       </div>
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingIndex !== null ? 'Edit' : 'Add'}{' '}
-              {editingCategory && CATEGORY_LABELS[editingCategory].slice(0, -1)}
-            </DialogTitle>
-            <DialogDescription>
-              {editingIndex !== null
-                ? 'Update the item text below'
-                : 'Enter the item text below (10-500 characters)'}
-            </DialogDescription>
-          </DialogHeader>
+      <div className="flex justify-end border-t border-gray-200 pt-4">
+        <Button onClick={handleSave} disabled={disabled || isSaving}>
+          {isSaving ? 'Saving...' : 'Save SWOT Analysis'}
+        </Button>
+      </div>
+    </div>
 
-          <div className="space-y-4">
-            <Textarea
-              value={editingText}
-              onChange={(e) => setEditingText(e.target.value)}
-              placeholder="Enter item text..."
-              rows={4}
-              maxLength={500}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground text-right">
-              {editingText.length}/500 characters
-            </p>
-          </div>
+    {/* Add/Edit Dialog */}
+    <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {editingIndex !== null ? 'Edit' : 'Add'}{' '}
+            {editingCategory && CATEGORY_LABELS[editingCategory].slice(0, -1)}
+          </DialogTitle>
+          <DialogDescription>
+            {editingIndex !== null
+              ? 'Update the item text below'
+              : 'Enter items below (10-500 characters each)\nAdd multiple items by putting each on a new line'}
+          </DialogDescription>
+        </DialogHeader>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveItem}>
-              {editingIndex !== null ? 'Update' : 'Add'} Item
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <div className="space-y-4">
+          <Textarea
+            value={editingText}
+            onChange={(e) => setEditingText(e.target.value)}
+            placeholder="Enter item text..."
+            rows={8}
+            maxLength={500}
+            className="resize-none"
+          />
+          <p className="text-xs text-muted-foreground text-right">
+            {editingText.length}/500 characters
+          </p>
+        </div>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Item?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this item? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete Item
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  )
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setShowDialog(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveItem}>
+            {editingIndex !== null ? 'Update' : 'Add'} Item
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    {/* Delete Confirmation Dialog */}
+    <AlertDialog
+      open={!!deleteConfirm}
+      onOpenChange={() => setDeleteConfirm(null)}
+    >
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Item?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this item? This action cannot be
+            undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={confirmDelete}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            Delete Item
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  </>
 }

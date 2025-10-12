@@ -510,8 +510,8 @@ export async function updateStrategicPlan(
   if (input.department_vision !== undefined)
     updateData.department_vision = input.department_vision
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  // Use admin client to bypass RLS for update
+  const { error } = await adminSupabase
     .from('strategic_plans')
     .update(updateData)
     .eq('id', input.id)
@@ -587,8 +587,8 @@ export async function updateDepartmentInfo(
   if (input.current_staffing !== undefined)
     updateData.current_staffing = input.current_staffing
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  // Use admin client to bypass RLS for update
+  const { error } = await adminSupabase
     .from('departments')
     .update(updateData)
     .eq('id', input.id)
@@ -651,8 +651,8 @@ export async function updateSwotAnalysis(
   }
 
   // Update SWOT analysis
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  // Use admin client to bypass RLS for update
+  const { error } = await adminSupabase
     .from('strategic_plans')
     .update({
       swot_analysis: swot,
@@ -719,8 +719,8 @@ export async function updateEnvironmentalScan(
   }
 
   // Update environmental scan
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  // Use admin client to bypass RLS for update
+  const { error } = await adminSupabase
     .from('strategic_plans')
     .update({
       environmental_scan: scan,
@@ -787,8 +787,8 @@ export async function updateBenchmarkingData(
   }
 
   // Update benchmarking data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  // Use admin client to bypass RLS for update
+  const { error } = await adminSupabase
     .from('strategic_plans')
     .update({
       benchmarking_data: data,

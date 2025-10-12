@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { ChevronDown, ChevronUp, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { researchDemographics } from '@/app/actions/ai-research'
 
 export interface EnvironmentalScanData {
   demographic_trends: string[]
@@ -37,6 +38,7 @@ interface EnvironmentalScanFormProps {
   initialScan?: EnvironmentalScanData
   onSave: (scan: EnvironmentalScanData) => Promise<void>
   disabled?: boolean
+  department_id: string
 }
 
 type ScanCategory = keyof EnvironmentalScanData
@@ -80,6 +82,7 @@ export function EnvironmentalScanForm({
   initialScan,
   onSave,
   disabled = false,
+  department_id,
 }: EnvironmentalScanFormProps) {
   const { toast } = useToast()
 
@@ -105,6 +108,7 @@ export function EnvironmentalScanForm({
   const [deletingIndex, setDeletingIndex] = useState<number>(0)
 
   const [isSaving, setIsSaving] = useState(false)
+  const [isResearching, setIsResearching] = useState(false)
 
   const toggleCategory = (category: ScanCategory) => {
     const newExpanded = new Set(expandedCategories)
@@ -437,13 +441,48 @@ export function EnvironmentalScanForm({
               <span>Minimum {MIN_LENGTH} characters required</span>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveItem} disabled={isSaving}>
-              {isSaving ? 'Saving...' : 'Save'}
-            </Button>
+          <DialogFooter className="flex items-center justify-between">
+            <div className="mr-auto">
+              {editingCategory === 'demographic_trends' && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={async () => {
+                    try {
+                      setIsResearching(true)
+                      // We need department_id to scope research; pull from current plan context on page via data- attribute or pass as prop.
+                      // For now, we'll attempt to infer from URL params if available on client.
+                      const urlParts = window.location.pathname.split('/')
+                      const planId = urlParts[urlParts.indexOf('plans') + 1]
+                      // Fallback: let server action use current user's department if needed (would require different API). Here we keep simple.
+                      // Call research using the plan's department id is better, but not directly available here; consider extending props later.
+                      const res = await researchDemographics(department_id)
+                      if (res?.content?.length) {
+                        const bulletText = res.content.map((b) => `• ${b}`).join('\n')
+                        // Append to existing text with spacing
+                        setEditingText((prev) => (prev ? prev + '\n\n' + bulletText : bulletText))
+                      }
+                    } catch (e) {
+                      console.error('AI research error:', e)
+                      toast({ title: 'AI Research Failed', description: 'Could not fetch suggestions. Configure Perplexity API and try again.', variant: 'destructive' })
+                    } finally {
+                      setIsResearching(false)
+                    }
+                  }}
+                  disabled={isResearching}
+                >
+                  {isResearching ? 'Researching…' : 'Research with AI'}
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveItem} disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Save'}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

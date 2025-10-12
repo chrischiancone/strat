@@ -20,6 +20,13 @@ interface CreateUserFormProps {
   departments: Department[]
 }
 
+interface CreateUserResponse {
+  success: boolean
+  error?: string
+  userId?: string
+  message?: string
+}
+
 const roles = [
   { value: 'admin', label: 'Admin' },
   { value: 'department_director', label: 'Department Director' },
@@ -54,7 +61,7 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
     setError(null)
 
     try {
-      const result = await createUser(data)
+      const result = await createUser(data) as unknown as CreateUserResponse
 
       if (result.error) {
         setError(result.error)
@@ -62,7 +69,9 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
         return
       }
 
-      // Success - redirect to users list
+      // Success - show credentials then redirect
+      const msg = result.message || 'User created successfully.'
+      alert(msg)
       router.push('/admin/users')
     } catch {
       setError('An unexpected error occurred')
@@ -183,7 +192,7 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
       </div>
 
       <p className="text-xs text-gray-500">
-        * Required fields. An invitation email will be sent to the user after creation.
+        * Required fields. New users are created with a default password and confirmed email.
       </p>
     </form>
   )

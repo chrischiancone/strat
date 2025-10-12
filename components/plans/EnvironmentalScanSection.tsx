@@ -7,9 +7,10 @@ import { updateEnvironmentalScan } from '@/app/actions/strategic-plans'
 interface EnvironmentalScanSectionProps {
   planId: string
   initialScan?: EnvironmentalScanData
+  department_id: string
 }
 
-export function EnvironmentalScanSection({ planId, initialScan }: EnvironmentalScanSectionProps) {
+export function EnvironmentalScanSection({ planId, initialScan, department_id }: EnvironmentalScanSectionProps) {
   const handleSave = async (scan: EnvironmentalScanData) => {
     await updateEnvironmentalScan(planId, scan)
   }
@@ -23,7 +24,11 @@ export function EnvironmentalScanSection({ planId, initialScan }: EnvironmentalS
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <EnvironmentalScanForm initialScan={initialScan} onSave={handleSave} />
+        <EnvironmentalScanForm
+          initialScan={initialScan}
+          onSave={handleSave}
+          department_id={department_id}
+        />
       </CardContent>
     </Card>
   )

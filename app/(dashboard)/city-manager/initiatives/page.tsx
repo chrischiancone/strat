@@ -6,6 +6,7 @@ import { InitiativesDashboardContent } from '@/components/city-initiatives/Initi
 import { GenerateReportButton } from '@/components/city-manager/GenerateReportButton'
 import { getFiscalYears } from '@/app/actions/strategic-plans'
 import { getDepartments } from '@/app/actions/users'
+import { InitiativesLayout } from '@/components/initiatives/InitiativesLayout'
 
 export default async function CityInitiativesDashboardPage() {
   // Verify user has access
@@ -33,7 +34,7 @@ export default async function CityInitiativesDashboardPage() {
   const [fiscalYears, departments] = await Promise.all([getFiscalYears(), getDepartments()])
 
   return (
-    <div className="flex h-full flex-col">
+    <InitiativesLayout>
       {/* Header */}
       <div className="border-b border-gray-200 bg-white px-6 py-4">
         <div className="flex items-center justify-between">
@@ -58,11 +59,11 @@ export default async function CityInitiativesDashboardPage() {
       </div>
 
       {/* Dashboard Content */}
-      <div className="flex-1 overflow-auto bg-gray-50">
+      <div className="overflow-auto bg-gray-50">
         <div className="mx-auto max-w-7xl p-6">
           <InitiativesDashboardContent />
         </div>
       </div>
-    </div>
+    </InitiativesLayout>
   )
 }
