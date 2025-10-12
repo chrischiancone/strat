@@ -16,10 +16,73 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="h-full">
+      <head>
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            /* Inline critical styles to prevent FOUC */
+            body {
+              font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+              background-color: #f9fafb;
+              margin: 0;
+              padding: 0;
+              min-height: 100vh;
+            }
+            
+            /* Loading state styles */
+            .loading-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: #f9fafb;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 9999;
+              opacity: 1;
+              transition: opacity 0.3s ease-out;
+            }
+            
+            .loading-overlay.loaded {
+              opacity: 0;
+              pointer-events: none;
+            }
+            
+            .loading-spinner {
+              width: 40px;
+              height: 40px;
+              border: 4px solid #e5e7eb;
+              border-left: 4px solid #3b82f6;
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          `
+        }} />
+      </head>
+      <body className={`${inter.className} h-full`}>
+        <div id="loading-overlay" className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
         {children}
         <Toaster />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            // Hide loading overlay once page is fully loaded
+            window.addEventListener('load', function() {
+              const overlay = document.getElementById('loading-overlay');
+              if (overlay) {
+                overlay.classList.add('loaded');
+                setTimeout(() => overlay.remove(), 300);
+              }
+            });
+          `
+        }} />
       </body>
     </html>
   )

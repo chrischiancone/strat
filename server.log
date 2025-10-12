@@ -1,0 +1,377 @@
+
+> strat_plan@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · optimizeCss
+
+ ✓ Starting...
+ ✓ Ready in 1032ms
+ ✓ Compiled /middleware in 346ms (486 modules)
+ ○ Compiling /admin/fiscal-years ...
+(node:49531) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ Compiled /admin/fiscal-years in 1852ms (1607 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+No authenticated user found in getFiscalYears
+ GET /admin/fiscal-years 307 in 1985ms
+ ✓ Compiled in 188ms (326 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (118kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled / in 127ms (1588 modules)
+ HEAD / 307 in 207ms
+ GET / 307 in 35ms
+ ✓ Compiled /dashboard in 219ms (1642 modules)
+ GET /dashboard 200 in 329ms
+ ✓ Compiled /admin/departments in 167ms (1657 modules)
+getDepartmentsWithStats called with filters: {
+  status: undefined,
+  search: undefined,
+  sortBy: undefined,
+  sortOrder: undefined
+}
+Authenticated user ID: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result: {
+  userProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing departments query for municipality_id: 00000000-0000-0000-0000-000000000001
+Raw departments query result: { count: null, error: null }
+DepartmentsPage - departments count: 6
+DepartmentsPage - departments: [
+  {
+    id: '00000000-0000-0000-0000-000000000104',
+    name: 'Finance',
+    slug: 'finance',
+    director_name: 'Amanda Rodriguez',
+    director_email: 'arodriguez@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To ensure fiscal responsibility and provide financial expertise supporting city operations.'
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000103',
+    name: 'Information Technology',
+    slug: 'information-technology',
+    director_name: 'Michael Chen',
+    director_email: 'mchen@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To deliver innovative technology solutions that enable efficient city operations and excellent citizen services.'
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000102',
+    name: 'Parks & Recreation',
+    slug: 'parks-recreation',
+    director_name: 'Sarah Johnson',
+    director_email: 'sjohnson@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To enhance quality of life through exceptional parks, recreation programs, and community spaces.'
+  },
+  {
+    id: '912d395e-73af-4086-acff-d57124923abe',
+    name: 'Strategic Services',
+    slug: 'strategic-services',
+    director_name: 'Krystal Bose',
+    director_email: 'krystle.boise@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: null
+  },
+  {
+    id: 'e15e2d63-0298-4245-a09c-dafb02f46a38',
+    name: 'Test Department 1760268016374',
+    slug: 'test-department-1760268016374',
+    director_name: 'Test Director',
+    director_email: 'test@example.com',
+    is_active: true,
+    mission_statement: 'Test mission statement'
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000101',
+    name: 'Water & Field Services',
+    slug: 'water-field-services',
+    director_name: 'John Smith',
+    director_email: 'jsmith@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To provide safe, reliable water services and maintain quality field operations for Carrollton residents.'
+  }
+]
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 0, error: null }
+Fiscal years data: []
+ ✓ Compiled /signup in 124ms (1665 modules)
+ HEAD /signup 200 in 153ms
+ ✓ Compiled /login in 130ms (1670 modules)
+ POST /admin/fiscal-years 303 in 219ms
+ POST /login 200 in 133ms
+getDepartmentsWithStats called with filters: {
+  status: undefined,
+  search: undefined,
+  sortBy: undefined,
+  sortOrder: undefined
+}
+Authenticated user ID: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result: {
+  userProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing departments query for municipality_id: 00000000-0000-0000-0000-000000000001
+Raw departments query result: { count: null, error: null }
+DepartmentsPage - departments count: 6
+DepartmentsPage - departments: [
+  {
+    id: '00000000-0000-0000-0000-000000000104',
+    name: 'Finance',
+    slug: 'finance',
+    director_name: 'Amanda Rodriguez',
+    director_email: 'arodriguez@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To ensure fiscal responsibility and provide financial expertise supporting city operations.'
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000103',
+    name: 'Information Technology',
+    slug: 'information-technology',
+    director_name: 'Michael Chen',
+    director_email: 'mchen@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To deliver innovative technology solutions that enable efficient city operations and excellent citizen services.'
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000102',
+    name: 'Parks & Recreation',
+    slug: 'parks-recreation',
+    director_name: 'Sarah Johnson',
+    director_email: 'sjohnson@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To enhance quality of life through exceptional parks, recreation programs, and community spaces.'
+  },
+  {
+    id: '912d395e-73af-4086-acff-d57124923abe',
+    name: 'Strategic Services',
+    slug: 'strategic-services',
+    director_name: 'Krystal Bose',
+    director_email: 'krystle.boise@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: null
+  },
+  {
+    id: 'e15e2d63-0298-4245-a09c-dafb02f46a38',
+    name: 'Test Department 1760268016374',
+    slug: 'test-department-1760268016374',
+    director_name: 'Test Director',
+    director_email: 'test@example.com',
+    is_active: true,
+    mission_statement: 'Test mission statement'
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000101',
+    name: 'Water & Field Services',
+    slug: 'water-field-services',
+    director_name: 'John Smith',
+    director_email: 'jsmith@cityofcarrollton.com',
+    is_active: true,
+    mission_statement: 'To provide safe, reliable water services and maintain quality field operations for Carrollton residents.'
+  }
+]
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 0, error: null }
+Fiscal years data: []
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+No authenticated user found in getFiscalYears
+ GET /admin/fiscal-years 307 in 27ms
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+No authenticated user found in getFiscalYears
+ GET /admin/fiscal-years 307 in 22ms
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 0, error: null }
+Fiscal years data: []
+ GET /admin/fiscal-years 200 in 65ms
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 0, error: null }
+Fiscal years data: []
+ GET /admin/fiscal-years 200 in 47ms
+ ✓ Compiled in 386ms (1679 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+No authenticated user found in getFiscalYears
+ ✓ Compiled in 153ms (1679 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 3, error: null }
+Fiscal years data: [
+  {
+    id: '00000000-0000-0000-0000-000000000203',
+    year: 2027,
+    start_date: '2026-10-01',
+    end_date: '2027-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000202',
+    year: 2026,
+    start_date: '2025-10-01',
+    end_date: '2026-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000201',
+    year: 2025,
+    start_date: '2024-10-01',
+    end_date: '2025-09-30',
+    is_current: false
+  }
+]
+ ✓ Compiled in 127ms (1679 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 3, error: null }
+Fiscal years data: [
+  {
+    id: '00000000-0000-0000-0000-000000000203',
+    year: 2027,
+    start_date: '2026-10-01',
+    end_date: '2027-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000202',
+    year: 2026,
+    start_date: '2025-10-01',
+    end_date: '2026-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000201',
+    year: 2025,
+    start_date: '2024-10-01',
+    end_date: '2025-09-30',
+    is_current: false
+  }
+]
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+No authenticated user found in getFiscalYears
+ GET /admin/fiscal-years 307 in 41ms
+ ✓ Compiled in 145ms (1679 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+ ⨯ app/actions/fiscal-years.ts (39:43) @ getFiscalYears
+ ⨯ ReferenceError: serverSupabase is not defined
+    at getFiscalYears (./app/actions/fiscal-years.ts:28:45)
+    at FiscalYearsPage (admin/fiscal-years/page.tsx:21:104)
+digest: "2595599414"
+[0m [90m 37 |[39m[0m
+[0m [90m 38 |[39m   [90m// Get current user to fetch their municipality_id[39m[0m
+[0m[31m[1m>[22m[39m[90m 39 |[39m   [36mconst[39m { data[33m:[39m { user[33m:[39m currentUser } } [33m=[39m [36mawait[39m serverSupabase[33m.[39mauth[33m.[39mgetUser()[0m
+[0m [90m    |[39m                                           [31m[1m^[22m[39m[0m
+[0m [90m 40 |[39m[0m
+[0m [90m 41 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
+[0m [90m 42 |[39m     console[33m.[39mlog([32m'No authenticated user found in getFiscalYears'[39m)[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 145ms (1679 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 0, error: null }
+Fiscal years data: []
+ GET /admin/fiscal-years 200 in 186ms
+ ✓ Compiled in 125ms (1679 modules)
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+Authenticated user ID in getFiscalYears: 35442c29-927d-484e-847f-57d4ad9ff10a
+User profile query result in getFiscalYears: {
+  currentUserProfile: { municipality_id: '00000000-0000-0000-0000-000000000001' },
+  profileError: null
+}
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 3, error: null }
+Fiscal years data: [
+  {
+    id: '00000000-0000-0000-0000-000000000203',
+    year: 2027,
+    start_date: '2026-10-01',
+    end_date: '2027-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000202',
+    year: 2026,
+    start_date: '2025-10-01',
+    end_date: '2026-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000201',
+    year: 2025,
+    start_date: '2024-10-01',
+    end_date: '2025-09-30',
+    is_current: false
+  }
+]
+getFiscalYears called with filters: { sortBy: undefined, sortOrder: undefined }
+No authenticated user found in getFiscalYears
+ GET /admin/fiscal-years 307 in 25ms
+ ✓ Compiled in 135ms (1679 modules)
+Executing fiscal years query for municipality_id: 00000000-0000-0000-0000-000000000001
+Fiscal years query result: { data: 3, error: null }
+Fiscal years data: [
+  {
+    id: '00000000-0000-0000-0000-000000000203',
+    year: 2027,
+    start_date: '2026-10-01',
+    end_date: '2027-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000202',
+    year: 2026,
+    start_date: '2025-10-01',
+    end_date: '2026-09-30',
+    is_current: false
+  },
+  {
+    id: '00000000-0000-0000-0000-000000000201',
+    year: 2025,
+    start_date: '2024-10-01',
+    end_date: '2025-09-30',
+    is_current: false
+  }
+]
+ ✓ Compiled in 132ms (1679 modules)
+ ✓ Compiled in 161ms (1679 modules)
+ ✓ Compiled in 143ms (1679 modules)

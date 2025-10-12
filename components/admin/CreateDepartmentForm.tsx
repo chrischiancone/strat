@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
 export function CreateDepartmentForm() {
   const router = useRouter()
+  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -58,8 +60,17 @@ export function CreateDepartmentForm() {
         return
       }
 
-      // Success - redirect to departments list
-      router.push('/admin/departments')
+      // Success - show toast and redirect
+      toast({
+        title: 'Department Created',
+        description: 'The department has been successfully created.',
+      })
+      
+      // Small delay to ensure toast is visible before redirect
+      setTimeout(() => {
+        router.refresh() // Clear Next.js cache
+        router.push('/admin/departments')
+      }, 500)
     } catch {
       setError('An unexpected error occurred')
       setIsSubmitting(false)

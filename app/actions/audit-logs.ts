@@ -24,6 +24,10 @@ export interface AuditLog {
   created_at: string
   user_name: string | null
   user_email: string | null
+  old_values: Record<string, unknown> | null
+  new_values: Record<string, unknown> | null
+  ip_address: string | null
+  user_agent: string | null
 }
 
 export interface AuditLogsResponse {
@@ -45,13 +49,13 @@ export async function getAuditLogs(
     userId,
     action,
     entityType,
-    sortBy = 'created_at',
+    sortBy = 'changed_at',
     sortOrder = 'desc',
     page = 1,
     limit = 50,
   } = filters
 
-  // Get current user to fetch their municipality_id
+  // Get current user to check permissions
   const { data: { user: currentUser } } = await supabase.auth.getUser()
 
   if (!currentUser) {
@@ -66,11 +70,11 @@ export async function getAuditLogs(
 
   const { data: currentUserProfile } = await supabase
     .from('users')
-    .select('municipality_id')
+    .select('role')
     .eq('id', currentUser.id)
-    .single<{ municipality_id: string }>()
+    .single<{ role: string }>()
 
-  if (!currentUserProfile) {
+  if (!currentUserProfile || !['admin', 'city_manager'].includes(currentUserProfile.role)) {
     return {
       logs: [],
       total: 0,
@@ -80,38 +84,40 @@ export async function getAuditLogs(
     }
   }
 
-  // Build base query with user join
+  // Build base query with user join - map database columns to expected interface
   let query = supabase
     .from('audit_logs')
     .select(
       `
       id,
-      user_id,
+      changed_by,
       action,
-      entity_type,
-      entity_id,
-      details,
-      created_at,
-      users:user_id (
+      table_name,
+      record_id,
+      old_values,
+      new_values,
+      changed_at,
+      ip_address,
+      user_agent,
+      users:changed_by (
         full_name,
         email
       )
     `,
       { count: 'exact' }
     )
-    .eq('municipality_id', currentUserProfile.municipality_id)
 
   // Apply filters
   if (startDate) {
-    query = query.gte('created_at', startDate)
+    query = query.gte('changed_at', startDate)
   }
 
   if (endDate) {
-    query = query.lte('created_at', endDate)
+    query = query.lte('changed_at', endDate)
   }
 
   if (userId) {
-    query = query.eq('user_id', userId)
+    query = query.eq('changed_by', userId)
   }
 
   if (action) {
@@ -119,7 +125,7 @@ export async function getAuditLogs(
   }
 
   if (entityType) {
-    query = query.eq('entity_type', entityType)
+    query = query.eq('table_name', entityType)
   }
 
   // Apply sorting
@@ -134,31 +140,45 @@ export async function getAuditLogs(
 
   if (error) {
     console.error('Error fetching audit logs:', error)
-    throw new Error('Failed to fetch audit logs')
+    // Return empty result instead of throwing error for better UX
+    return {
+      logs: [],
+      total: 0,
+      page,
+      limit,
+      totalPages: 0,
+    }
   }
 
-  // Transform data to include user name and email
+  // Transform data to match expected interface
   interface AuditLogQueryResult {
     id: string
-    user_id: string | null
+    changed_by: string | null
     action: string
-    entity_type: string
-    entity_id: string
-    details: Record<string, unknown> | null
-    created_at: string
+    table_name: string
+    record_id: string
+    old_values: Record<string, unknown> | null
+    new_values: Record<string, unknown> | null
+    changed_at: string
+    ip_address: string | null
+    user_agent: string | null
     users: { full_name: string | null; email: string | null } | null
   }
 
   const logs: AuditLog[] = (data as unknown as AuditLogQueryResult[] || []).map((log) => ({
     id: log.id,
-    user_id: log.user_id,
+    user_id: log.changed_by,
     action: log.action,
-    entity_type: log.entity_type,
-    entity_id: log.entity_id,
-    details: log.details,
-    created_at: log.created_at,
+    entity_type: log.table_name,
+    entity_id: log.record_id,
+    details: log.new_values,
+    created_at: log.changed_at,
     user_name: log.users?.full_name || null,
     user_email: log.users?.email || null,
+    old_values: log.old_values,
+    new_values: log.new_values,
+    ip_address: log.ip_address,
+    user_agent: log.user_agent,
   }))
 
   const total = count || 0

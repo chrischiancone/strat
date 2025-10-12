@@ -22,15 +22,7 @@ export default async function EditUserPage({ params }: PageProps) {
     notFound()
   }
 
-  const user = userData as {
-    id: string
-    full_name: string | null
-    email: string | null
-    role: string
-    title: string | null
-    is_active: boolean | null
-    department_id: string | null
-  }
+  const user = userData
 
   return (
     <div className="flex h-full flex-col">

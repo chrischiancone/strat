@@ -1,10 +1,13 @@
 import { Suspense } from 'react'
 import { getStrategicPlans, getFiscalYears } from '@/app/actions/strategic-plans'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { CreatePlanDialog } from '@/components/plans/CreatePlanDialog'
 import { PlansTable } from '@/components/plans/PlansTable'
-import { ListSkeleton } from '@/components/ui/skeleton'
-import { NoDataEmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/layouts/PageHeader'
+import { PageContainer, ContentCard } from '@/components/layouts/PageContainer'
+import { TableSkeleton, NoDataEmptyState } from '@/components/ui/loading-states'
+import { PlusIcon, FileTextIcon } from 'lucide-react'
 
 async function getUserProfile() {
   const supabase = createServerSupabaseClient()
@@ -28,24 +31,25 @@ async function getUserProfile() {
 }
 
 async function getDepartments() {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const serverSupabase = createServerSupabaseClient()
+  const { data: { user } } = await serverSupabase.auth.getUser()
 
   if (!user) {
     return []
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await serverSupabase
     .from('users')
-    .select('municipality_id, role')
+    .select('municipality_id')
     .eq('id', user.id)
-    .single<{ municipality_id: string; role: string }>()
+    .single<{ municipality_id: string }>()
 
-  if (!userProfile || userProfile.role !== 'admin') {
+  if (!userProfile) {
     return []
   }
 
-  // Only fetch departments if user is admin
+  // Use admin client to fetch departments (component will handle role-based display logic)
+  const supabase = createAdminSupabaseClient()
   const { data } = await supabase
     .from('departments')
     .select('id, name')
@@ -58,14 +62,17 @@ async function getDepartments() {
 
 function PlansSkeleton() {
   return (
-    <div className="border-b border-gray-200 bg-white px-6 py-4">
-      <div className="animate-pulse space-y-4">
-        <div className="h-8 w-64 bg-gray-200 rounded" />
-        <div className="h-4 w-96 bg-gray-200 rounded" />
-      </div>
-      <div className="mt-8 p-6">
-        <ListSkeleton items={5} />
-      </div>
+    <div className="flex h-full flex-col">
+      <PageHeader
+        title="Strategic Plans"
+        description="Create and manage your department's strategic plans"
+        breadcrumbs={[
+          { label: 'Plans', current: true }
+        ]}
+      />
+      <PageContainer>
+        <TableSkeleton rows={5} columns={6} />
+      </PageContainer>
     </div>
   )
 }
@@ -79,17 +86,15 @@ async function PlansContent() {
   ])
 
   return (
-    <>
-      <div className="border-b border-gray-200 bg-white px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Strategic Plans
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Create and manage your department&apos;s strategic plans
-            </p>
-          </div>
+    <div className="flex h-full flex-col">
+      <PageHeader
+        title="Strategic Plans"
+        description="Create and manage your department's strategic plans"
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Plans', current: true }
+        ]}
+        actions={
           <CreatePlanDialog
             fiscalYears={fiscalYears}
             userDepartmentId={userProfile?.department_id || null}
@@ -97,30 +102,37 @@ async function PlansContent() {
             userRole={userProfile?.role || 'staff'}
             departments={departments}
           />
-        </div>
-      </div>
+        }
+      />
 
-      <div className="flex-1 overflow-auto bg-gray-50">
-        <div className="mx-auto max-w-7xl p-6">
-          {plans.length === 0 ? (
-            <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-              <NoDataEmptyState resourceName="Strategic Plans" />
-            </div>
-          ) : (
-            <PlansTable plans={plans} />
-          )}
-        </div>
-      </div>
-    </>
+      <PageContainer>
+        {plans.length === 0 ? (
+          <ContentCard>
+            <NoDataEmptyState 
+              resourceName="Strategic Plans"
+              action={
+                <CreatePlanDialog
+                  fiscalYears={fiscalYears}
+                  userDepartmentId={userProfile?.department_id || null}
+                  userDepartmentName={userProfile?.departments?.name || null}
+                  userRole={userProfile?.role || 'staff'}
+                  departments={departments}
+                />
+              }
+            />
+          </ContentCard>
+        ) : (
+          <PlansTable plans={plans} />
+        )}
+      </PageContainer>
+    </div>
   )
 }
 
 export default async function PlansPage() {
   return (
-    <div className="flex h-full flex-col">
-      <Suspense fallback={<PlansSkeleton />}>
-        <PlansContent />
-      </Suspense>
-    </div>
+    <Suspense fallback={<PlansSkeleton />}>
+      <PlansContent />
+    </Suspense>
   )
 }

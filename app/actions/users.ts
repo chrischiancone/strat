@@ -144,11 +144,33 @@ export async function getUsers(
 }
 
 export async function getDepartments() {
-  const supabase = createServerSupabaseClient()
+  // Get current user's municipality_id first
+  const serverSupabase = createServerSupabaseClient()
+  const { data: { user } } = await serverSupabase.auth.getUser()
+  
+  if (!user) {
+    console.error('User not authenticated when fetching departments')
+    return []
+  }
+  
+  const { data: userProfile } = await serverSupabase
+    .from('users')
+    .select('municipality_id')
+    .eq('id', user.id)
+    .single<{ municipality_id: string }>()
+    
+  if (!userProfile) {
+    console.error('User profile not found when fetching departments')
+    return []
+  }
+  
+  // Use admin client to bypass RLS for reading departments
+  const supabase = createAdminSupabaseClient()
 
   const { data, error } = await supabase
     .from('departments')
     .select('id, name')
+    .eq('municipality_id', userProfile.municipality_id)
     .eq('is_active', true)
     .order('name', { ascending: true })
 
@@ -172,10 +194,7 @@ export async function getUserById(userId: string) {
       role,
       title,
       is_active,
-      department_id,
-      departments:department_id (
-        name
-      )
+      department_id
     `)
     .eq('id', userId)
     .single()

@@ -385,10 +385,10 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
   // Get user profile with department
   const { data: profile } = await supabase
     .from('users')
-    .select('name, role, department_id, departments:department_id(name)')
+    .select('full_name, role, department_id, departments:department_id(name)')
     .eq('id', user.id)
     .single<{
-      name: string
+      full_name: string
       role: string
       department_id: string | null
       departments: { name: string } | null
@@ -397,7 +397,7 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
   const userRole = profile?.role || 'staff'
   const departmentId = profile?.department_id
   const departmentName = profile?.departments?.name || null
-  const userName = profile?.name || user.email || 'User'
+  const userName = profile?.full_name || user.email || 'User'
 
   // Determine access level
   const isAdmin = userRole === 'admin'

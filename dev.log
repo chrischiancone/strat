@@ -1,0 +1,757 @@
+
+> strat_plan@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · optimizeCss
+
+ ✓ Starting...
+ ✓ Ready in 1241ms
+ ✓ Compiled /middleware in 322ms (486 modules)
+ ○ Compiling /admin/departments ...
+(node:24831) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ Compiled /admin/departments in 2.1s (1612 modules)
+ ⨯ app/actions/departments.ts (50:11) @ getDepartmentsWithStats
+ ⨯ Error: User not authenticated
+    at getDepartmentsWithStats (./app/actions/departments.ts:28:15)
+    at async DepartmentsPage (admin/departments/page.tsx:23:25)
+digest: "3601057955"
+[0m [90m 48 |[39m   [0m
+[0m [90m 49 |[39m   [36mif[39m ([33m![39muser) {[0m
+[0m[31m[1m>[22m[39m[90m 50 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'User not authenticated'[39m)[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 51 |[39m   }[0m
+[0m [90m 52 |[39m   [0m
+[0m [90m 53 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m serverSupabase[0m
+ GET /admin/departments 307 in 2195ms
+ ✓ Compiled in 115ms (328 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (118kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /login in 163ms (1599 modules)
+ GET /login 200 in 211ms
+ ⨯ app/actions/departments.ts (50:11) @ getDepartmentsWithStats
+ ⨯ Error: User not authenticated
+    at getDepartmentsWithStats (./app/actions/departments.ts:28:15)
+    at async DepartmentsPage (admin/departments/page.tsx:23:25)
+digest: "3601057955"
+[0m [90m 48 |[39m   [0m
+[0m [90m 49 |[39m   [36mif[39m ([33m![39muser) {[0m
+[0m[31m[1m>[22m[39m[90m 50 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'User not authenticated'[39m)[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 51 |[39m   }[0m
+[0m [90m 52 |[39m   [0m
+[0m [90m 53 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m serverSupabase[0m
+ GET /admin/departments 307 in 53ms
+ GET /login 200 in 10ms
+ POST /login 200 in 156ms
+ ✓ Compiled /dashboard in 217ms (1653 modules)
+ ✓ Compiled /admin/users in 343ms (1816 modules)
+ ✓ Compiled /admin/users/[id] in 331ms (1855 modules)
+ ✓ Compiled /admin/users/new in 180ms (1862 modules)
+ ✓ Compiled in 296ms (1869 modules)
+ ✓ Compiled in 172ms (1869 modules)
+User not authenticated when fetching departments
+ GET /admin/users/new 307 in 41ms
+ ✓ Compiled in 189ms (1869 modules)
+ POST /admin/users/new 200 in 159ms
+ ✓ Compiled /login in 149ms (1436 modules)
+ POST /admin/users 303 in 245ms
+ POST /login 200 in 141ms
+ POST /login 200 in 106ms
+ POST /login 200 in 109ms
+ POST /dashboard 303 in 46ms
+ POST /login 200 in 109ms
+ POST /admin/users/new 200 in 162ms
+ POST /admin/users 303 in 48ms
+ POST /login 200 in 19ms
+ POST /login 200 in 24ms
+ POST /login 200 in 23ms
+ POST /login 200 in 14ms
+ POST /login 200 in 104ms
+ POST /login 200 in 102ms
+ POST /login 200 in 102ms
+ POST /login 200 in 102ms
+ POST /login 200 in 104ms
+ GET /login 200 in 64ms
+ POST /login 200 in 102ms
+ POST /login 200 in 85ms
+ ○ Compiling /plans ...
+ ✓ Compiled /plans in 565ms (1910 modules)
+ ✓ Compiled in 261ms (1886 modules)
+ ✓ Compiled in 151ms (1886 modules)
+ ✓ Compiled in 171ms (1886 modules)
+ ✓ Compiled /admin/fiscal-years in 368ms (1882 modules)
+ ✓ Compiled /admin/fiscal-years/new in 273ms (1893 modules)
+ ✓ Compiled in 201ms (1902 modules)
+Error creating fiscal year: {
+  code: '23505',
+  details: 'Key (municipality_id, year)=(00000000-0000-0000-0000-000000000001, 2027) already exists.',
+  hint: null,
+  message: 'duplicate key value violates unique constraint "fiscal_years_municipality_year_unique"'
+}
+ POST /admin/fiscal-years/new 200 in 35ms
+ ⨯ app/actions/strategic-plans.ts (44:11) @ getStrategicPlans
+ ⨯ Error: Unauthorized
+    at getStrategicPlans (./app/actions/strategic-plans.ts:32:15)
+    at async Promise.all (index 0)
+    at async PlansContent (plans/page.tsx:91:60)
+digest: "1652746578"
+[0m [90m 42 |[39m[0m
+[0m [90m 43 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
+[0m[31m[1m>[22m[39m[90m 44 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Unauthorized'[39m)[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 45 |[39m   }[0m
+[0m [90m 46 |[39m[0m
+[0m [90m 47 |[39m   [90m// Get user's municipality and role[39m[0m
+ GET /plans 307 in 47ms
+ ✓ Compiled in 208ms (1902 modules)
+ GET /admin/fiscal-years/new 307 in 41ms
+ ✓ Compiled in 245ms (1897 modules)
+ ✓ Compiled in 173ms (1897 modules)
+ ✓ Compiled in 72ms (472 modules)
+ ✓ Compiled in 86ms (472 modules)
+ ⨯ ./components/finance/FundingSourcePieChart.tsx:3:1
+Module not found: Can't resolve 'recharts'
+[0m [90m 1 |[39m [32m'use client'[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mPieChart[39m[33m,[39m [33mPie[39m[33m,[39m [33mCell[39m[33m,[39m [33mResponsiveContainer[39m[33m,[39m [33mLegend[39m[33m,[39m [33mTooltip[39m } [36mfrom[39m [32m'recharts'[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mFundingSourceRow[39m } [36mfrom[39m [32m'@/app/actions/funding-sources'[39m[0m
+[0m [90m 5 |[39m[0m
+[0m [90m 6 |[39m [36minterface[39m [33mFundingSourcePieChartProps[39m {[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/finance/FundingSourceDashboardContent.tsx
+ ⨯ ./components/finance/FundingSourcePieChart.tsx:3:1
+Module not found: Can't resolve 'recharts'
+[0m [90m 1 |[39m [32m'use client'[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mPieChart[39m[33m,[39m [33mPie[39m[33m,[39m [33mCell[39m[33m,[39m [33mResponsiveContainer[39m[33m,[39m [33mLegend[39m[33m,[39m [33mTooltip[39m } [36mfrom[39m [32m'recharts'[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mFundingSourceRow[39m } [36mfrom[39m [32m'@/app/actions/funding-sources'[39m[0m
+[0m [90m 5 |[39m[0m
+[0m [90m 6 |[39m [36minterface[39m [33mFundingSourcePieChartProps[39m {[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/finance/FundingSourceDashboardContent.tsx
+ ○ Compiling /_not-found ...
+ ⨯ ./components/finance/FundingSourcePieChart.tsx:3:1
+Module not found: Can't resolve 'recharts'
+[0m [90m 1 |[39m [32m'use client'[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mPieChart[39m[33m,[39m [33mPie[39m[33m,[39m [33mCell[39m[33m,[39m [33mResponsiveContainer[39m[33m,[39m [33mLegend[39m[33m,[39m [33mTooltip[39m } [36mfrom[39m [32m'recharts'[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mFundingSourceRow[39m } [36mfrom[39m [32m'@/app/actions/funding-sources'[39m[0m
+[0m [90m 5 |[39m[0m
+[0m [90m 6 |[39m [36minterface[39m [33mFundingSourcePieChartProps[39m {[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/finance/FundingSourceDashboardContent.tsx
+ ⨯ Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async pipe.req.req (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2056:30)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:395:24)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async pipe.req.req (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2056:30)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:395:24)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async pipe.req.req (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2056:30)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:395:24)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:231:21)
+    at async DevServer.handleRequestImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+Error: Cannot find module 'critters'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:147:30
+    at postProcessHTML (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js:165:29)
+    at async renderToHTMLImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js:1016:27)
+    at async doRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1414:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:1496:28)
+    at async pipe.req.req (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2056:30)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:395:24)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/post-process.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/render.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/module.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/future/route-modules/pages/builtin/_error.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-default-error-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /finance/funding-sources 500 in 6ms
+ GET /finance/funding-sources 500 in 1ms
+ ⨯ ./components/finance/FundingSourcePieChart.tsx:3:1
+Module not found: Can't resolve 'recharts'
+[0m [90m 1 |[39m [32m'use client'[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mPieChart[39m[33m,[39m [33mPie[39m[33m,[39m [33mCell[39m[33m,[39m [33mResponsiveContainer[39m[33m,[39m [33mLegend[39m[33m,[39m [33mTooltip[39m } [36mfrom[39m [32m'recharts'[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mFundingSourceRow[39m } [36mfrom[39m [32m'@/app/actions/funding-sources'[39m[0m
+[0m [90m 5 |[39m[0m
+[0m [90m 6 |[39m [36minterface[39m [33mFundingSourcePieChartProps[39m {[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/finance/FundingSourceDashboardContent.tsx
+ ⨯ ./components/finance/FundingSourcePieChart.tsx:3:1
+Module not found: Can't resolve 'recharts'
+[0m [90m 1 |[39m [32m'use client'[39m[0m
+[0m [90m 2 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mPieChart[39m[33m,[39m [33mPie[39m[33m,[39m [33mCell[39m[33m,[39m [33mResponsiveContainer[39m[33m,[39m [33mLegend[39m[33m,[39m [33mTooltip[39m } [36mfrom[39m [32m'recharts'[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 4 |[39m [36mimport[39m { [33mFundingSourceRow[39m } [36mfrom[39m [32m'@/app/actions/funding-sources'[39m[0m
+[0m [90m 5 |[39m[0m
+[0m [90m 6 |[39m [36minterface[39m [33mFundingSourcePieChartProps[39m {[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/finance/FundingSourceDashboardContent.tsx
+[?25h

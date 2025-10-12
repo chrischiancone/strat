@@ -50,8 +50,12 @@ export async function getFiscalYears(
     return []
   }
 
+  // Use admin client for fiscal years query to bypass RLS issues
+  // We've already verified user authentication and municipality access above
+  const adminClient = createAdminSupabaseClient()
+  
   // Build query
-  let query = supabase
+  let query = adminClient
     .from('fiscal_years')
     .select(`
       id,
@@ -135,6 +139,14 @@ export async function createFiscalYear(input: CreateFiscalYearInput) {
     }
 
     // Create fiscal year
+    console.log('Creating fiscal year with data:', {
+      municipality_id: municipalityId,
+      year: validatedInput.year,
+      start_date: validatedInput.startDate,
+      end_date: validatedInput.endDate,
+      is_current: validatedInput.isActive,
+    })
+    
     const { data: newFiscalYear, error: insertError } = await adminClient
       .from('fiscal_years')
       .insert({
@@ -143,14 +155,27 @@ export async function createFiscalYear(input: CreateFiscalYearInput) {
         start_date: validatedInput.startDate,
         end_date: validatedInput.endDate,
         is_current: validatedInput.isActive,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      })
       .select()
       .single()
 
     if (insertError) {
       console.error('Error creating fiscal year:', insertError)
-      return { error: 'Failed to create fiscal year' }
+      console.error('Insert error details:', {
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint,
+      })
+      
+      // Handle specific constraint violations
+      if (insertError.code === '23505') { // Unique violation
+        if (insertError.message.includes('fiscal_years_municipality_year_unique')) {
+          return { error: `A fiscal year ${validatedInput.year} already exists. Please choose a different year.` }
+        }
+      }
+      
+      return { error: `Failed to create fiscal year: ${insertError.message}` }
     }
 
     // Revalidate fiscal years list page

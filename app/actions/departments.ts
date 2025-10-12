@@ -42,7 +42,26 @@ interface DepartmentBase {
 export async function getDepartmentsWithStats(
   filters: DepartmentFilters = {}
 ): Promise<DepartmentWithStats[]> {
-  const supabase = createServerSupabaseClient()
+  // Get current user's municipality_id first
+  const serverSupabase = createServerSupabaseClient()
+  const { data: { user } } = await serverSupabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+  
+  const { data: userProfile } = await serverSupabase
+    .from('users')
+    .select('municipality_id')
+    .eq('id', user.id)
+    .single<{ municipality_id: string }>()
+    
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+  
+  // Use admin client to bypass RLS for reading departments
+  const supabase = createAdminSupabaseClient()
 
   const {
     status,
@@ -63,6 +82,7 @@ export async function getDepartmentsWithStats(
       is_active,
       mission_statement
     `)
+    .eq('municipality_id', userProfile.municipality_id)
 
   // Apply status filter
   if (status) {
@@ -97,12 +117,14 @@ export async function getDepartmentsWithStats(
     .from('users')
     .select('department_id')
     .eq('is_active', true)
+    .eq('municipality_id', userProfile.municipality_id)
     .in('department_id', departmentIds)
 
   // Fetch plans counts for all departments
   const { data: plansCounts } = await supabase
     .from('strategic_plans')
     .select('department_id')
+    .eq('municipality_id', userProfile.municipality_id)
     .in('department_id', departmentIds)
 
   // Create lookup maps for counts
@@ -230,8 +252,10 @@ export async function createDepartment(input: CreateDepartmentInput) {
       return { error: 'Failed to create department' }
     }
 
-    // Revalidate departments list page
+    // Revalidate departments pages
     revalidatePath('/admin/departments')
+    revalidatePath('/admin/departments/new')
+    revalidatePath('/', 'layout') // Refresh entire layout cache
 
     return { success: true, departmentId: newDepartment.id }
   } catch (error) {

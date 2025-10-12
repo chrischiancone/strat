@@ -108,7 +108,7 @@ export function CreatePlanDialog({
             {/* Department Selection */}
             <div className="grid gap-2">
               <Label htmlFor="department">Department</Label>
-              {isAdmin && departments.length > 0 ? (
+              {departments.length > 0 ? (
                 <Select
                   value={departmentId}
                   onValueChange={setDepartmentId}
