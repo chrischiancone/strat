@@ -610,3 +610,415 @@ digest: "3610353485"
 [0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
  POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 500 in 36ms
  ✓ Compiled in 180ms (3390 modules)
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 500 in 18ms
+ ⨯ Failed to generate static paths for /plans/[id]/edit:
+Error: ENOENT: no such file or directory, open '/Users/cchiancone/Desktop/Stratic Plan/.next/build-manifest.json'
+    at readFileSync (node:fs:433:20)
+    at loadManifest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-manifest.js:36:52)
+    at loadManifestWithRetries (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js:40:51)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at listOnTimeout (node:internal/timers:569:9)
+    at process.processTimers (node:internal/timers:543:7)
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js:84:100)
+    at async Object.loadStaticPaths (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/static-paths-worker.js:23:24) {
+  type: 'Error',
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/cchiancone/Desktop/Stratic Plan/.next/build-manifest.json'
+}
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 500 in 170ms
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 500 in 27ms
+ ✓ Compiled /_not-found in 216ms (3379 modules)
+ ⨯ Error: Cannot find module './9276.js'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at __webpack_require__.f.require (/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:203:28)
+    at /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:162:22)
+    at /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js:53:1263
+    at Object.<anonymous> (/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js:53:1311)
+    at Module._compile (node:internal/modules/cjs/loader:1734:14)
+    at Object..js (node:internal/modules/cjs/loader:1899:10)
+    at Module.load (node:internal/modules/cjs/loader:1469:32)
+    at Module._load (node:internal/modules/cjs/loader:1286:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at requirePage (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js:109:84)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2090:30)
+    at async pipe.req.req (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2056:30)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:374:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './9276.js'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at __webpack_require__.f.require (/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:203:28)
+    at /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js:162:22)
+    at /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js:53:1263
+    at Object.<anonymous> (/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js:53:1311)
+    at Module._compile (node:internal/modules/cjs/loader:1734:14)
+    at Object..js (node:internal/modules/cjs/loader:1899:10)
+    at Module.load (node:internal/modules/cjs/loader:1469:32)
+    at Module._load (node:internal/modules/cjs/loader:1286:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at requirePage (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js:109:84)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2090:30)
+    at async pipe.req.req (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:2056:30)
+    at async DevServer.pipeImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/base-server.js:922:25)
+    at async /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:374:24)
+    at async requestHandlerImpl (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ✓ Compiled /_error in 472ms (3606 modules)
+Time 2.118875
+Time 0.341375
+ GET /_next/static/css/app/layout.css?v=1760272001479 500 in 1577ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 1541ms
+ GET /_next/static/css/app/layout.css?v=1760272050779 404 in 26ms
+ GET /_next/static/css/app/layout.css?v=1760272050779 404 in 10ms
+ ⨯ Failed to generate static paths for /plans/[id]/edit:
+Error: Cannot find module './vendor-chunks/sonner.js'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/plans/[id]/edit/page.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/static-paths-worker.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/plans/[id]/edit/page.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ]
+}
+ ⨯ Failed to generate static paths for /plans/[id]/edit:
+Error: Cannot find module './vendor-chunks/sonner.js'
+Require stack:
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+- /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/plans/[id]/edit/page.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/static-paths-worker.js
+- /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/jest-worker/processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1405:15)
+    at /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1061:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1066:22)
+    at Module._load (node:internal/modules/cjs/loader:1215:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1491:12)
+    at mod.require (/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/plans/[id]/edit/page.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/dev/static-paths-worker.js',
+    '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/jest-worker/processChild.js'
+  ]
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/get-nonce.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/get-nonce' in /Users/cchiancone/Desktop/Stratic Plan/.next/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/get-nonce.js', but to 'Error: Can't resolve './vendor-chunks/get-nonce' in '/Users/cchiancone/Desktop/Stratic Plan/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/get-nonce (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/get-nonce.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/swc/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/react-style-singleton' in /Users/cchiancone/Desktop/Stratic Plan/.next/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/react-style-singleton.js', but to 'Error: Can't resolve './vendor-chunks/react-style-singleton' in '/Users/cchiancone/Desktop/Stratic Plan/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/react-style-singleton (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/react-style-singleton.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/swc/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/use-sidecar' in /Users/cchiancone/Desktop/Stratic Plan/.next/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/use-sidecar.js', but to 'Error: Can't resolve './vendor-chunks/use-sidecar' in '/Users/cchiancone/Desktop/Stratic Plan/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/use-sidecar (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/use-sidecar.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/swc/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/get-nonce.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/get-nonce' in /Users/cchiancone/Desktop/Stratic Plan/.next/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/get-nonce.js', but to 'Error: Can't resolve './vendor-chunks/get-nonce' in '/Users/cchiancone/Desktop/Stratic Plan/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/get-nonce (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/get-nonce.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/handle-externals.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/react-style-singleton' in /Users/cchiancone/Desktop/Stratic Plan/.next/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/react-style-singleton.js', but to 'Error: Can't resolve './vendor-chunks/react-style-singleton' in '/Users/cchiancone/Desktop/Stratic Plan/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/react-style-singleton (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/vendor-chunks/react-style-singleton.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/handle-externals.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+ GET /plans 200 in 88ms
+ GET /_next/static/css/app/layout.css?v=1760272068763 404 in 14ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 10ms
+ GET /_next/static/chunks/main-app.js?v=1760272068763 404 in 18ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 17ms
+ GET /_next/static/chunks/app/(dashboard)/plans/page.js 404 in 16ms
+ GET /_next/static/chunks/app/layout.js 404 in 16ms
+ GET /_next/static/chunks/app/(dashboard)/layout.js 404 in 16ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(dashboard)/admin/fiscal-years/page' in '/Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(dashboard)/admin/fiscal-years/page (expected /Users/cchiancone/Desktop/Stratic Plan/.next/server/app/(dashboard)/admin/fiscal-years/page.js)
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/cchiancone/Desktop/Stratic Plan/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ ✓ Compiled in 762ms (3615 modules)
+ ✓ Compiled in 210ms (3615 modules)
+ ✓ Compiled in 213ms (3615 modules)

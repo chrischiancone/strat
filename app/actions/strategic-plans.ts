@@ -461,6 +461,7 @@ export async function updateStrategicPlan(
   input: UpdatePlanMetadataInput
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -469,8 +470,8 @@ export async function updateStrategicPlan(
     throw new Error('Unauthorized')
   }
 
-  // Check if user has permission to edit this plan
-  const { data: plan } = await supabase
+  // Check if user has permission to edit this plan using admin client
+  const { data: plan } = await adminSupabase
     .from('strategic_plans')
     .select('created_by, department_id')
     .eq('id', input.id)
@@ -480,7 +481,7 @@ export async function updateStrategicPlan(
     throw new Error('Plan not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -543,6 +544,7 @@ export async function updateDepartmentInfo(
   input: UpdateDepartmentInput
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -552,7 +554,7 @@ export async function updateDepartmentInfo(
   }
 
   // Check if user has permission to edit this department
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -605,6 +607,7 @@ export async function updateSwotAnalysis(
   swot: SwotAnalysis
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -616,7 +619,7 @@ export async function updateSwotAnalysis(
   }
 
   // Check if user has permission to edit this plan
-  const { data: plan } = await supabase
+  const { data: plan } = await adminSupabase
     .from('strategic_plans')
     .select('created_by, department_id')
     .eq('id', planId)
@@ -626,7 +629,7 @@ export async function updateSwotAnalysis(
     throw new Error('Plan not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -672,6 +675,7 @@ export async function updateEnvironmentalScan(
   scan: EnvironmentalScan
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -683,7 +687,7 @@ export async function updateEnvironmentalScan(
   }
 
   // Check if user has permission to edit this plan
-  const { data: plan } = await supabase
+  const { data: plan } = await adminSupabase
     .from('strategic_plans')
     .select('created_by, department_id')
     .eq('id', planId)
@@ -693,7 +697,7 @@ export async function updateEnvironmentalScan(
     throw new Error('Plan not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
@@ -739,6 +743,7 @@ export async function updateBenchmarkingData(
   data: BenchmarkingData
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -750,7 +755,7 @@ export async function updateBenchmarkingData(
   }
 
   // Check if user has permission to edit this plan
-  const { data: plan } = await supabase
+  const { data: plan } = await adminSupabase
     .from('strategic_plans')
     .select('created_by, department_id')
     .eq('id', planId)
@@ -760,7 +765,7 @@ export async function updateBenchmarkingData(
     throw new Error('Plan not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
