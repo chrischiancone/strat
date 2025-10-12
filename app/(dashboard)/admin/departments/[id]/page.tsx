@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getDepartmentById } from '@/app/actions/departments'
 import { EditDepartmentForm } from '@/components/admin/EditDepartmentForm'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +13,26 @@ interface PageProps {
 
 export default async function EditDepartmentPage({ params }: PageProps) {
   const { id } = await params
+
+  // Verify user has admin access
+  const supabase = createServerSupabaseClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    notFound()
+  }
+
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single<{ role: string }>()
+
+  if (!profile || profile.role !== 'admin') {
+    notFound()
+  }
 
   const departmentData = await getDepartmentById(id)
 

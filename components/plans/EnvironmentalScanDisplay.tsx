@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import ReactMarkdown from 'react-markdown'
 import type { EnvironmentalScan } from '@/app/actions/strategic-plans'
 
 interface EnvironmentalScanDisplayProps {
@@ -69,10 +70,39 @@ export function EnvironmentalScanDisplay({ scan }: EnvironmentalScanDisplayProps
                 <h3 className={`font-semibold ${colors.text} mb-3`}>
                   {CATEGORY_LABELS[category]}
                 </h3>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {items.map((item, index) => (
                     <li key={index} className={`text-sm ${colors.text}`}>
-                      • {item}
+                      <div className="flex items-start gap-2">
+                        <span className="mt-1 text-xs">•</span>
+                        <div className="flex-1 prose prose-sm max-w-none">
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => <span className="leading-relaxed">{children}</span>,
+                              strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                              em: ({ children }) => <em className="italic">{children}</em>,
+                              a: ({ href, children }) => (
+                                <a 
+                                  href={href} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 underline break-words"
+                                  title={href}
+                                >
+                                  {children}
+                                </a>
+                              ),
+                              code: ({ children }) => (
+                                <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono text-gray-800">
+                                  {children}
+                                </code>
+                              ),
+                            }}
+                          >
+                            {item}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
                     </li>
                   ))}
                 </ul>

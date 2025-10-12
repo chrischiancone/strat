@@ -170,7 +170,26 @@ export async function getDepartmentsWithStats(
 }
 
 export async function getDepartmentById(departmentId: string) {
-  const supabase = createServerSupabaseClient()
+  // Get current user's municipality_id first
+  const serverSupabase = createServerSupabaseClient()
+  const { data: { user } } = await serverSupabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+  
+  const { data: userProfile } = await serverSupabase
+    .from('users')
+    .select('municipality_id')
+    .eq('id', user.id)
+    .single<{ municipality_id: string }>()
+    
+  if (!userProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Use admin client to bypass RLS for reading department
+  const supabase = createAdminSupabaseClient()
 
   const { data, error } = await supabase
     .from('departments')
@@ -184,6 +203,7 @@ export async function getDepartmentById(departmentId: string) {
       is_active
     `)
     .eq('id', departmentId)
+    .eq('municipality_id', userProfile.municipality_id)
     .single()
 
   if (error) {

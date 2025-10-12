@@ -391,8 +391,9 @@ export async function createInitiative(
     status: 'not_started' as InitiativeStatus,
   }
 
+  // Use admin client to bypass RLS since we've already validated permissions
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = (await (supabase as any)
+  const { data, error } = (await (adminSupabase as any)
     .from('initiatives')
     .insert(newInitiative)
     .select('id')
@@ -498,8 +499,9 @@ export async function updateInitiative(
     updateData.responsible_party = input.responsible_party
   if (input.status !== undefined) updateData.status = input.status
 
+  // Use admin client to bypass RLS since we've already validated permissions
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await (adminSupabase as any)
     .from('initiatives')
     .update(updateData)
     .eq('id', input.id)

@@ -15,6 +15,7 @@ import {
   Gift,
   BarChart3,
   Flag,
+  Plus,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -31,13 +32,14 @@ interface NavItem {
 const mainNavigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Strategic Plans', href: '/plans', icon: Target },
+  { name: 'Add Initiative', href: '/initiatives/new', icon: Plus, roles: ['admin', 'city_manager', 'department_director'] },
 ]
 
 const financeNavigation: NavItem[] = [
-  { name: 'Initiative Budgets', href: '/finance', icon: DollarSign, roles: ['finance', 'admin', 'city_manager'] },
-  { name: 'Funding Sources', href: '/finance/funding-sources', icon: TrendingUp, roles: ['finance', 'admin', 'city_manager'] },
-  { name: 'Budget Categories', href: '/finance/categories', icon: BarChart3, roles: ['finance', 'admin', 'city_manager'] },
-  { name: 'Grant Tracking', href: '/finance/grants', icon: Gift, roles: ['finance', 'admin', 'city_manager'] },
+  { name: 'Initiative Budgets', href: '/finance', icon: DollarSign, roles: ['finance', 'admin', 'city_manager', 'department_director'] },
+  { name: 'Funding Sources', href: '/finance/funding-sources', icon: TrendingUp, roles: ['finance', 'admin', 'city_manager', 'department_director'] },
+  { name: 'Budget Categories', href: '/finance/categories', icon: BarChart3, roles: ['finance', 'admin', 'city_manager', 'department_director'] },
+  { name: 'Grant Tracking', href: '/finance/grants', icon: Gift, roles: ['finance', 'admin', 'city_manager', 'department_director'] },
 ]
 
 const adminNavigation: NavItem[] = [

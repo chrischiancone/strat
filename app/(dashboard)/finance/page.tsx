@@ -24,7 +24,8 @@ export default async function FinanceDashboardPage() {
     .eq('id', user.id)
     .single<{ role: string }>()
 
-  if (!profile || (profile.role !== 'finance' && profile.role !== 'admin')) {
+  const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
+  if (!profile || !allowedRoles.includes(profile.role)) {
     notFound()
   }
 

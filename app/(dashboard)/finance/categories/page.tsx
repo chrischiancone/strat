@@ -29,8 +29,9 @@ export default async function CategoriesPage() {
     notFound()
   }
 
-  // Only Finance and Admin can access
-  if (profile.role !== 'finance' && profile.role !== 'admin') {
+  // Allow Finance, Admin, City Manager, and Department Directors
+  const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
+  if (!allowedRoles.includes(profile.role)) {
     notFound()
   }
 

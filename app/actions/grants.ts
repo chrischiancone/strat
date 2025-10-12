@@ -63,7 +63,7 @@ export async function getGrantInitiatives(
   // Get user profile
   const { data: profile } = await supabase
     .from('users')
-    .select('role, municipality_id')
+    .select('role, municipality_id, department_id')
     .eq('id', user.id)
     .single()
 
@@ -74,12 +74,14 @@ export async function getGrantInitiatives(
   type Profile = {
     role: string
     municipality_id: string
+    department_id: string | null
   }
 
   const typedProfile = profile as unknown as Profile
 
-  // Only Finance Director and Admin can access
-  if (typedProfile.role !== 'finance' && typedProfile.role !== 'admin') {
+  // Check role permissions
+  const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
+  if (!allowedRoles.includes(typedProfile.role)) {
     throw new Error('Access denied: Finance role required')
   }
 
@@ -121,6 +123,11 @@ export async function getGrantInitiatives(
     .eq('initiative.goal.strategic_plan.department.municipality_id', typedProfile.municipality_id)
     // Filter for grant funding sources (contains "grant" case-insensitive)
     .ilike('funding_source', '%grant%')
+  
+  // Department directors can only see their own department's data
+  if (typedProfile.role === 'department_director' && typedProfile.department_id) {
+    query = query.eq('initiative.goal.strategic_plan.department.id', typedProfile.department_id)
+  }
 
   // Apply filters
   if (filters.fiscal_year_ids && filters.fiscal_year_ids.length > 0) {

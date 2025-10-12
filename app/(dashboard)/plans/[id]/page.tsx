@@ -10,6 +10,10 @@ import { KpiProgressList } from '@/components/dashboard/KpiProgressList'
 import { SwotAnalysisDisplay } from '@/components/plans/SwotAnalysisDisplay'
 import { EnvironmentalScanDisplay } from '@/components/plans/EnvironmentalScanDisplay'
 import { BenchmarkingDataDisplay } from '@/components/plans/BenchmarkingDataDisplay'
+import { ExecutiveSummaryDisplay } from '@/components/plans/ExecutiveSummaryDisplay'
+import { GeneratePlanPdfButton } from '@/components/plans/GeneratePlanPdfButton'
+import { GoalsDisplay } from '@/components/plans/GoalsDisplay'
+import { InitiativesDisplay } from '@/components/initiatives/InitiativesDisplay'
 import { CommentsSection } from '@/components/comments/CommentsSection'
 import { PlanStatusBadge } from '@/components/plans/PlanStatusBadge'
 import { PlanApprovalActions } from '@/components/plans/PlanApprovalActions'
@@ -60,9 +64,9 @@ export default async function PlanDashboardPage({ params }: PageProps) {
   const backLink = userRole === 'city_manager' ? '/city-manager' : '/plans'
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4">
+      <div className="-mx-6 -mt-6 border-b border-gray-200 bg-white px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href={backLink}>
@@ -101,6 +105,15 @@ export default async function PlanDashboardPage({ params }: PageProps) {
               />
             )}
 
+            {/* PDF Export Button */}
+            <GeneratePlanPdfButton
+              planId={id}
+              planTitle={dashboardData.plan.title}
+              departmentName={dashboardData.plan.department_name}
+              variant="outline"
+              size="sm"
+            />
+            
             {canEdit && (
               <Link href={`/plans/${id}/edit`}>
                 <Button variant="outline">
@@ -117,51 +130,58 @@ export default async function PlanDashboardPage({ params }: PageProps) {
       </div>
 
       {/* Dashboard Content */}
-      <div className="flex-1 overflow-auto bg-gray-50">
-        <div className="mx-auto max-w-7xl p-6">
-          <div className="space-y-6">
-            {/* Key Metrics and Initiative Breakdown */}
-            <DashboardStats data={dashboardData} />
+      <div className="space-y-6">
+        {/* Key Metrics and Initiative Breakdown */}
+        <DashboardStats data={dashboardData} />
 
-            {/* SWOT Analysis */}
-            {dashboardData.plan.swot_analysis && (
-              <SwotAnalysisDisplay swot={dashboardData.plan.swot_analysis} />
-            )}
+        {/* Executive Summary */}
+        {dashboardData.plan.executive_summary && (
+          <ExecutiveSummaryDisplay summary={dashboardData.plan.executive_summary} />
+        )}
 
-            {/* Environmental Scan */}
-            {dashboardData.plan.environmental_scan && (
-              <EnvironmentalScanDisplay scan={dashboardData.plan.environmental_scan} />
-            )}
+        {/* Strategic Goals */}
+        <GoalsDisplay planId={id} />
 
-            {/* Benchmarking Data */}
-            {dashboardData.plan.benchmarking_data && (
-              <BenchmarkingDataDisplay data={dashboardData.plan.benchmarking_data} />
-            )}
+        {/* Strategic Initiatives */}
+        <InitiativesDisplay planId={id} />
 
-            {/* Budget Charts */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <BudgetByYearChart data={dashboardData} />
-              <BudgetBySourceChart data={dashboardData} />
-            </div>
+        {/* SWOT Analysis */}
+        {dashboardData.plan.swot_analysis && (
+          <SwotAnalysisDisplay swot={dashboardData.plan.swot_analysis} />
+        )}
 
-            {/* KPI Progress */}
-            <KpiProgressList data={dashboardData} />
+        {/* Environmental Scan */}
+        {dashboardData.plan.environmental_scan && (
+          <EnvironmentalScanDisplay scan={dashboardData.plan.environmental_scan} />
+        )}
 
-            {/* Approval History */}
-            <ApprovalHistory planId={id} />
+        {/* Benchmarking Data */}
+        {dashboardData.plan.benchmarking_data && (
+          <BenchmarkingDataDisplay data={dashboardData.plan.benchmarking_data} />
+        )}
 
-            {/* Comments Section */}
-            {userId && (
-              <CommentsSection
-                entityType="strategic_plan"
-                entityId={id}
-                currentUserId={userId}
-                currentUserRole={userRole || undefined}
-                entityOwnerId={dashboardData.plan.created_by}
-              />
-            )}
-          </div>
+        {/* Budget Charts */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <BudgetByYearChart data={dashboardData} />
+          <BudgetBySourceChart data={dashboardData} />
         </div>
+
+        {/* KPI Progress */}
+        <KpiProgressList data={dashboardData} />
+
+        {/* Approval History */}
+        <ApprovalHistory planId={id} />
+
+        {/* Comments Section */}
+        {userId && (
+          <CommentsSection
+            entityType="strategic_plan"
+            entityId={id}
+            currentUserId={userId}
+            currentUserRole={userRole || undefined}
+            entityOwnerId={dashboardData.plan.created_by}
+          />
+        )}
       </div>
     </div>
   )

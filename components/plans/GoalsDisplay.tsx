@@ -29,24 +29,20 @@ export async function GoalsDisplay({ planId }: GoalsDisplayProps) {
         {goals.map((goal) => (
           <Card key={goal.id}>
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-base">
-                    Goal {goal.goal_number}: {goal.title}
-                  </CardTitle>
-                  <CardDescription className="mt-1 flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {goal.city_priority_alignment}
-                    </Badge>
-                    {goal.initiative_count !== undefined && goal.initiative_count > 0 && (
-                      <span className="text-xs">
-                        • {goal.initiative_count} initiative
-                        {goal.initiative_count !== 1 ? 's' : ''}
-                      </span>
-                    )}
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle className="text-base">
+                Goal {goal.goal_number}: {goal.title}
+              </CardTitle>
+              <CardDescription className="mt-1 flex items-center gap-2">
+                <Badge variant="secondary" className="text-xs">
+                  {goal.city_priority_alignment}
+                </Badge>
+                {goal.initiative_count !== undefined && goal.initiative_count > 0 && (
+                  <span className="text-xs">
+                    • {goal.initiative_count} initiative
+                    {goal.initiative_count !== 1 ? 's' : ''}
+                  </span>
+                )}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Description */}
