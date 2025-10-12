@@ -1193,6 +1193,7 @@ export async function generateExecutiveSummary(planId: string): Promise<string> 
       departments:department_id (
         id,
         name,
+        municipality_id,
         director_name,
         mission_statement,
         core_services,
@@ -1235,14 +1236,26 @@ export async function generateExecutiveSummary(planId: string): Promise<string> 
     .order('goal_number')
 
   // Get Council Goals for alignment context
-  console.log('Fetching Council Goals for municipality:', planData.departments.municipality_id)
-  const { data: councilGoals, error: councilGoalsError } = await adminSupabase
-    .from('council_goals')
-    .select('category, title, description, key_points')
-    .eq('municipality_id', planData.departments.municipality_id)
-    .eq('is_active', true)
-    .order('category')
-    .order('sort_order')
+  const municipalityId = planData.departments?.municipality_id
+  console.log('Fetching Council Goals for municipality:', municipalityId)
+  
+  let councilGoals = null
+  let councilGoalsError = null
+  
+  if (municipalityId) {
+    const result = await adminSupabase
+      .from('council_goals')
+      .select('category, title, description, key_points')
+      .eq('municipality_id', municipalityId)
+      .eq('is_active', true)
+      .order('category')
+      .order('sort_order')
+    
+    councilGoals = result.data
+    councilGoalsError = result.error
+  } else {
+    console.warn('No municipality_id found, skipping council goals fetch')
+  }
   
   if (councilGoalsError) {
     console.error('Error fetching council goals:', councilGoalsError)
