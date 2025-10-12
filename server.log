@@ -375,3 +375,17 @@ Fiscal years data: [
  ✓ Compiled in 132ms (1679 modules)
  ✓ Compiled in 161ms (1679 modules)
  ✓ Compiled in 143ms (1679 modules)
+ ✓ Compiled /plans in 378ms (1813 modules)
+ ✓ Compiled in 221ms (1827 modules)
+ ✓ Compiled in 152ms (1827 modules)
+ ✓ Compiled in 146ms (1827 modules)
+ ✓ Compiled in 173ms (1827 modules)
+ ✓ Compiled in 353ms (1827 modules)
+ GET /admin/fiscal-years 307 in 39ms
+ ✓ Compiled /admin/fiscal-years/[id] in 351ms (1850 modules)
+Error fetching fiscal year: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}

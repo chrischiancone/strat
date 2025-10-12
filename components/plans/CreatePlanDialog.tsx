@@ -48,6 +48,22 @@ export function CreatePlanDialog({
   const [startFiscalYearId, setStartFiscalYearId] = useState('')
   const [endFiscalYearId, setEndFiscalYearId] = useState('')
 
+  // Handle start fiscal year change - clear end year if it becomes invalid
+  const handleStartFiscalYearChange = (newStartId: string) => {
+    setStartFiscalYearId(newStartId)
+    
+    // If end year is already selected, check if it's still valid
+    if (endFiscalYearId) {
+      const startYear = fiscalYears.find((fy) => fy.id === newStartId)
+      const endYear = fiscalYears.find((fy) => fy.id === endFiscalYearId)
+      
+      // Clear end year if it's now earlier than the new start year
+      if (startYear && endYear && endYear.year < startYear.year) {
+        setEndFiscalYearId('')
+      }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -57,12 +73,12 @@ export function CreatePlanDialog({
       return
     }
 
-    // Validate: end year must be after start year
+    // Validate: end year must not be less than start year (can be equal for single-year plans)
     const startYear = fiscalYears.find((fy) => fy.id === startFiscalYearId)
     const endYear = fiscalYears.find((fy) => fy.id === endFiscalYearId)
 
-    if (startYear && endYear && endYear.year <= startYear.year) {
-      setError('End fiscal year must be after start fiscal year')
+    if (startYear && endYear && endYear.year < startYear.year) {
+      setError('End fiscal year cannot be earlier than start fiscal year')
       return
     }
 
@@ -137,7 +153,7 @@ export function CreatePlanDialog({
               <Label htmlFor="start-year">Start Fiscal Year</Label>
               <Select
                 value={startFiscalYearId}
-                onValueChange={setStartFiscalYearId}
+                onValueChange={handleStartFiscalYearChange}
                 disabled={isSubmitting}
               >
                 <SelectTrigger id="start-year">
@@ -160,17 +176,25 @@ export function CreatePlanDialog({
               <Select
                 value={endFiscalYearId}
                 onValueChange={setEndFiscalYearId}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !startFiscalYearId}
               >
                 <SelectTrigger id="end-year">
-                  <SelectValue placeholder="Select end year" />
+                  <SelectValue placeholder={startFiscalYearId ? "Select end year" : "Select start year first"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {fiscalYears.map((fy) => (
-                    <SelectItem key={fy.id} value={fy.id}>
-                      FY {fy.year}
-                    </SelectItem>
-                  ))}
+                  {fiscalYears
+                    .filter((fy) => {
+                      // Only show fiscal years that are >= start year
+                      if (!startFiscalYearId) return true
+                      const startYear = fiscalYears.find((f) => f.id === startFiscalYearId)
+                      return startYear ? fy.year >= startYear.year : true
+                    })
+                    .map((fy) => (
+                      <SelectItem key={fy.id} value={fy.id}>
+                        FY {fy.year}
+                        {fy.is_current && ' (Current)'}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>

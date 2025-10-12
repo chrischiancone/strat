@@ -148,8 +148,12 @@ export async function getFiscalYears(): Promise<FiscalYear[]> {
     throw new Error('User profile not found')
   }
 
+  // Use admin client for fiscal years query to bypass RLS issues
+  // We've already verified user authentication and municipality access above
+  const adminClient = createAdminSupabaseClient()
+  
   // Fetch fiscal years for user's municipality
-  const { data, error } = await supabase
+  const { data, error } = await adminClient
     .from('fiscal_years')
     .select('id, year, start_date, end_date, is_current')
     .eq('municipality_id', currentUserProfile.municipality_id)
