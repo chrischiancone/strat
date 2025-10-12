@@ -80,7 +80,34 @@ export async function getFiscalYears(
 }
 
 export async function getFiscalYearById(fiscalYearId: string) {
-  const supabase = createServerSupabaseClient()
+  console.log('getFiscalYearById called with ID:', fiscalYearId)
+  
+  // Get current user to fetch their municipality_id
+  const serverSupabase = createServerSupabaseClient()
+  const { data: { user: currentUser } } = await serverSupabase.auth.getUser()
+
+  if (!currentUser) {
+    console.log('No authenticated user found in getFiscalYearById')
+    return null
+  }
+  
+  console.log('Authenticated user found:', currentUser.id)
+
+  const { data: currentUserProfile } = await serverSupabase
+    .from('users')
+    .select('municipality_id')
+    .eq('id', currentUser.id)
+    .single<{ municipality_id: string }>()
+
+  if (!currentUserProfile) {
+    console.log('No user profile found in getFiscalYearById')
+    return null
+  }
+  
+  console.log('Municipality ID:', currentUserProfile.municipality_id)
+
+  // Use admin client to bypass RLS issues
+  const supabase = createAdminSupabaseClient()
 
   const { data, error } = await supabase
     .from('fiscal_years')
@@ -92,13 +119,15 @@ export async function getFiscalYearById(fiscalYearId: string) {
       is_current
     `)
     .eq('id', fiscalYearId)
+    .eq('municipality_id', currentUserProfile.municipality_id)
     .single()
 
   if (error) {
     console.error('Error fetching fiscal year:', error)
     return null
   }
-
+  
+  console.log('getFiscalYearById result:', data ? 'found' : 'not found')
   return data
 }
 

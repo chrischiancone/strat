@@ -389,3 +389,203 @@ Error fetching fiscal year: {
   hint: null,
   message: 'Cannot coerce the result to a single JSON object'
 }
+ ✓ Compiled in 170ms (1864 modules)
+ POST /admin/fiscal-years/00000000-0000-0000-0000-000000000203 200 in 58ms
+ GET /admin/fiscal-years/00000000-0000-0000-0000-000000000201 307 in 39ms
+ ✓ Compiled in 217ms (1836 modules)
+ ✓ Compiled in 148ms (1836 modules)
+ ✓ Compiled in 161ms (1836 modules)
+Error creating strategic plan: {
+  code: '42501',
+  details: null,
+  hint: null,
+  message: 'new row violates row-level security policy for table "strategic_plans"'
+}
+ ⨯ app/actions/strategic-plans.ts (236:11) @ createStrategicPlan
+ ⨯ Error: Failed to create strategic plan
+    at createStrategicPlan (./app/actions/strategic-plans.ts:150:15)
+digest: "2164936402"
+[0m [90m 234 |[39m   [36mif[39m (error) {[0m
+[0m [90m 235 |[39m     console[33m.[39merror([32m'Error creating strategic plan:'[39m[33m,[39m error)[0m
+[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to create strategic plan'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 237 |[39m   }[0m
+[0m [90m 238 |[39m[0m
+[0m [90m 239 |[39m   [36mif[39m ([33m![39mdata) {[0m
+ POST /plans 500 in 33ms
+Error creating strategic plan: {
+  code: '42501',
+  details: null,
+  hint: null,
+  message: 'new row violates row-level security policy for table "strategic_plans"'
+}
+ ⨯ app/actions/strategic-plans.ts (236:11) @ createStrategicPlan
+ ⨯ Error: Failed to create strategic plan
+    at createStrategicPlan (./app/actions/strategic-plans.ts:150:15)
+digest: "2164936402"
+[0m [90m 234 |[39m   [36mif[39m (error) {[0m
+[0m [90m 235 |[39m     console[33m.[39merror([32m'Error creating strategic plan:'[39m[33m,[39m error)[0m
+[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to create strategic plan'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 237 |[39m   }[0m
+[0m [90m 238 |[39m[0m
+[0m [90m 239 |[39m   [36mif[39m ([33m![39mdata) {[0m
+ POST /plans 500 in 35ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 409ms (1836 modules)
+ ⨯ components/plans/CreatePlanDialog.tsx (162:24) @ startFiscalYearId
+ ⨯ ReferenceError: startFiscalYearId is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:215:52)
+digest: "3331038547"
+[0m [90m 160 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
+[0m [90m 161 |[39m               [33m<[39m[33mSelect[39m[0m
+[0m[31m[1m>[22m[39m[90m 162 |[39m                 value[33m=[39m{startFiscalYearId}[0m
+[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
+[0m [90m 163 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
+[0m [90m 164 |[39m                 disabled[33m=[39m{isSubmitting}[0m
+[0m [90m 165 |[39m               [33m>[39m[0m
+ GET /plans 200 in 264ms
+ ✓ Compiled in 169ms (1836 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ components/plans/CreatePlanDialog.tsx (147:24) @ startFiscalYearId
+ ⨯ ReferenceError: startFiscalYearId is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:202:52)
+digest: "3606218165"
+[0m [90m 145 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
+[0m [90m 146 |[39m               [33m<[39m[33mSelect[39m[0m
+[0m[31m[1m>[22m[39m[90m 147 |[39m                 value[33m=[39m{startFiscalYearId}[0m
+[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
+[0m [90m 148 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
+[0m [90m 149 |[39m                 disabled[33m=[39m{isSubmitting}[0m
+[0m [90m 150 |[39m               [33m>[39m[0m
+ GET /plans 200 in 90ms
+ ✓ Compiled in 170ms (1836 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ components/plans/CreatePlanDialog.tsx (138:24) @ startFiscalYearId
+ ⨯ ReferenceError: startFiscalYearId is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:195:52)
+digest: "1099648024"
+[0m [90m 136 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
+[0m [90m 137 |[39m               [33m<[39m[33mSelect[39m[0m
+[0m[31m[1m>[22m[39m[90m 138 |[39m                 value[33m=[39m{startFiscalYearId}[0m
+[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
+[0m [90m 139 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
+[0m [90m 140 |[39m                 disabled[33m=[39m{isSubmitting}[0m
+[0m [90m 141 |[39m               [33m>[39m[0m
+ GET /plans 200 in 55ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 173ms (1836 modules)
+ ⨯ components/plans/CreatePlanDialog.tsx (138:24) @ startFiscalYearId
+ ⨯ ReferenceError: startFiscalYearId is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:195:52)
+digest: "1099648024"
+[0m [90m 136 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"start-year"[39m[33m>[39m[33mStart[39m [33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
+[0m [90m 137 |[39m               [33m<[39m[33mSelect[39m[0m
+[0m[31m[1m>[22m[39m[90m 138 |[39m                 value[33m=[39m{startFiscalYearId}[0m
+[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
+[0m [90m 139 |[39m                 onValueChange[33m=[39m{handleStartFiscalYearChange}[0m
+[0m [90m 140 |[39m                 disabled[33m=[39m{isSubmitting}[0m
+[0m [90m 141 |[39m               [33m>[39m[0m
+ GET /plans 200 in 147ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 174ms (1836 modules)
+ GET /plans 200 in 179ms
+Error creating strategic plan: {
+  code: '42501',
+  details: null,
+  hint: null,
+  message: 'new row violates row-level security policy for table "strategic_plans"'
+}
+ ⨯ app/actions/strategic-plans.ts (236:11) @ createStrategicPlan
+ ⨯ Error: Failed to create strategic plan
+    at createStrategicPlan (./app/actions/strategic-plans.ts:150:15)
+digest: "2164936402"
+[0m [90m 234 |[39m   [36mif[39m (error) {[0m
+[0m [90m 235 |[39m     console[33m.[39merror([32m'Error creating strategic plan:'[39m[33m,[39m error)[0m
+[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Failed to create strategic plan'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 237 |[39m   }[0m
+[0m [90m 238 |[39m[0m
+[0m [90m 239 |[39m   [36mif[39m ([33m![39mdata) {[0m
+ POST /plans 500 in 52ms
+ ✓ Compiled in 277ms (1836 modules)
+ ✓ Compiled in 142ms (1836 modules)
+ ✓ Compiled in 155ms (1836 modules)
+ ✓ Compiled in 141ms (1836 modules)
+ ✓ Compiled in 182ms (1836 modules)
+ ✓ Compiled in 180ms (1836 modules)
+ ⨯ app/actions/strategic-plans.ts (44:11) @ getStrategicPlans
+ ⨯ Error: Unauthorized
+    at getStrategicPlans (./app/actions/strategic-plans.ts:32:15)
+    at async Promise.all (index 0)
+    at async PlansContent (plans/page.tsx:91:60)
+digest: "1652746578"
+[0m [90m 42 |[39m[0m
+[0m [90m 43 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
+[0m[31m[1m>[22m[39m[90m 44 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Unauthorized'[39m)[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 45 |[39m   }[0m
+[0m [90m 46 |[39m[0m
+[0m [90m 47 |[39m   [90m// Get user's municipality and role[39m[0m
+ GET /plans 307 in 42ms
+ ✓ Compiled in 176ms (1836 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 263ms (1836 modules)
+ ⨯ components/plans/CreatePlanDialog.tsx (51:3) @ useEffect
+ ⨯ ReferenceError: useEffect is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:34:5)
+digest: "2608333840"
+[0m [90m 49 |[39m   [0m
+[0m [90m 50 |[39m   [90m// Set default to current fiscal year if available[39m[0m
+[0m[31m[1m>[22m[39m[90m 51 |[39m   useEffect(() [33m=>[39m {[0m
+[0m [90m    |[39m   [31m[1m^[22m[39m[0m
+[0m [90m 52 |[39m     [36mconst[39m currentFiscalYear [33m=[39m fiscalYears[33m.[39mfind(fy [33m=>[39m fy[33m.[39mis_current)[0m
+[0m [90m 53 |[39m     [36mif[39m (currentFiscalYear [33m&&[39m [33m![39mfiscalYearId) {[0m
+[0m [90m 54 |[39m       setFiscalYearId(currentFiscalYear[33m.[39mid)[0m
+ GET /plans 200 in 111ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 143ms (1836 modules)
+ ⨯ components/plans/CreatePlanDialog.tsx (147:24) @ fiscalYearId
+ ⨯ ReferenceError: fiscalYearId is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:203:52)
+digest: "1622792596"
+[0m [90m 145 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"fiscal-year"[39m[33m>[39m[33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
+[0m [90m 146 |[39m               [33m<[39m[33mSelect[39m[0m
+[0m[31m[1m>[22m[39m[90m 147 |[39m                 value[33m=[39m{fiscalYearId}[0m
+[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
+[0m [90m 148 |[39m                 onValueChange[33m=[39m{setFiscalYearId}[0m
+[0m [90m 149 |[39m                 disabled[33m=[39m{isSubmitting}[0m
+[0m [90m 150 |[39m               [33m>[39m[0m
+ GET /plans 200 in 150ms
+ ✓ Compiled in 147ms (1836 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ components/plans/CreatePlanDialog.tsx (162:24) @ fiscalYearId
+ ⨯ ReferenceError: fiscalYearId is not defined
+    at CreatePlanDialog (./components/plans/CreatePlanDialog.tsx:216:52)
+digest: "3065747824"
+[0m [90m 160 |[39m               [33m<[39m[33mLabel[39m htmlFor[33m=[39m[32m"fiscal-year"[39m[33m>[39m[33mFiscal[39m [33mYear[39m[33m<[39m[33m/[39m[33mLabel[39m[33m>[39m[0m
+[0m [90m 161 |[39m               [33m<[39m[33mSelect[39m[0m
+[0m[31m[1m>[22m[39m[90m 162 |[39m                 value[33m=[39m{fiscalYearId}[0m
+[0m [90m     |[39m                        [31m[1m^[22m[39m[0m
+[0m [90m 163 |[39m                 onValueChange[33m=[39m{setFiscalYearId}[0m
+[0m [90m 164 |[39m                 disabled[33m=[39m{isSubmitting}[0m
+[0m [90m 165 |[39m               [33m>[39m[0m
+ GET /plans 200 in 46ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 169ms (1836 modules)
+ GET /plans 200 in 163ms
+ ✓ Compiled in 133ms (1836 modules)
+ ⨯ app/actions/strategic-plans.ts (44:11) @ getStrategicPlans
+ ⨯ Error: Unauthorized
+    at getStrategicPlans (./app/actions/strategic-plans.ts:32:15)
+    at async Promise.all (index 0)
+    at async PlansContent (plans/page.tsx:91:60)
+digest: "2114528784"
+[0m [90m 42 |[39m[0m
+[0m [90m 43 |[39m   [36mif[39m ([33m![39mcurrentUser) {[0m
+[0m[31m[1m>[22m[39m[90m 44 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Unauthorized'[39m)[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 45 |[39m   }[0m
+[0m [90m 46 |[39m[0m
+[0m [90m 47 |[39m   [90m// Get user's municipality and role[39m[0m
+ GET /plans 307 in 26ms

@@ -58,11 +58,12 @@ export function CreatePlanDialog({
       const endYear = fiscalYears.find((fy) => fy.id === endFiscalYearId)
       
       // Clear end year if it's now earlier than the new start year
-      if (startYear && endYear && endYear.year < startYear.year) {
+      if (startYear && endYear && endYear.year <= startYear.year) {
         setEndFiscalYearId('')
       }
     }
   }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,13 +74,19 @@ export function CreatePlanDialog({
       return
     }
 
-    // Validate: end year must not be less than start year (can be equal for single-year plans)
+    // Validate: end year must be different from and after start year
     const startYear = fiscalYears.find((fy) => fy.id === startFiscalYearId)
     const endYear = fiscalYears.find((fy) => fy.id === endFiscalYearId)
 
-    if (startYear && endYear && endYear.year < startYear.year) {
-      setError('End fiscal year cannot be earlier than start fiscal year')
-      return
+    if (startYear && endYear) {
+      if (endYear.year < startYear.year) {
+        setError('End fiscal year cannot be earlier than start fiscal year')
+        return
+      }
+      if (endYear.year === startYear.year) {
+        setError('End fiscal year must be different from start fiscal year (multi-year plans only)')
+        return
+      }
     }
 
     setIsSubmitting(true)
@@ -116,7 +123,7 @@ export function CreatePlanDialog({
           <DialogHeader>
             <DialogTitle>Create New Strategic Plan</DialogTitle>
             <DialogDescription>
-              Create a new 3-year strategic plan for your department.
+              Create a new multi-year strategic plan for your department.
             </DialogDescription>
           </DialogHeader>
 
@@ -184,10 +191,10 @@ export function CreatePlanDialog({
                 <SelectContent>
                   {fiscalYears
                     .filter((fy) => {
-                      // Only show fiscal years that are >= start year
+                      // Only show fiscal years that are > start year
                       if (!startFiscalYearId) return true
                       const startYear = fiscalYears.find((f) => f.id === startFiscalYearId)
-                      return startYear ? fy.year >= startYear.year : true
+                      return startYear ? fy.year > startYear.year : true
                     })
                     .map((fy) => (
                       <SelectItem key={fy.id} value={fy.id}>

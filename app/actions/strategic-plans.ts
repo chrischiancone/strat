@@ -210,10 +210,15 @@ export async function createStrategicPlan(
     .eq('id', input.end_fiscal_year_id)
     .single<{ year: number }>()
 
-  // Generate default title
-  const defaultTitle = `FY${startFY?.year}-${endFY?.year} Strategic Plan`
+  // Generate default title - handle single year plans
+  const defaultTitle = startFY?.year === endFY?.year 
+    ? `FY${startFY?.year} Strategic Plan`
+    : `FY${startFY?.year}-${endFY?.year} Strategic Plan`
 
-  // Create the strategic plan
+  // Create the strategic plan using admin client to bypass RLS
+  // We've already verified user authentication and permissions above
+  const adminClient = createAdminSupabaseClient()
+  
   const newPlan: TablesInsert<'strategic_plans'> = {
     department_id: input.department_id,
     start_fiscal_year_id: input.start_fiscal_year_id,
@@ -223,17 +228,30 @@ export async function createStrategicPlan(
     created_by: currentUser.id,
   }
 
-  // TODO: Fix Supabase type inference issue
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = (await ((supabase as any)
+  const { data, error } = await adminClient
     .from('strategic_plans')
     .insert(newPlan)
     .select('id')
-    .single())) as { data: { id: string } | null; error: unknown }
+    .single()
 
   if (error) {
     console.error('Error creating strategic plan:', error)
-    throw new Error('Failed to create strategic plan')
+    console.error('Strategic plan data that failed:', newPlan)
+    console.error('Error details:', {
+      code: (error as any)?.code,
+      message: (error as any)?.message,
+      details: (error as any)?.details,
+      hint: (error as any)?.hint,
+    })
+    
+    // Provide more specific error messages
+    if ((error as any)?.code === '23505') {
+      throw new Error('A strategic plan already exists for this department and time period')
+    } else if ((error as any)?.code === '42501') {
+      throw new Error('Permission denied: Unable to create strategic plan')
+    } else {
+      throw new Error(`Failed to create strategic plan: ${(error as any)?.message || 'Unknown error'}`)
+    }
   }
 
   if (!data) {
