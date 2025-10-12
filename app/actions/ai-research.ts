@@ -1262,7 +1262,7 @@ export async function generateExecutiveSummary(planId: string): Promise<string> 
   // Calculate total investment
   let totalInvestment = 0
   let initiativeCount = 0
-  let priorityBreakdown = { NEED: 0, WANT: 0, NICE_TO_HAVE: 0 }
+  const priorityBreakdown = { NEED: 0, WANT: 0, NICE_TO_HAVE: 0 }
 
   goalsData?.forEach(goal => {
     goal.initiatives?.forEach(initiative => {
@@ -1281,9 +1281,9 @@ export async function generateExecutiveSummary(planId: string): Promise<string> 
   const departmentVision = planData.department_vision || ''
 
   // Extract key data points
-  const swotData = planData.swot_analysis as any
-  const envScanData = planData.environmental_scan as any
-  const benchmarkingData = planData.benchmarking_data as any
+  const swotData = planData.swot_analysis as Record<string, string[] | number>
+  const envScanData = planData.environmental_scan as Record<string, string[] | number>
+  const benchmarkingData = planData.benchmarking_data as Record<string, string[] | number>
 
   const swotSummary = swotData ? {
     strengths: swotData.strengths?.length || 0,
@@ -1424,7 +1424,7 @@ Write a comprehensive, professional executive summary (800-1000 words) that:
 
 Use professional, confident language appropriate for city leadership and elected officials. Focus on demonstrating clear value, measurable impact, and strategic alignment with established council priorities.
 
-**RESPONSE FORMAT**: Return ONLY the Markdown-formatted executive summary text. Do not include any preamble, explanations, or additional commentary.
+**RESPONSE FORMAT**: Return ONLY the Markdown-formatted executive summary text. Do not include any preamble, explanations, or additional commentary.`
 
   console.log('AI Research (Executive Summary): Calling Perplexity API...')
   const response = await callPerplexityApi([
@@ -1520,14 +1520,14 @@ export async function generateStrategicGoals(planId: string): Promise<StrategicG
   const directorName = planData.departments?.director_name || 'Department Director'
 
   // Process SWOT data
-  const swotData = planData.swot_analysis as any
+  const swotData = planData.swot_analysis as Record<string, string[] | number>
   const strengths = swotData?.strengths || []
   const weaknesses = swotData?.weaknesses || []
   const opportunities = swotData?.opportunities || []
   const threats = swotData?.threats || []
 
   // Process Environmental Scan data
-  const envScanData = planData.environmental_scan as any
+  const envScanData = planData.environmental_scan as Record<string, string[] | number>
   const demographics = envScanData?.demographic_trends || []
   const economics = envScanData?.economic_factors || []
   const regulatory = envScanData?.regulatory_changes || []
@@ -1535,9 +1535,9 @@ export async function generateStrategicGoals(planId: string): Promise<StrategicG
   const community = envScanData?.community_expectations || []
 
   // Process Benchmarking data
-  const benchmarkingData = planData.benchmarking_data as any
-  const peerMunicipalities = benchmarkingData?.peer_municipalities || []
-  const performanceMetrics = benchmarkingData?.metrics || []
+  const benchmarkingData = planData.benchmarking_data as Record<string, string[] | number>
+  const _peerMunicipalities = benchmarkingData?.peer_municipalities || []
+  const _performanceMetrics = benchmarkingData?.metrics || []
   const keyFindings = benchmarkingData?.key_findings || []
 
   // Organize Council Goals by category
@@ -1545,7 +1545,7 @@ export async function generateStrategicGoals(planId: string): Promise<StrategicG
   const focusAreas = councilGoals?.filter(goal => goal.category === 'focus_area') || []
 
   // Build comprehensive context for AI
-  const currentYear = new Date().getFullYear()
+  const _currentYear = new Date().getFullYear()
   const prompt = `You are an expert strategic planning consultant developing strategic goals for a municipal department. Analyze all available strategic data to create 3-5 comprehensive strategic goals.
 
 **DEPARTMENT CONTEXT:**
@@ -1643,7 +1643,7 @@ Do not include any text before or after the JSON array. Ensure all strings are p
     let content = response.content.trim()
     
     // Try to find JSON array in the response
-    let jsonMatch = content.match(/\[\s*\{[\s\S]*\}\s*\]/)
+    const jsonMatch = content.match(/\[\s*\{[\s\S]*\}\s*\]/)
     
     if (!jsonMatch) {
       // If no array found, try to find individual objects and wrap in array
@@ -1677,7 +1677,7 @@ Do not include any text before or after the JSON array. Ensure all strings are p
     const jsonString = jsonMatch ? jsonMatch[0] : content
     
     // Fix common JSON issues
-    let cleanJson = jsonString
+    const cleanJson = jsonString
       .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*):/g, '$1"$2":') // Add quotes to keys
       .replace(/:\s*([^\[\{"\s][^,\}\]]*)/g, (match, p1) => {
         // Add quotes to string values that aren't already quoted
