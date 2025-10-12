@@ -64,20 +64,21 @@ export function CreateFiscalYearForm({ hasActiveFiscalYear = false }: CreateFisc
       )}
 
       <div>
-        <Label htmlFor="yearName">
-          Year Name <span className="text-red-500">*</span>
+        <Label htmlFor="year">
+          Year <span className="text-red-500">*</span>
         </Label>
         <Input
-          id="yearName"
-          {...register('yearName')}
-          placeholder="FY 2025"
+          id="year"
+          type="number"
+          {...register('year', { valueAsNumber: true })}
+          placeholder="2025"
           className="mt-1"
         />
         <p className="mt-1 text-xs text-gray-500">
-          e.g., &quot;FY 2025&quot; or &quot;2024-2025&quot;
+          e.g., &quot;2025&quot; for FY 2025
         </p>
-        {errors.yearName && (
-          <p className="mt-1 text-sm text-red-600">{errors.yearName.message}</p>
+        {errors.year && (
+          <p className="mt-1 text-sm text-red-600">{errors.year.message}</p>
         )}
       </div>
 

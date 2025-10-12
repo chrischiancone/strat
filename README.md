@@ -157,4 +157,8 @@ Proprietary - Municipal Government Internal Use
 
 For questions or issues, contact the development team.
 
+Chris's Notes
+
 claude --dangerously-skip-permissions
+
+find docs -name "*.md" -type f | grep -v "docs/Word" | while read file; do relative_path="${file#docs/}"; output_file="docs/Word/${relative_path%.md}.docx"; mkdir -p "$(dirname "$output_file")"; pandoc "$file" -o "$output_file"; echo "Converted: $file -> $output_file"; done

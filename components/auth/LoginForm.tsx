@@ -13,14 +13,20 @@ export function LoginForm() {
     setLoading(true)
     setError(null)
 
-    const result = await signIn(formData)
+    try {
+      const result = await signIn(formData)
 
-    if (result?.error) {
-      setError(result.error)
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
+      } else if (result?.success) {
+        router.push('/dashboard')
+        router.refresh()
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Unexpected failure, please check server logs for more information')
       setLoading(false)
-    } else {
-      router.push('/dashboard')
-      router.refresh()
     }
   }
 

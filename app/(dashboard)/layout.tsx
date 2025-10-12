@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header'
 import { Sidebar } from '@/components/layout/Sidebar'
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { Toaster } from '@/components/ui/toaster'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -19,12 +20,24 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
+  // Fetch user profile for header
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('full_name, email, role, department_id')
+    .eq('id', user.id)
+    .single<{ full_name: string; email: string; role: string; department_id: string | null }>()
+
   return (
     <div className="flex h-screen flex-col">
-      <Header />
+      <Header user={userProfile || undefined} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6">{children}</main>
+        <Sidebar userRole={userProfile?.role} />
+        <main className="flex flex-1 flex-col overflow-y-auto bg-gray-50">
+          <div className="border-b border-gray-200 bg-white px-6 py-4">
+            <Breadcrumbs />
+          </div>
+          <div className="flex-1 p-6">{children}</div>
+        </main>
       </div>
       <Toaster />
     </div>

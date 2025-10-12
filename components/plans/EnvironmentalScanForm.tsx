@@ -83,15 +83,13 @@ export function EnvironmentalScanForm({
 }: EnvironmentalScanFormProps) {
   const { toast } = useToast()
 
-  const [scan, setScan] = useState<EnvironmentalScanData>(
-    initialScan || {
-      demographic_trends: [],
-      economic_factors: [],
-      regulatory_changes: [],
-      technology_trends: [],
-      community_expectations: [],
-    }
-  )
+  const [scan, setScan] = useState<EnvironmentalScanData>({
+    demographic_trends: initialScan?.demographic_trends || [],
+    economic_factors: initialScan?.economic_factors || [],
+    regulatory_changes: initialScan?.regulatory_changes || [],
+    technology_trends: initialScan?.technology_trends || [],
+    community_expectations: initialScan?.community_expectations || [],
+  })
 
   const [expandedCategories, setExpandedCategories] = useState<Set<ScanCategory>>(
     new Set(['demographic_trends'])

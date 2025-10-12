@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Eye, Pencil } from 'lucide-react'
 
 interface PlansTableProps {
@@ -27,32 +28,18 @@ export function PlansTable({ plans }: PlansTableProps) {
     })
   }
 
-  const getStatusBadge = (status: string) => {
-    const statusStyles: Record<string, string> = {
-      draft: 'bg-gray-100 text-gray-800',
-      under_review: 'bg-yellow-100 text-yellow-800',
-      approved: 'bg-green-100 text-green-800',
-      active: 'bg-blue-100 text-blue-800',
-      archived: 'bg-gray-100 text-gray-600',
+  const getPlanStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'info'; label: string }> = {
+      draft: { variant: 'secondary', label: 'Draft' },
+      under_review: { variant: 'warning', label: 'Under Review' },
+      approved: { variant: 'success', label: 'Approved' },
+      active: { variant: 'info', label: 'Active' },
+      archived: { variant: 'secondary', label: 'Archived' },
     }
 
-    const statusLabels: Record<string, string> = {
-      draft: 'Draft',
-      under_review: 'Under Review',
-      approved: 'Approved',
-      active: 'Active',
-      archived: 'Archived',
-    }
+    const config = statusConfig[status] || statusConfig.draft
 
-    return (
-      <span
-        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-          statusStyles[status] || statusStyles.draft
-        }`}
-      >
-        {statusLabels[status] || status}
-      </span>
-    )
+    return <Badge variant={config.variant}>{config.label}</Badge>
   }
 
   return (
@@ -78,7 +65,7 @@ export function PlansTable({ plans }: PlansTableProps) {
               <TableCell>
                 {plan.start_year} - {plan.end_year}
               </TableCell>
-              <TableCell>{getStatusBadge(plan.status)}</TableCell>
+              <TableCell>{getPlanStatusBadge(plan.status)}</TableCell>
               <TableCell className="text-sm text-gray-600">
                 {formatDate(plan.updated_at)}
               </TableCell>

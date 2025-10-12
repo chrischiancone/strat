@@ -63,13 +63,11 @@ export function BenchmarkingDataForm({
 }: BenchmarkingDataFormProps) {
   const { toast } = useToast()
 
-  const [data, setData] = useState<BenchmarkingData>(
-    initialData || {
-      peer_municipalities: [],
-      metrics: [],
-      key_findings: [],
-    }
-  )
+  const [data, setData] = useState<BenchmarkingData>({
+    peer_municipalities: initialData?.peer_municipalities || [],
+    metrics: initialData?.metrics || [],
+    key_findings: initialData?.key_findings || [],
+  })
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editMode, setEditMode] = useState<EditMode>(null)

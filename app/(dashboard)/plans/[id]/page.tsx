@@ -10,6 +10,11 @@ import { KpiProgressList } from '@/components/dashboard/KpiProgressList'
 import { SwotAnalysisDisplay } from '@/components/plans/SwotAnalysisDisplay'
 import { EnvironmentalScanDisplay } from '@/components/plans/EnvironmentalScanDisplay'
 import { BenchmarkingDataDisplay } from '@/components/plans/BenchmarkingDataDisplay'
+import { CommentsSection } from '@/components/comments/CommentsSection'
+import { PlanStatusBadge } from '@/components/plans/PlanStatusBadge'
+import { PlanApprovalActions } from '@/components/plans/PlanApprovalActions'
+import { ApprovalHistory } from '@/components/plans/ApprovalHistory'
+import type { PlanStatus } from '@/app/actions/plan-approval'
 
 interface PageProps {
   params: Promise<{
@@ -21,19 +26,38 @@ export default async function PlanDashboardPage({ params }: PageProps) {
   const { id } = await params
 
   let dashboardData
+  let userRole: string | null = null
+  let userId: string | null = null
+  let isOwner = false
+
   try {
     dashboardData = await getDashboardData(id)
+
+    // Get user role to determine permissions
+    const { createServerSupabaseClient } = await import('@/lib/supabase/server')
+    const supabase = createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+      userId = user.id
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single<{ role: string }>()
+
+      userRole = profile?.role || null
+      isOwner = dashboardData.plan.created_by === user.id
+    }
   } catch (error) {
     console.error('Error loading dashboard:', error)
     notFound()
   }
 
-  const formatStatus = (status: string) => {
-    return status
-      .split('_')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
+
+  // City Manager has read-only access
+  const canEdit = userRole !== 'city_manager'
+  const backLink = userRole === 'city_manager' ? '/city-manager' : '/plans'
 
   return (
     <div className="flex h-full flex-col">
@@ -41,12 +65,19 @@ export default async function PlanDashboardPage({ params }: PageProps) {
       <div className="border-b border-gray-200 bg-white px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/plans">
+            <Link href={backLink}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
             <div>
+              <div className="text-xs text-gray-500 mb-1">
+                {userRole === 'city_manager' ? (
+                  <>City Manager Dashboard &gt; {dashboardData.plan.department_name}</>
+                ) : (
+                  <>My Plans</>
+                )}
+              </div>
               <h1 className="text-2xl font-semibold text-gray-900">
                 {dashboardData.plan.title || 'Strategic Plan'}
               </h1>
@@ -58,15 +89,29 @@ export default async function PlanDashboardPage({ params }: PageProps) {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
-              {formatStatus(dashboardData.plan.status)}
-            </span>
-            <Link href={`/plans/${id}/edit`}>
-              <Button>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit Plan
-              </Button>
-            </Link>
+            <PlanStatusBadge status={dashboardData.plan.status as PlanStatus} />
+
+            {/* Approval Actions */}
+            {userId && (
+              <PlanApprovalActions
+                planId={id}
+                currentStatus={dashboardData.plan.status as PlanStatus}
+                userRole={userRole || ''}
+                isOwner={isOwner}
+              />
+            )}
+
+            {canEdit && (
+              <Link href={`/plans/${id}/edit`}>
+                <Button variant="outline">
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit Plan
+                </Button>
+              </Link>
+            )}
+            {!canEdit && userRole === 'city_manager' && (
+              <span className="text-sm text-gray-500 italic">Read-only view</span>
+            )}
           </div>
         </div>
       </div>
@@ -101,6 +146,20 @@ export default async function PlanDashboardPage({ params }: PageProps) {
 
             {/* KPI Progress */}
             <KpiProgressList data={dashboardData} />
+
+            {/* Approval History */}
+            <ApprovalHistory planId={id} />
+
+            {/* Comments Section */}
+            {userId && (
+              <CommentsSection
+                entityType="strategic_plan"
+                entityId={id}
+                currentUserId={userId}
+                currentUserRole={userRole || undefined}
+                entityOwnerId={dashboardData.plan.created_by}
+              />
+            )}
           </div>
         </div>
       </div>

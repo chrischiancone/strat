@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 export default async function NewFiscalYearPage() {
   // Check if there's already an active fiscal year
   const fiscalYears = await getFiscalYears()
-  const hasActiveFiscalYear = fiscalYears.some((fy) => fy.is_active)
+  const hasActiveFiscalYear = fiscalYears.some((fy) => fy.is_current)
 
   return (
     <div className="flex h-full flex-col">

@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { TablesInsert } from '@/types/database'
 
@@ -772,4 +773,236 @@ export async function updateBenchmarkingData(
   revalidatePath(`/plans/${planId}`)
   revalidatePath(`/plans/${planId}/edit`)
   revalidatePath('/plans')
+}
+
+// ==================== CITY MANAGER DASHBOARD ====================
+
+export interface CityManagerPlanSummary {
+  id: string
+  department_id: string
+  department_name: string
+  title: string | null
+  status: string
+  start_year: number
+  end_year: number
+  total_budget: number
+  initiative_count: number
+  updated_at: string
+}
+
+export interface DashboardFilters {
+  status?: string
+  fiscal_year_id?: string
+  department_id?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+export interface DashboardSummaryStats {
+  total_plans: number
+  total_budget: number
+  plans_by_status: {
+    draft: number
+    under_review: number
+    approved: number
+    active: number
+    archived: number
+  }
+}
+
+export async function getCityManagerDashboard(
+  filters: DashboardFilters = {}
+): Promise<{
+  plans: CityManagerPlanSummary[]
+  stats: DashboardSummaryStats
+}> {
+  const supabase = createServerSupabaseClient()
+  const adminClient = createAdminSupabaseClient()
+
+  // Get current user
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Get user's municipality and role
+  const { data: currentUserProfile } = await supabase
+    .from('users')
+    .select('municipality_id, role')
+    .eq('id', currentUser.id)
+    .single<{ municipality_id: string; role: string }>()
+
+  if (!currentUserProfile) {
+    throw new Error('User profile not found')
+  }
+
+  // Only City Manager can access this dashboard
+  if (currentUserProfile.role !== 'city_manager') {
+    throw new Error('Access denied: City Manager role required')
+  }
+
+  const { sortBy = 'updated_at', sortOrder = 'desc' } = filters
+
+  // Fetch all strategic plans for the municipality using admin client
+  let query = adminClient
+    .from('strategic_plans')
+    .select(`
+      id,
+      department_id,
+      title,
+      status,
+      updated_at,
+      departments:department_id (
+        name,
+        municipality_id
+      ),
+      start_fiscal_year:start_fiscal_year_id (year),
+      end_fiscal_year:end_fiscal_year_id (year)
+    `)
+
+  // Apply filters
+  if (filters.status) {
+    query = query.eq('status', filters.status)
+  }
+
+  if (filters.fiscal_year_id) {
+    query = query.or(`start_fiscal_year_id.eq.${filters.fiscal_year_id},end_fiscal_year_id.eq.${filters.fiscal_year_id}`)
+  }
+
+  if (filters.department_id) {
+    query = query.eq('department_id', filters.department_id)
+  }
+
+  const { data: plansData, error: plansError } = await query
+
+  if (plansError) {
+    console.error('Error fetching plans for City Manager dashboard:', plansError)
+    throw new Error('Failed to fetch strategic plans')
+  }
+
+  // Filter by municipality and transform data
+  interface PlanQueryResult {
+    id: string
+    department_id: string
+    title: string | null
+    status: string
+    updated_at: string
+    departments: { name: string; municipality_id: string } | null
+    start_fiscal_year: { year: number } | null
+    end_fiscal_year: { year: number } | null
+  }
+
+  const filteredPlans = (plansData as unknown as PlanQueryResult[] || []).filter(
+    (plan) => plan.departments?.municipality_id === currentUserProfile.municipality_id
+  )
+
+  // Get budget and initiative counts for each plan
+  const plansWithAggregates = await Promise.all(
+    filteredPlans.map(async (plan) => {
+      // Get initiative count and total budget
+      const { data: goals } = await adminClient
+        .from('strategic_goals')
+        .select('id')
+        .eq('strategic_plan_id', plan.id)
+
+      const goalIds = (goals || []).map((g: { id: string }) => g.id)
+
+      let initiativeCount = 0
+      let totalBudget = 0
+
+      if (goalIds.length > 0) {
+        const { data: initiatives } = await adminClient
+          .from('initiatives')
+          .select('id')
+          .in('strategic_goal_id', goalIds)
+
+        initiativeCount = initiatives?.length || 0
+
+        if (initiativeCount > 0) {
+          const initiativeIds = (initiatives || []).map((i: { id: string }) => i.id)
+          const { data: budgets } = await adminClient
+            .from('initiative_budgets')
+            .select('budget_data')
+            .in('initiative_id', initiativeIds)
+
+          totalBudget = (budgets || []).reduce((sum: number, budget: { budget_data: { total_amount?: number } }) => {
+            return sum + (budget.budget_data?.total_amount || 0)
+          }, 0)
+        }
+      }
+
+      return {
+        id: plan.id,
+        department_id: plan.department_id,
+        department_name: plan.departments?.name || 'Unknown',
+        title: plan.title,
+        status: plan.status,
+        start_year: plan.start_fiscal_year?.year || 0,
+        end_year: plan.end_fiscal_year?.year || 0,
+        total_budget: totalBudget,
+        initiative_count: initiativeCount,
+        updated_at: plan.updated_at,
+      }
+    })
+  )
+
+  // Sort plans
+  const sortedPlans = plansWithAggregates.sort((a, b) => {
+    let aVal: string | number = ''
+    let bVal: string | number = ''
+
+    switch (sortBy) {
+      case 'department_name':
+        aVal = a.department_name
+        bVal = b.department_name
+        break
+      case 'title':
+        aVal = a.title || ''
+        bVal = b.title || ''
+        break
+      case 'status':
+        aVal = a.status
+        bVal = b.status
+        break
+      case 'start_year':
+        aVal = a.start_year
+        bVal = b.start_year
+        break
+      case 'total_budget':
+        aVal = a.total_budget
+        bVal = b.total_budget
+        break
+      case 'initiative_count':
+        aVal = a.initiative_count
+        bVal = b.initiative_count
+        break
+      default:
+        aVal = a.updated_at
+        bVal = b.updated_at
+    }
+
+    if (sortOrder === 'asc') {
+      return aVal > bVal ? 1 : -1
+    } else {
+      return aVal < bVal ? 1 : -1
+    }
+  })
+
+  const plans = sortedPlans
+
+  // Calculate summary stats
+  const stats: DashboardSummaryStats = {
+    total_plans: plans.length,
+    total_budget: plans.reduce((sum, plan) => sum + plan.total_budget, 0),
+    plans_by_status: {
+      draft: plans.filter((p) => p.status === 'draft').length,
+      under_review: plans.filter((p) => p.status === 'under_review').length,
+      approved: plans.filter((p) => p.status === 'approved').length,
+      active: plans.filter((p) => p.status === 'active').length,
+      archived: plans.filter((p) => p.status === 'archived').length,
+    },
+  }
+
+  return { plans, stats }
 }

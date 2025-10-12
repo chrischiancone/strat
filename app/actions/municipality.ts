@@ -8,11 +8,22 @@ import { revalidatePath } from 'next/cache'
 export interface Municipality {
   id: string
   name: string
-  state: string | null
-  contact_name: string | null
-  contact_email: string | null
-  contact_phone: string | null
-  website_url: string | null
+  slug: string
+  state: string
+  settings: {
+    contact_name?: string
+    contact_email?: string
+    contact_phone?: string
+    website_url?: string
+    timezone?: string
+    fiscal_year_start_month?: number
+    currency?: string
+    features?: {
+      ai_assistance?: boolean
+      public_dashboard?: boolean
+      multi_department_collaboration?: boolean
+    }
+  } | null
 }
 
 export async function getMunicipality(): Promise<Municipality | null> {
@@ -41,11 +52,9 @@ export async function getMunicipality(): Promise<Municipality | null> {
     .select(`
       id,
       name,
+      slug,
       state,
-      contact_name,
-      contact_email,
-      contact_phone,
-      website_url
+      settings
     `)
     .eq('id', currentUserProfile.municipality_id)
     .single()
@@ -65,18 +74,29 @@ export async function updateMunicipality(municipalityId: string, input: UpdateMu
 
     const adminClient = createAdminSupabaseClient()
 
-    // Update municipality
+    // Get existing settings first
+    const { data: existingMunicipality } = await adminClient
+      .from('municipalities')
+      .select('settings')
+      .eq('id', municipalityId)
+      .single()
+    
+    const existingSettings = existingMunicipality?.settings || {}
+    
+    // Update municipality with merged settings
     const { error: updateError } = await adminClient
       .from('municipalities')
       .update({
         name: validatedInput.name,
-        state: validatedInput.state || null,
-        contact_name: validatedInput.contactName || null,
-        contact_email: validatedInput.contactEmail || null,
-        contact_phone: validatedInput.contactPhone || null,
-        website_url: validatedInput.websiteUrl || null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+        state: validatedInput.state || existingSettings.state || 'TX',
+        settings: {
+          ...existingSettings,
+          contact_name: validatedInput.contactName || null,
+          contact_email: validatedInput.contactEmail || null,
+          contact_phone: validatedInput.contactPhone || null,
+          website_url: validatedInput.websiteUrl || null,
+        }
+      })
       .eq('id', municipalityId)
 
     if (updateError) {

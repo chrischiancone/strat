@@ -68,10 +68,10 @@ export function FiscalYearsTable({
           <TableRow>
             <TableHead>
               <button
-                onClick={() => handleSort('year_name')}
+                onClick={() => handleSort('year')}
                 className="flex items-center gap-1 font-medium hover:text-gray-900"
               >
-                Year {getSortIcon('year_name')}
+                Year {getSortIcon('year')}
               </button>
             </TableHead>
             <TableHead>
@@ -92,10 +92,10 @@ export function FiscalYearsTable({
             </TableHead>
             <TableHead>
               <button
-                onClick={() => handleSort('is_active')}
+                onClick={() => handleSort('is_current')}
                 className="flex items-center gap-1 font-medium hover:text-gray-900"
               >
-                Status {getSortIcon('is_active')}
+                Status {getSortIcon('is_current')}
               </button>
             </TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -103,10 +103,10 @@ export function FiscalYearsTable({
         </TableHeader>
         <TableBody>
           {fiscalYears.map((fy) => (
-            <TableRow key={fy.id} className={fy.is_active ? 'bg-blue-50' : ''}>
+            <TableRow key={fy.id} className={fy.is_current ? 'bg-blue-50' : ''}>
               <TableCell className="font-medium">
-                {fy.year_name}
-                {fy.is_active && (
+                {fy.year}
+                {fy.is_current && (
                   <span className="ml-2 text-xs">⭐</span>
                 )}
               </TableCell>
@@ -119,12 +119,12 @@ export function FiscalYearsTable({
               <TableCell>
                 <span
                   className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                    fy.is_active
+                    fy.is_current
                       ? 'bg-green-100 text-green-800'
                       : 'bg-gray-100 text-gray-800'
                   }`}
                 >
-                  {fy.is_active ? 'Active' : 'Inactive'}
+                  {fy.is_current ? 'Current' : 'Inactive'}
                 </span>
               </TableCell>
               <TableCell className="text-right">

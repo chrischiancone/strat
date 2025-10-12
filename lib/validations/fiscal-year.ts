@@ -1,10 +1,11 @@
 import { z } from 'zod'
 
 const fiscalYearBaseSchema = z.object({
-  yearName: z
-    .string()
-    .min(2, 'Year name must be at least 2 characters')
-    .max(50, 'Year name must be less than 50 characters'),
+  year: z
+    .number()
+    .int('Year must be an integer')
+    .min(2000, 'Year must be 2000 or later')
+    .max(2100, 'Year must be 2100 or earlier'),
   startDate: z
     .string()
     .min(1, 'Start date is required')

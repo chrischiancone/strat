@@ -24,15 +24,15 @@ export default async function EditFiscalYearPage({ params }: PageProps) {
 
   const fiscalYear = fiscalYearData as {
     id: string
-    year_name: string
+    year: number
     start_date: string
     end_date: string
-    is_active: boolean | null
+    is_current: boolean | null
   }
 
   // Check if there's another active fiscal year
   const hasOtherActiveFiscalYear = allFiscalYears.some(
-    (fy) => fy.is_active && fy.id !== id
+    (fy) => fy.is_current && fy.id !== id
   )
 
   return (
@@ -46,7 +46,7 @@ export default async function EditFiscalYearPage({ params }: PageProps) {
           </Link>
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">
-              Edit Fiscal Year: {fiscalYear.year_name}
+              Edit Fiscal Year: FY {fiscalYear.year}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Update fiscal year information and configuration

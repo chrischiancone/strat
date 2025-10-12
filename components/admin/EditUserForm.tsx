@@ -52,6 +52,7 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<UpdateUserInput>({
     resolver: zodResolver(updateUserSchema),
@@ -65,6 +66,7 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
   })
 
   const selectedRole = watch('role')
+  const isActive = watch('isActive')
   const requiresDepartment = selectedRole ? rolesThatRequireDepartment.includes(selectedRole) : false
 
   const onSubmit = async (data: UpdateUserInput) => {
@@ -195,8 +197,8 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              {...register('isActive')}
-              value="true"
+              checked={isActive === true}
+              onChange={() => setValue('isActive', true, { shouldValidate: true })}
               className="h-4 w-4 text-blue-600"
             />
             <span className="text-sm text-gray-700">Active</span>
@@ -204,8 +206,8 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
           <label className="flex items-center gap-2">
             <input
               type="radio"
-              {...register('isActive')}
-              value="false"
+              checked={isActive === false}
+              onChange={() => setValue('isActive', false, { shouldValidate: true })}
               className="h-4 w-4 text-blue-600"
             />
             <span className="text-sm text-gray-700">Inactive</span>

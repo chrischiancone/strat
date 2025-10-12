@@ -12,11 +12,22 @@ import { Label } from '@/components/ui/label'
 interface Municipality {
   id: string
   name: string
-  state: string | null
-  contact_name: string | null
-  contact_email: string | null
-  contact_phone: string | null
-  website_url: string | null
+  slug: string
+  state: string
+  settings: {
+    contact_name?: string
+    contact_email?: string
+    contact_phone?: string
+    website_url?: string
+    timezone?: string
+    fiscal_year_start_month?: number
+    currency?: string
+    features?: {
+      ai_assistance?: boolean
+      public_dashboard?: boolean
+      multi_department_collaboration?: boolean
+    }
+  } | null
 }
 
 interface EditMunicipalityFormProps {
@@ -37,10 +48,10 @@ export function EditMunicipalityForm({ municipality }: EditMunicipalityFormProps
     defaultValues: {
       name: municipality.name,
       state: municipality.state || '',
-      contactName: municipality.contact_name || '',
-      contactEmail: municipality.contact_email || '',
-      contactPhone: municipality.contact_phone || '',
-      websiteUrl: municipality.website_url || '',
+      contactName: municipality.settings?.contact_name || '',
+      contactEmail: municipality.settings?.contact_email || '',
+      contactPhone: municipality.settings?.contact_phone || '',
+      websiteUrl: municipality.settings?.website_url || '',
     },
   })
 

@@ -11,6 +11,7 @@ export interface DashboardData {
     fiscal_year_start: string
     fiscal_year_end: string
     department_name: string
+    created_by: string
     swot_analysis: SwotAnalysis | null
     environmental_scan: EnvironmentalScan | null
     benchmarking_data: BenchmarkingData | null
@@ -67,14 +68,26 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     throw new Error('Unauthorized')
   }
 
-  // Get plan metadata with department info
+  // Get plan metadata with department info and fiscal years
   const { data: plan, error: planError } = await supabase
     .from('strategic_plans')
-    .select('id, title, status, fiscal_year_start, fiscal_year_end, swot_analysis, environmental_scan, benchmarking_data, departments(name)')
+    .select(`
+      id,
+      title,
+      status,
+      created_by,
+      swot_analysis,
+      environmental_scan,
+      benchmarking_data,
+      departments(name),
+      start_fiscal_year:fiscal_years!start_fiscal_year_id(year),
+      end_fiscal_year:fiscal_years!end_fiscal_year_id(year)
+    `)
     .eq('id', planId)
     .single()
 
   if (planError || !plan) {
+    console.error('Error loading plan:', planError)
     throw new Error('Plan not found')
   }
 
@@ -82,12 +95,13 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     id: string
     title: string
     status: string
-    fiscal_year_start: string
-    fiscal_year_end: string
+    created_by: string
     swot_analysis: unknown
     environmental_scan: unknown
     benchmarking_data: unknown
     departments: { name: string }
+    start_fiscal_year: { year: number }
+    end_fiscal_year: { year: number }
   }
   const typedPlan = plan as PlanData
 
@@ -299,9 +313,10 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
       id: typedPlan.id,
       title: typedPlan.title,
       status: typedPlan.status,
-      fiscal_year_start: typedPlan.fiscal_year_start,
-      fiscal_year_end: typedPlan.fiscal_year_end,
+      fiscal_year_start: typedPlan.start_fiscal_year.year.toString(),
+      fiscal_year_end: typedPlan.end_fiscal_year.year.toString(),
       department_name: typedPlan.departments.name,
+      created_by: typedPlan.created_by,
       swot_analysis:
         typeof typedPlan.swot_analysis === 'object' && typedPlan.swot_analysis !== null
           ? (typedPlan.swot_analysis as SwotAnalysis)
@@ -321,5 +336,201 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     budgetByYear,
     budgetByFundingSource,
     kpiProgress,
+  }
+}
+
+// Main dashboard statistics
+export interface MainDashboardStats {
+  userInfo: {
+    name: string
+    email: string
+    role: string
+    departmentName: string | null
+  }
+  stats: {
+    totalPlans: number
+    activePlans: number
+    totalInitiatives: number
+    activeInitiatives: number
+    totalBudget: number
+  }
+  recentPlans: Array<{
+    id: string
+    title: string
+    status: string
+    updated_at: string
+    department_name: string
+  }>
+  recentInitiatives: Array<{
+    id: string
+    name: string
+    status: string
+    plan_id: string
+    plan_title: string
+  }>
+}
+
+export async function getMainDashboardStats(): Promise<MainDashboardStats> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Not authenticated')
+  }
+
+  // Get user profile with department
+  const { data: profile } = await supabase
+    .from('users')
+    .select('name, role, department_id, departments:department_id(name)')
+    .eq('id', user.id)
+    .single<{
+      name: string
+      role: string
+      department_id: string | null
+      departments: { name: string } | null
+    }>()
+
+  const userRole = profile?.role || 'staff'
+  const departmentId = profile?.department_id
+  const departmentName = profile?.departments?.name || null
+  const userName = profile?.name || user.email || 'User'
+
+  // Determine access level
+  const isAdmin = userRole === 'admin'
+  const isFinance = userRole === 'finance'
+  const isCityManager = userRole === 'city_manager'
+  const hasFullAccess = isAdmin || isFinance || isCityManager
+
+  // Fetch total plans
+  let plansQuery = supabase.from('strategic_plans').select('id, status', { count: 'exact' })
+  if (!hasFullAccess && departmentId) {
+    plansQuery = plansQuery.eq('department_id', departmentId)
+  }
+  const { count: totalPlans } = await plansQuery
+
+  // Fetch active plans
+  let activePlansQuery = supabase
+    .from('strategic_plans')
+    .select('id', { count: 'exact' })
+    .eq('status', 'active')
+  if (!hasFullAccess && departmentId) {
+    activePlansQuery = activePlansQuery.eq('department_id', departmentId)
+  }
+  const { count: activePlans } = await activePlansQuery
+
+  // Fetch total initiatives
+  let initiativesQuery = supabase.from('initiatives').select('id, status, plan_id', { count: 'exact' })
+  if (!hasFullAccess && departmentId) {
+    initiativesQuery = initiativesQuery.eq('strategic_plans.department_id', departmentId).select('id, status, plan_id, strategic_plans!inner(department_id)')
+  }
+  const { count: totalInitiatives } = await initiativesQuery
+
+  // Fetch active initiatives
+  let activeInitiativesQuery = supabase
+    .from('initiatives')
+    .select('id, plan_id', { count: 'exact' })
+    .eq('status', 'IN_PROGRESS')
+  if (!hasFullAccess && departmentId) {
+    activeInitiativesQuery = activeInitiativesQuery.eq('strategic_plans.department_id', departmentId).select('id, plan_id, strategic_plans!inner(department_id)')
+  }
+  const { count: activeInitiatives } = await activeInitiativesQuery
+
+  // Fetch total budget
+  let budgetQuery = supabase.from('initiatives').select('year_1_cost, year_2_cost, year_3_cost, plan_id')
+  if (!hasFullAccess && departmentId) {
+    budgetQuery = budgetQuery.eq('strategic_plans.department_id', departmentId).select('year_1_cost, year_2_cost, year_3_cost, plan_id, strategic_plans!inner(department_id)')
+  }
+  const { data: budgetData } = await budgetQuery
+
+  type InitiativeBudget = {
+    year_1_cost: number | null
+    year_2_cost: number | null
+    year_3_cost: number | null
+  }
+  const typedBudgetData = (budgetData || []) as InitiativeBudget[]
+  
+  const totalBudget = typedBudgetData.reduce((sum, init) => {
+    const year1 = init.year_1_cost || 0
+    const year2 = init.year_2_cost || 0
+    const year3 = init.year_3_cost || 0
+    return sum + year1 + year2 + year3
+  }, 0)
+
+  // Fetch recent plans (last 5)
+  let recentPlansQuery = supabase
+    .from('strategic_plans')
+    .select('id, title, status, updated_at, departments:department_id(name)')
+    .order('updated_at', { ascending: false })
+    .limit(5)
+  if (!hasFullAccess && departmentId) {
+    recentPlansQuery = recentPlansQuery.eq('department_id', departmentId)
+  }
+  const { data: recentPlansData } = await recentPlansQuery
+
+  type RecentPlan = {
+    id: string
+    title: string | null
+    status: string
+    updated_at: string
+    departments: { name: string } | null
+  }
+  const typedRecentPlansData = (recentPlansData || []) as RecentPlan[]
+  
+  const recentPlans = typedRecentPlansData.map((plan) => ({
+    id: plan.id,
+    title: plan.title || 'Untitled Plan',
+    status: plan.status,
+    updated_at: plan.updated_at,
+    department_name: plan.departments?.name || 'Unknown',
+  }))
+
+  // Fetch recent initiatives (last 5)
+  let recentInitiativesQuery = supabase
+    .from('initiatives')
+    .select('id, name, status, plan_id, strategic_plans!inner(id, title, department_id)')
+    .order('created_at', { ascending: false })
+    .limit(5)
+  if (!hasFullAccess && departmentId) {
+    recentInitiativesQuery = recentInitiativesQuery.eq('strategic_plans.department_id', departmentId)
+  }
+  const { data: recentInitiativesData } = await recentInitiativesQuery
+
+  type RecentInitiative = {
+    id: string
+    name: string
+    status: string
+    plan_id: string
+    strategic_plans: { title: string } | null
+  }
+  const typedRecentInitiativesData = (recentInitiativesData || []) as RecentInitiative[]
+  
+  const recentInitiatives = typedRecentInitiativesData.map((init) => ({
+    id: init.id,
+    name: init.name,
+    status: init.status,
+    plan_id: init.plan_id,
+    plan_title: init.strategic_plans?.title || 'Unknown Plan',
+  }))
+
+  return {
+    userInfo: {
+      name: userName,
+      email: user.email || '',
+      role: userRole,
+      departmentName,
+    },
+    stats: {
+      totalPlans: totalPlans || 0,
+      activePlans: activePlans || 0,
+      totalInitiatives: totalInitiatives || 0,
+      activeInitiatives: activeInitiatives || 0,
+      totalBudget,
+    },
+    recentPlans,
+    recentInitiatives,
   }
 }

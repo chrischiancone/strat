@@ -9,12 +9,18 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+          "border-transparent bg-primary-100 text-primary-800",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-transparent bg-gray-100 text-gray-800",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+          "border-transparent bg-red-100 text-red-800",
+        success:
+          "border-transparent bg-green-100 text-green-800",
+        warning:
+          "border-transparent bg-amber-100 text-amber-800",
+        info:
+          "border-transparent bg-blue-100 text-blue-800",
+        outline: "text-gray-700 border-gray-300",
       },
     },
     defaultVariants: {
@@ -33,4 +39,87 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   )
 }
 
-export { Badge, badgeVariants }
+// Status badge for initiative/project statuses
+interface StatusBadgeProps {
+  status: string
+  className?: string
+}
+
+function StatusBadge({ status, className }: StatusBadgeProps) {
+  // Map database status values to display values
+  const getStatusConfig = (dbStatus: string) => {
+    const normalizedStatus = dbStatus.toUpperCase()
+    
+    const variants: Record<string, { variant: BadgeProps['variant']; label: string }> = {
+      'NOT_STARTED': { variant: 'secondary', label: 'Not Started' },
+      'IN_PROGRESS': { variant: 'info', label: 'In Progress' },
+      'AT_RISK': { variant: 'warning', label: 'At Risk' },
+      'COMPLETED': { variant: 'success', label: 'Completed' },
+      'DEFERRED': { variant: 'destructive', label: 'Deferred' },
+      'ON_HOLD': { variant: 'warning', label: 'On Hold' },
+      'CANCELLED': { variant: 'destructive', label: 'Cancelled' },
+      'DRAFT': { variant: 'secondary', label: 'Draft' },
+      'UNDER_REVIEW': { variant: 'warning', label: 'Under Review' },
+      'APPROVED': { variant: 'info', label: 'Approved' },
+      'ACTIVE': { variant: 'success', label: 'Active' },
+      'ARCHIVED': { variant: 'secondary', label: 'Archived' },
+    }
+    
+    return variants[normalizedStatus] || { variant: 'secondary', label: dbStatus }
+  }
+
+  const config = getStatusConfig(status)
+
+  return (
+    <Badge variant={config.variant} className={className}>
+      {config.label}
+    </Badge>
+  )
+}
+
+// Priority badge for initiative priorities
+interface PriorityBadgeProps {
+  priority: 'NEED' | 'WANT' | 'NICE_TO_HAVE'
+  className?: string
+}
+
+function PriorityBadge({ priority, className }: PriorityBadgeProps) {
+  const variants: Record<typeof priority, { variant: BadgeProps['variant']; label: string }> = {
+    NEED: { variant: 'destructive', label: 'Need (Critical)' },
+    WANT: { variant: 'warning', label: 'Want (Important)' },
+    NICE_TO_HAVE: { variant: 'success', label: 'Nice to Have' },
+  }
+
+  const config = variants[priority] || variants.NEED
+
+  return (
+    <Badge variant={config.variant} className={className}>
+      {config.label}
+    </Badge>
+  )
+}
+
+// Funding status badge
+interface FundingStatusBadgeProps {
+  status: 'secured' | 'requested' | 'pending' | 'projected'
+  className?: string
+}
+
+function FundingStatusBadge({ status, className }: FundingStatusBadgeProps) {
+  const variants: Record<typeof status, { variant: BadgeProps['variant']; label: string }> = {
+    secured: { variant: 'success', label: 'Secured' },
+    requested: { variant: 'info', label: 'Requested' },
+    pending: { variant: 'warning', label: 'Pending' },
+    projected: { variant: 'default', label: 'Projected' },
+  }
+
+  const config = variants[status]
+
+  return (
+    <Badge variant={config.variant} className={className}>
+      {config.label}
+    </Badge>
+  )
+}
+
+export { Badge, badgeVariants, StatusBadge, PriorityBadge, FundingStatusBadge }

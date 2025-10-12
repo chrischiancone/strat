@@ -59,14 +59,12 @@ export function SwotAnalysisForm({
   onSave,
   disabled = false,
 }: SwotAnalysisFormProps) {
-  const [swot, setSwot] = useState<SwotData>(
-    initialSwot || {
-      strengths: [],
-      weaknesses: [],
-      opportunities: [],
-      threats: [],
-    }
-  )
+  const [swot, setSwot] = useState<SwotData>({
+    strengths: initialSwot?.strengths || [],
+    weaknesses: initialSwot?.weaknesses || [],
+    opportunities: initialSwot?.opportunities || [],
+    threats: initialSwot?.threats || [],
+  })
   const [showDialog, setShowDialog] = useState(false)
   const [editingCategory, setEditingCategory] = useState<SwotCategory | null>(null)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)

@@ -17,10 +17,10 @@ export interface FiscalYearFilters {
 
 export interface FiscalYear {
   id: string
-  year_name: string
+  year: number
   start_date: string
   end_date: string
-  is_active: boolean | null
+  is_current: boolean | null
 }
 
 export async function getFiscalYears(
@@ -55,10 +55,10 @@ export async function getFiscalYears(
     .from('fiscal_years')
     .select(`
       id,
-      year_name,
+      year,
       start_date,
       end_date,
-      is_active
+      is_current
     `)
     .eq('municipality_id', currentUserProfile.municipality_id)
 
@@ -82,10 +82,10 @@ export async function getFiscalYearById(fiscalYearId: string) {
     .from('fiscal_years')
     .select(`
       id,
-      year_name,
+      year,
       start_date,
       end_date,
-      is_active
+      is_current
     `)
     .eq('id', fiscalYearId)
     .single()
@@ -124,14 +124,14 @@ export async function createFiscalYear(input: CreateFiscalYearInput) {
     const municipalityId = currentUserProfile.municipality_id
     const adminClient = createAdminSupabaseClient()
 
-    // If setting this fiscal year to active, deactivate all others
+    // If setting this fiscal year to current, deactivate all others
     if (validatedInput.isActive) {
       await adminClient
         .from('fiscal_years')
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .update({ is_active: false } as any)
+        .update({ is_current: false } as any)
         .eq('municipality_id', municipalityId)
-        .eq('is_active', true)
+        .eq('is_current', true)
     }
 
     // Create fiscal year
@@ -139,10 +139,10 @@ export async function createFiscalYear(input: CreateFiscalYearInput) {
       .from('fiscal_years')
       .insert({
         municipality_id: municipalityId,
-        year_name: validatedInput.yearName,
+        year: validatedInput.year,
         start_date: validatedInput.startDate,
         end_date: validatedInput.endDate,
-        is_active: validatedInput.isActive,
+        is_current: validatedInput.isActive,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any)
       .select()
@@ -193,25 +193,25 @@ export async function updateFiscalYear(fiscalYearId: string, input: UpdateFiscal
     const municipalityId = currentUserProfile.municipality_id
     const adminClient = createAdminSupabaseClient()
 
-    // If setting this fiscal year to active, deactivate all others
+    // If setting this fiscal year to current, deactivate all others
     if (validatedInput.isActive) {
       await adminClient
         .from('fiscal_years')
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .update({ is_active: false } as any)
+        .update({ is_current: false } as any)
         .eq('municipality_id', municipalityId)
         .neq('id', fiscalYearId)
-        .eq('is_active', true)
+        .eq('is_current', true)
     }
 
     // Update fiscal year
     const { error: updateError } = await adminClient
       .from('fiscal_years')
       .update({
-        year_name: validatedInput.yearName,
+        year: validatedInput.year,
         start_date: validatedInput.startDate,
         end_date: validatedInput.endDate,
-        is_active: validatedInput.isActive,
+        is_current: validatedInput.isActive,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any)
       .eq('id', fiscalYearId)

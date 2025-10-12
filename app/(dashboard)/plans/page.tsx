@@ -3,6 +3,8 @@ import { getStrategicPlans, getFiscalYears } from '@/app/actions/strategic-plans
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { CreatePlanDialog } from '@/components/plans/CreatePlanDialog'
 import { PlansTable } from '@/components/plans/PlansTable'
+import { ListSkeleton } from '@/components/ui/skeleton'
+import { NoDataEmptyState } from '@/components/ui/empty-state'
 
 async function getUserProfile() {
   const supabase = createServerSupabaseClient()
@@ -54,12 +56,16 @@ async function getDepartments() {
   return data || []
 }
 
-function TableSkeleton() {
+function PlansSkeleton() {
   return (
-    <div className="space-y-4">
-      {[...Array(5)].map((_, i) => (
-        <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
-      ))}
+    <div className="border-b border-gray-200 bg-white px-6 py-4">
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 w-64 bg-gray-200 rounded" />
+        <div className="h-4 w-96 bg-gray-200 rounded" />
+      </div>
+      <div className="mt-8 p-6">
+        <ListSkeleton items={5} />
+      </div>
     </div>
   )
 }
@@ -97,22 +103,8 @@ async function PlansContent() {
       <div className="flex-1 overflow-auto bg-gray-50">
         <div className="mx-auto max-w-7xl p-6">
           {plans.length === 0 ? (
-            <div className="rounded-lg bg-white p-12 text-center shadow">
-              <h3 className="text-lg font-medium text-gray-900">
-                No strategic plans yet
-              </h3>
-              <p className="mt-2 text-sm text-gray-500">
-                Get started by creating your first strategic plan.
-              </p>
-              <div className="mt-6">
-                <CreatePlanDialog
-                  fiscalYears={fiscalYears}
-                  userDepartmentId={userProfile?.department_id || null}
-                  userDepartmentName={userProfile?.departments?.name || null}
-                  userRole={userProfile?.role || 'staff'}
-                  departments={departments}
-                />
-              </div>
+            <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+              <NoDataEmptyState resourceName="Strategic Plans" />
             </div>
           ) : (
             <PlansTable plans={plans} />
@@ -126,7 +118,7 @@ async function PlansContent() {
 export default async function PlansPage() {
   return (
     <div className="flex h-full flex-col">
-      <Suspense fallback={<TableSkeleton />}>
+      <Suspense fallback={<PlansSkeleton />}>
         <PlansContent />
       </Suspense>
     </div>
