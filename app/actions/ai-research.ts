@@ -1411,9 +1411,20 @@ Write a comprehensive, professional executive summary (800-1000 words) that:
 6. **Investment Framework**: Justify the strategic investment requirements and projected return on investment
 7. **Expected Impact**: Conclude with specific expected outcomes and measurable benefits to the community
 
+**FORMATTING REQUIREMENTS:**
+- Format your response using proper Markdown syntax
+- Use ## for main section headers (e.g., ## Executive Summary, ## Strategic Foundation, ## Key Findings)
+- Use ### for subsection headers where appropriate
+- Use **bold text** for emphasis on key points
+- Use bullet points (-) for lists of items
+- Use > blockquotes for important quotes or highlighted information
+- Ensure proper paragraph breaks and spacing for readability
+
 **CRITICAL INSTRUCTION**: You MUST acknowledge and reference the City Council's established core values of ${coreValues.map(cv => cv.title).join(', ')} throughout the summary. DO NOT state that council goals are undefined - they are clearly established and provided above.
 
-Use professional, confident language appropriate for city leadership and elected officials. Focus on demonstrating clear value, measurable impact, and strategic alignment with established council priorities.`
+Use professional, confident language appropriate for city leadership and elected officials. Focus on demonstrating clear value, measurable impact, and strategic alignment with established council priorities.
+
+**RESPONSE FORMAT**: Return ONLY the Markdown-formatted executive summary text. Do not include any preamble, explanations, or additional commentary.
 
   console.log('AI Research (Executive Summary): Calling Perplexity API...')
   const response = await callPerplexityApi([
