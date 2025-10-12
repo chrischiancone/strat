@@ -36,15 +36,16 @@ export interface CreatePlanInput {
 
 export async function getStrategicPlans(): Promise<StrategicPlan[]> {
   const supabase = createServerSupabaseClient()
+  const adminClient = createAdminSupabaseClient()
 
-  // Get current user
+  // Get current user for authentication
   const { data: { user: currentUser } } = await supabase.auth.getUser()
 
   if (!currentUser) {
     throw new Error('Unauthorized')
   }
 
-  // Get user's municipality and role
+  // Get user's municipality and role for filtering
   const { data: currentUserProfile } = await supabase
     .from('users')
     .select('municipality_id, department_id, role')
@@ -55,8 +56,9 @@ export async function getStrategicPlans(): Promise<StrategicPlan[]> {
     throw new Error('User profile not found')
   }
 
-  // Build query - fetch plans with department and fiscal year data
-  let query = supabase
+  // Use admin client for data query to bypass RLS
+  // We've already verified user authentication above
+  let query = adminClient
     .from('strategic_plans')
     .select(`
       id,
