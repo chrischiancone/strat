@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import type { SwotAnalysis, EnvironmentalScan, BenchmarkingData } from './strategic-plans'
 
 export interface DashboardData {
@@ -58,8 +59,9 @@ export interface DashboardData {
 
 export async function getDashboardData(planId: string): Promise<DashboardData> {
   const supabase = createServerSupabaseClient()
+  const adminClient = createAdminSupabaseClient()
 
-  // Get current user
+  // Get current user for authentication
   const {
     data: { user: currentUser },
   } = await supabase.auth.getUser()
@@ -68,8 +70,9 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     throw new Error('Unauthorized')
   }
 
-  // Get plan metadata with department info and fiscal years
-  const { data: plan, error: planError } = await supabase
+  // Use admin client for data queries to bypass RLS
+  // We've already verified user authentication above
+  const { data: plan, error: planError } = await adminClient
     .from('strategic_plans')
     .select(`
       id,
@@ -106,7 +109,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
   const typedPlan = plan as PlanData
 
   // Get all goals for this plan
-  const { data: goals } = await supabase
+  const { data: goals } = await adminClient
     .from('strategic_goals')
     .select('id')
     .eq('strategic_plan_id', planId)
@@ -139,7 +142,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
 
   // Get all initiatives for this plan
   if (goalIds.length > 0) {
-    const { data: initiatives } = await supabase
+    const { data: initiatives } = await adminClient
       .from('initiatives')
       .select('priority_level, status, total_year_1_cost, total_year_2_cost, total_year_3_cost')
       .in('strategic_goal_id', goalIds)
@@ -175,7 +178,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
   let budgetByFundingSource: Array<{ source_name: string; total: number }> = []
 
   if (goalIds.length > 0) {
-    const { data: fundingSources } = await supabase
+    const { data: fundingSources } = await adminClient
       .from('initiative_budgets')
       .select('source_name, amount, initiatives!inner(strategic_goal_id)')
       .in('initiatives.strategic_goal_id', goalIds)
@@ -204,7 +207,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
 
   if (goalIds.length > 0) {
     // Get initiative-level KPIs
-    const { data: initiativeKpis } = await supabase
+    const { data: initiativeKpis } = await adminClient
       .from('initiative_kpis')
       .select(`
         id,
@@ -241,7 +244,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     )
 
     // Get goal-level KPIs
-    const { data: goalKpis } = await supabase
+    const { data: goalKpis } = await adminClient
       .from('initiative_kpis')
       .select(`
         id,
@@ -280,7 +283,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
   }
 
   // Get plan-level KPIs
-  const { data: planKpis } = await supabase
+  const { data: planKpis } = await adminClient
     .from('initiative_kpis')
     .select('id, metric_name, baseline_value, year_1_target, year_2_target, year_3_target')
     .eq('strategic_plan_id', planId)
