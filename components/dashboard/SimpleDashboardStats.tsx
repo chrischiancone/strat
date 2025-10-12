@@ -30,7 +30,7 @@ interface DashboardStats {
     trendValue: number
   }
   fiscalYear: {
-    current: number | null
+    current: string | number | null
   }
   strategicPlans: {
     total: number
@@ -146,7 +146,7 @@ export function SimpleDashboardStats({ stats }: SimpleDashboardStatsProps) {
     },
     {
       title: 'Current Fiscal Year',
-      value: stats.fiscalYear.current?.toString() || 'None Set',
+      value: stats.fiscalYear.current || 'None Set',
       icon: Calendar,
       color: {
         bg: 'bg-gradient-to-br from-purple-50 to-purple-100/50',

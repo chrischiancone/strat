@@ -95,7 +95,7 @@ export async function DashboardContent() {
       trendValue: 0
     },
     fiscalYear: {
-      current: new Date().getFullYear()
+      current: data.fiscalYear?.current || `${new Date().getFullYear()} - ${new Date().getFullYear() + 1}`
     },
     strategicPlans: {
       total: data.stats.totalPlans,
@@ -142,7 +142,7 @@ export async function DashboardContent() {
     <div className="flex h-full flex-col">
       <PageHeader
         title={`${getGreeting()}, ${data.userInfo.name}`}
-        description={`${getRoleLabel(data.userInfo.role)}${data.userInfo.departmentName ? ` • ${data.userInfo.departmentName}` : ''}`}
+        description={`${getRoleLabel(data.userInfo.role)}${data.userInfo.departmentName ? ` • ${data.userInfo.departmentName}` : ''}${data.fiscalYear ? ` • FY ${data.fiscalYear.current}` : ''}`}
         breadcrumbs={[
           { label: 'Dashboard', current: true }
         ]}

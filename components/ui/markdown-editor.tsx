@@ -82,7 +82,7 @@ export function MarkdownEditor({
             style={{ minHeight: '200px', resize: 'vertical' }}
           />
           <p className="mt-1 text-xs text-gray-500">
-            Use Markdown syntax for formatting. **bold**, *italic*, ## headers, - bullet points, > blockquotes
+            Use Markdown syntax for formatting. **bold**, *italic*, ## headers, - bullet points, &gt; blockquotes
           </p>
         </TabsContent>
         
