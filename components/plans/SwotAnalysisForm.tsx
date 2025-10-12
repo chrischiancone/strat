@@ -90,7 +90,7 @@ export function SwotAnalysisForm({
     setShowDialog(true)
   }
 
-  const handleSaveItem = () => {
+  const handleSaveItem = async () => {
     if (!editingCategory) return
 
     // Split input by newlines and handle each item
@@ -140,10 +140,30 @@ export function SwotAnalysisForm({
 
       const newItems = [...swot[editingCategory]]
       newItems[editingIndex] = trimmedText
-      setSwot({
+      const newSwot = {
         ...swot,
         [editingCategory]: newItems,
-      })
+      }
+      setSwot(newSwot)
+      
+      // Auto-save to database
+      setTimeout(async () => {
+        try {
+          await onSave(newSwot)
+          toast({
+            title: 'Saved',
+            description: 'Item updated successfully',
+          })
+        } catch (error) {
+          toast({
+            title: 'Error',
+            description: 'Failed to save changes',
+            variant: 'destructive',
+          })
+          // Revert on error
+          setSwot(swot)
+        }
+      }, 0)
     } else {
       // Handle bulk items for new entries
       const validItems: string[] = []
@@ -201,17 +221,37 @@ export function SwotAnalysisForm({
       // Save valid items
       if (validItems.length > 0) {
         const newItems = [...swot[editingCategory], ...validItems]
-        setSwot({
+        const newSwot = {
           ...swot,
           [editingCategory]: newItems,
-        })
-
-        if (validItems.length > 1) {
-          toast({
-            title: 'Success',
-            description: `Added ${validItems.length} items to ${CATEGORY_LABELS[editingCategory]}`,
-          })
         }
+        setSwot(newSwot)
+
+        // Auto-save to database
+        setTimeout(async () => {
+          try {
+            await onSave(newSwot)
+            if (validItems.length > 1) {
+              toast({
+                title: 'Success',
+                description: `Added ${validItems.length} items to ${CATEGORY_LABELS[editingCategory]}`,
+              })
+            } else {
+              toast({
+                title: 'Saved',
+                description: 'Item added successfully',
+              })
+            }
+          } catch (error) {
+            toast({
+              title: 'Error',
+              description: 'Failed to save changes',
+              variant: 'destructive',
+            })
+            // Revert on error
+            setSwot(swot)
+          }
+        }, 0)
       }
     }
 
@@ -225,46 +265,91 @@ export function SwotAnalysisForm({
     setDeleteConfirm({ category, index })
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteConfirm) return
 
     const { category, index } = deleteConfirm
     const newItems = swot[category].filter((_, idx) => idx !== index)
-
-    setSwot({
+    const newSwot = {
       ...swot,
       [category]: newItems,
-    })
-
+    }
+    const oldSwot = swot
+    setSwot(newSwot)
     setDeleteConfirm(null)
+
+    // Auto-save to database
+    try {
+      await onSave(newSwot)
+      toast({
+        title: 'Saved',
+        description: 'Item deleted successfully',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save changes',
+        variant: 'destructive',
+      })
+      // Revert on error
+      setSwot(oldSwot)
+    }
   }
 
-  const handleMoveUp = (category: SwotCategory, index: number) => {
+  const handleMoveUp = async (category: SwotCategory, index: number) => {
     if (index === 0) return
 
     const newItems = [...swot[category]]
     const temp = newItems[index]
     newItems[index] = newItems[index - 1]
     newItems[index - 1] = temp
-
-    setSwot({
+    const newSwot = {
       ...swot,
       [category]: newItems,
-    })
+    }
+    const oldSwot = swot
+    setSwot(newSwot)
+
+    // Auto-save to database
+    try {
+      await onSave(newSwot)
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save changes',
+        variant: 'destructive',
+      })
+      // Revert on error
+      setSwot(oldSwot)
+    }
   }
 
-  const handleMoveDown = (category: SwotCategory, index: number) => {
+  const handleMoveDown = async (category: SwotCategory, index: number) => {
     if (index === swot[category].length - 1) return
 
     const newItems = [...swot[category]]
     const temp = newItems[index]
     newItems[index] = newItems[index + 1]
     newItems[index + 1] = temp
-
-    setSwot({
+    const newSwot = {
       ...swot,
       [category]: newItems,
-    })
+    }
+    const oldSwot = swot
+    setSwot(newSwot)
+
+    // Auto-save to database
+    try {
+      await onSave(newSwot)
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save changes',
+        variant: 'destructive',
+      })
+      // Revert on error
+      setSwot(oldSwot)
+    }
   }
 
   const handleSave = async () => {
@@ -309,7 +394,7 @@ export function SwotAnalysisForm({
         <CardContent>
           {items.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No items added yet. Click "Add Item" to begin.
+              No items added yet. Click &ldquo;Add Item&rdquo; to begin.
             </p>
           ) : (
             <div className="space-y-2">

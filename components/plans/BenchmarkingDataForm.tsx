@@ -32,8 +32,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Trash2, Sparkles } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { researchBenchmarkingMetrics } from '@/app/actions/ai-research'
 
 export interface BenchmarkingMetric {
   metric_name: string
@@ -52,6 +53,7 @@ interface BenchmarkingDataFormProps {
   initialData?: BenchmarkingData
   onSave: (data: BenchmarkingData) => Promise<void>
   disabled?: boolean
+  departmentId: string
 }
 
 type EditMode = 'peer' | 'metric' | 'finding' | null
@@ -60,6 +62,7 @@ export function BenchmarkingDataForm({
   initialData,
   onSave,
   disabled = false,
+  departmentId,
 }: BenchmarkingDataFormProps) {
   const { toast } = useToast()
 
@@ -90,6 +93,45 @@ export function BenchmarkingDataForm({
   const [deletingIndex, setDeletingIndex] = useState<number>(0)
 
   const [isSaving, setIsSaving] = useState(false)
+  const [isResearching, setIsResearching] = useState(false)
+
+  // AI Research handler
+  const handleAIResearch = async () => {
+    setIsResearching(true)
+    try {
+      const result = await researchBenchmarkingMetrics(departmentId)
+      
+      const newData: BenchmarkingData = {
+        peer_municipalities: result.peer_municipalities,
+        metrics: result.metrics.map(metric => ({
+          metric_name: metric.metric_name,
+          carrollton_current: metric.current_value,
+          peer_average: metric.peer_average,
+          gap_analysis: metric.gap_analysis
+        })),
+        key_findings: result.key_findings,
+      }
+
+      setData(newData)
+
+      // Save the data
+      await onSave(newData)
+
+      toast({
+        title: 'AI Research Complete',
+        description: `Generated ${result.metrics.length} benchmarking metrics and ${result.peer_municipalities.length} peer municipalities`,
+      })
+    } catch (error) {
+      console.error('AI Research Error:', error)
+      toast({
+        title: 'Research Failed',
+        description: error instanceof Error ? error.message : 'Failed to generate benchmarking metrics',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsResearching(false)
+    }
+  }
 
   // Add handlers
   const handleAddPeer = () => {
@@ -353,8 +395,35 @@ export function BenchmarkingDataForm({
     }
   }
 
+  const totalItems = data.peer_municipalities.length + data.metrics.length + data.key_findings.length
+
   return (
     <div className="space-y-6">
+      {/* Header with AI Generate Button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Benchmarking Analysis</h2>
+          <p className="text-sm text-gray-600">
+            Compare your department&apos;s performance with peer municipalities
+          </p>
+        </div>
+        <Button
+          onClick={handleAIResearch}
+          disabled={disabled || isResearching}
+          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+        >
+          <Sparkles className="h-4 w-4 mr-2" />
+          {isResearching ? 'Researching...' : 'Generate with AI'}
+        </Button>
+      </div>
+
+      {/* Progress indicator */}
+      {totalItems > 0 && (
+        <div className="text-sm text-gray-500">
+          {data.peer_municipalities.length} peer municipalities • {data.metrics.length} metrics • {data.key_findings.length} findings
+        </div>
+      )}
+
       {/* Peer Municipalities */}
       <Card className="border-2 border-blue-200 bg-blue-50">
         <div className="p-4">
@@ -378,7 +447,7 @@ export function BenchmarkingDataForm({
           <div className="space-y-2">
             {data.peer_municipalities.length === 0 ? (
               <p className="text-sm text-gray-500 italic">
-                No peer municipalities added yet. Click &ldquo;Add&rdquo; to get started.
+                No peer municipalities added yet. Click &quot;Generate with AI&quot; to auto-populate or &quot;Add&quot; to manually enter.
               </p>
             ) : (
               data.peer_municipalities.map((municipality, index) => (
@@ -434,7 +503,7 @@ export function BenchmarkingDataForm({
           </div>
           {data.metrics.length === 0 ? (
             <p className="text-sm text-gray-500 italic">
-              No metrics added yet. Click &ldquo;Add Metric&rdquo; to get started.
+              No metrics added yet. Click &quot;Generate with AI&quot; to auto-populate 20 metrics or &quot;Add Metric&quot; to manually enter.
             </p>
           ) : (
             <div className="rounded-md border border-gray-200 bg-white overflow-auto">
@@ -507,7 +576,7 @@ export function BenchmarkingDataForm({
           <div className="space-y-2">
             {data.key_findings.length === 0 ? (
               <p className="text-sm text-gray-500 italic">
-                No findings added yet. Click &ldquo;Add Finding&rdquo; to get started.
+                No findings added yet. Click &quot;Generate with AI&quot; to auto-populate or &quot;Add Finding&quot; to manually enter.
               </p>
             ) : (
               data.key_findings.map((finding, index) => (

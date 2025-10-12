@@ -147,15 +147,24 @@ export async function createStrategicGoal(
   }
 
   // Check if user has permission to edit this plan
-  const { data: plan } = await adminSupabase
+  console.log('Looking for plan with ID:', input.strategic_plan_id)
+  const { data: plan, error: planError } = await adminSupabase
     .from('strategic_plans')
     .select('department_id')
     .eq('id', input.strategic_plan_id)
     .single<{ department_id: string }>()
 
+  if (planError) {
+    console.error('Plan query error:', planError)
+    throw new Error(`Plan query failed: ${planError.message}`)
+  }
+
   if (!plan) {
+    console.error('Plan not found for ID:', input.strategic_plan_id)
     throw new Error('Plan not found')
   }
+  
+  console.log('Found plan:', plan)
 
   const { data: userProfile } = await adminSupabase
     .from('users')
@@ -211,16 +220,19 @@ export async function createStrategicGoal(
     created_by: currentUser.id,
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = (await (supabase as any)
+  console.log('Creating strategic goal with data:', newGoal)
+
+  // Use admin client for insertion to bypass RLS issues
+  const { data, error } = await adminSupabase
     .from('strategic_goals')
     .insert(newGoal)
     .select('id')
-    .single()) as { data: { id: string } | null; error: unknown }
+    .single()
 
   if (error) {
     console.error('Error creating strategic goal:', error)
-    throw new Error('Failed to create strategic goal')
+    console.error('Goal data attempted:', newGoal)
+    throw new Error(`Failed to create strategic goal: ${error.message}`)
   }
 
   if (!data) {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -24,7 +24,80 @@ import {
 } from '@/components/ui/alert-dialog'
 import { ChevronDown, ChevronUp, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { researchDemographics } from '@/app/actions/ai-research'
+import { researchDemographics, researchEconomicFactors, researchRegulatoryChanges, researchTechnologyTrends, researchCommunityExpectations } from '@/app/actions/ai-research'
+import dynamic from 'next/dynamic'
+
+// Dynamically import ReactMarkdown to prevent SSR issues
+const ReactMarkdown = dynamic(() => import('react-markdown'), {
+  ssr: false,
+  loading: () => <div className="h-4 w-full bg-gray-100 rounded animate-pulse"></div>
+})
+
+// Safe markdown renderer that handles hydration issues
+const MarkdownRenderer = memo(function MarkdownRenderer({ content }: { content: string }) {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // During SSR and before mounting, show formatted plain text inline
+  if (!isMounted) {
+    return (
+      <span className="whitespace-pre-line">
+        {content.split('\n').map((line, i) => {
+          // Basic formatting for SSR - render inline to stay on same line as number
+          if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
+            return (
+              <span key={i} className="font-semibold text-gray-900">
+                {i > 0 && ' '}{line.replace(/\*\*/g, '')}
+              </span>
+            )
+          }
+          // Show reference numbers without making them links - inline
+          const withRefNumbers = line.replace(/\[\[(.+?)\]\]\((.+?)\)/g, '[$1]')
+          return (
+            <span key={i}>
+              {i > 0 && ' '}{withRefNumbers}
+            </span>
+          )
+        })}
+      </span>
+    )
+  }
+
+  // Client-side rendering with full markdown support
+  return (
+    <span className="markdown-content">
+      <ReactMarkdown 
+        components={{
+          // Ensure the root element is inline
+          div: ({ children }) => <span>{children}</span>,
+          // Handle paragraphs as inline spans to keep content on same line as number
+          p: ({ children }) => <span>{children}</span>,
+          // Style links to be clickable and visually distinct
+          a: ({ href, children }) => (
+            <a 
+              href={href} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline break-words"
+              title={href}
+            >
+              {children}
+            </a>
+          ),
+          // Bold text styling
+          strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+          // Handle line breaks
+          br: () => <br />
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </span>
+  )
+})
 
 export interface EnvironmentalScanData {
   demographic_trends: string[]
@@ -362,9 +435,10 @@ export function EnvironmentalScanForm({
                         className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3"
                       >
                         <div className="flex-1">
-                          <p className="text-sm text-gray-800">
-                            {index + 1}. {item}
-                          </p>
+                          <div className="text-sm text-gray-800">
+                            <span className="mr-1">{index + 1}.</span>
+                            <MarkdownRenderer content={item} />
+                          </div>
                         </div>
                         <div className="flex gap-1">
                           <Button
@@ -450,21 +524,335 @@ export function EnvironmentalScanForm({
                   onClick={async () => {
                     try {
                       setIsResearching(true)
-                      // We need department_id to scope research; pull from current plan context on page via data- attribute or pass as prop.
-                      // For now, we'll attempt to infer from URL params if available on client.
-                      const urlParts = window.location.pathname.split('/')
-                      const planId = urlParts[urlParts.indexOf('plans') + 1]
-                      // Fallback: let server action use current user's department if needed (would require different API). Here we keep simple.
-                      // Call research using the plan's department id is better, but not directly available here; consider extending props later.
                       const res = await researchDemographics(department_id)
                       if (res?.content?.length) {
-                        const bulletText = res.content.map((b) => `• ${b}`).join('\n')
-                        // Append to existing text with spacing
-                        setEditingText((prev) => (prev ? prev + '\n\n' + bulletText : bulletText))
+                        const bullets = res.content.filter(b => b.trim().length >= MIN_LENGTH)
+                        
+                        if (bullets.length > 0) {
+                          const newScan = { ...scan }
+                          const existingItems = newScan.demographic_trends.map(item => item.toLowerCase())
+                          
+                          const newBullets = bullets.filter(bullet => 
+                            !existingItems.includes(bullet.toLowerCase())
+                          )
+                          
+                          if (newBullets.length > 0) {
+                            newScan.demographic_trends = [...newScan.demographic_trends, ...newBullets]
+                            setScan(newScan)
+                            setIsEditDialogOpen(false)
+                            
+                            setIsSaving(true)
+                            try {
+                              await onSave(newScan)
+                              toast({
+                                title: 'AI Research Complete',
+                                description: `Added ${newBullets.length} new demographic trend${newBullets.length === 1 ? '' : 's'} from AI research.`,
+                              })
+                            } catch (error) {
+                              console.error('Error saving AI research results:', error)
+                              toast({
+                                title: 'Error',
+                                description: 'Failed to save AI research results. Please try again.',
+                                variant: 'destructive',
+                              })
+                              setScan(scan)
+                            } finally {
+                              setIsSaving(false)
+                            }
+                          } else {
+                            toast({
+                              title: 'No New Content',
+                              description: 'All AI-generated trends already exist in your list.',
+                              variant: 'default',
+                            })
+                          }
+                        } else {
+                          toast({
+                            title: 'No Valid Content',
+                            description: `AI research returned content that was too short (minimum ${MIN_LENGTH} characters required).`,
+                            variant: 'destructive',
+                          })
+                        }
                       }
                     } catch (e) {
                       console.error('AI research error:', e)
                       toast({ title: 'AI Research Failed', description: 'Could not fetch suggestions. Configure Perplexity API and try again.', variant: 'destructive' })
+                    } finally {
+                      setIsResearching(false)
+                    }
+                  }}
+                  disabled={isResearching}
+                >
+                  {isResearching ? 'Researching…' : 'Research with AI'}
+                </Button>
+              )}
+              {editingCategory === 'economic_factors' && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={async () => {
+                    try {
+                      setIsResearching(true)
+                      const res = await researchEconomicFactors(department_id)
+                      if (res?.content?.length) {
+                        const bullets = res.content.filter(b => b.trim().length >= MIN_LENGTH)
+                        
+                        if (bullets.length > 0) {
+                          const newScan = { ...scan }
+                          const existingItems = newScan.economic_factors.map(item => item.toLowerCase())
+                          
+                          const newBullets = bullets.filter(bullet => 
+                            !existingItems.includes(bullet.toLowerCase())
+                          )
+                          
+                          if (newBullets.length > 0) {
+                            newScan.economic_factors = [...newScan.economic_factors, ...newBullets]
+                            setScan(newScan)
+                            setIsEditDialogOpen(false)
+                            
+                            setIsSaving(true)
+                            try {
+                              await onSave(newScan)
+                              toast({
+                                title: 'AI Research Complete',
+                                description: `Added ${newBullets.length} new economic factor${newBullets.length === 1 ? '' : 's'} from AI research.`,
+                              })
+                            } catch (error) {
+                              console.error('Error saving AI research results:', error)
+                              toast({
+                                title: 'Error',
+                                description: 'Failed to save AI research results. Please try again.',
+                                variant: 'destructive',
+                              })
+                              setScan(scan)
+                            } finally {
+                              setIsSaving(false)
+                            }
+                          } else {
+                            toast({
+                              title: 'No New Content',
+                              description: 'All AI-generated economic factors already exist in your list.',
+                              variant: 'default',
+                            })
+                          }
+                        } else {
+                          toast({
+                            title: 'No Valid Content',
+                            description: `AI research returned content that was too short (minimum ${MIN_LENGTH} characters required).`,
+                            variant: 'destructive',
+                          })
+                        }
+                      }
+                    } catch (e) {
+                      console.error('AI research error:', e)
+                      toast({ title: 'AI Research Failed', description: 'Could not fetch economic data. Configure Perplexity API and try again.', variant: 'destructive' })
+                    } finally {
+                      setIsResearching(false)
+                    }
+                  }}
+                  disabled={isResearching}
+                >
+                  {isResearching ? 'Researching…' : 'Research with AI'}
+                </Button>
+              )}
+              {editingCategory === 'regulatory_changes' && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={async () => {
+                    try {
+                      setIsResearching(true)
+                      const res = await researchRegulatoryChanges(department_id)
+                      if (res?.content?.length) {
+                        const bullets = res.content.filter(b => b.trim().length >= MIN_LENGTH)
+                        
+                        if (bullets.length > 0) {
+                          const newScan = { ...scan }
+                          const existingItems = newScan.regulatory_changes.map(item => item.toLowerCase())
+                          
+                          const newBullets = bullets.filter(bullet => 
+                            !existingItems.includes(bullet.toLowerCase())
+                          )
+                          
+                          if (newBullets.length > 0) {
+                            newScan.regulatory_changes = [...newScan.regulatory_changes, ...newBullets]
+                            setScan(newScan)
+                            setIsEditDialogOpen(false)
+                            
+                            setIsSaving(true)
+                            try {
+                              await onSave(newScan)
+                              toast({
+                                title: 'AI Research Complete',
+                                description: `Added ${newBullets.length} new regulatory change${newBullets.length === 1 ? '' : 's'} from AI research.`,
+                              })
+                            } catch (error) {
+                              console.error('Error saving AI research results:', error)
+                              toast({
+                                title: 'Error',
+                                description: 'Failed to save AI research results. Please try again.',
+                                variant: 'destructive',
+                              })
+                              setScan(scan)
+                            } finally {
+                              setIsSaving(false)
+                            }
+                          } else {
+                            toast({
+                              title: 'No New Content',
+                              description: 'All AI-generated regulatory changes already exist in your list.',
+                              variant: 'default',
+                            })
+                          }
+                        } else {
+                          toast({
+                            title: 'No Valid Content',
+                            description: `AI research returned content that was too short (minimum ${MIN_LENGTH} characters required).`,
+                            variant: 'destructive',
+                          })
+                        }
+                      }
+                    } catch (e) {
+                      console.error('AI research error:', e)
+                      toast({ title: 'AI Research Failed', description: 'Could not fetch regulatory data. Configure Perplexity API and try again.', variant: 'destructive' })
+                    } finally {
+                      setIsResearching(false)
+                    }
+                  }}
+                  disabled={isResearching}
+                >
+                  {isResearching ? 'Researching…' : 'Research with AI'}
+                </Button>
+              )}
+              {editingCategory === 'technology_trends' && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={async () => {
+                    try {
+                      setIsResearching(true)
+                      const res = await researchTechnologyTrends(department_id)
+                      if (res?.content?.length) {
+                        const bullets = res.content.filter(b => b.trim().length >= MIN_LENGTH)
+                        
+                        if (bullets.length > 0) {
+                          const newScan = { ...scan }
+                          const existingItems = newScan.technology_trends.map(item => item.toLowerCase())
+                          
+                          const newBullets = bullets.filter(bullet => 
+                            !existingItems.includes(bullet.toLowerCase())
+                          )
+                          
+                          if (newBullets.length > 0) {
+                            newScan.technology_trends = [...newScan.technology_trends, ...newBullets]
+                            setScan(newScan)
+                            setIsEditDialogOpen(false)
+                            
+                            setIsSaving(true)
+                            try {
+                              await onSave(newScan)
+                              toast({
+                                title: 'AI Research Complete',
+                                description: `Added ${newBullets.length} new technology trend${newBullets.length === 1 ? '' : 's'} from AI research.`,
+                              })
+                            } catch (error) {
+                              console.error('Error saving AI research results:', error)
+                              toast({
+                                title: 'Error',
+                                description: 'Failed to save AI research results. Please try again.',
+                                variant: 'destructive',
+                              })
+                              setScan(scan)
+                            } finally {
+                              setIsSaving(false)
+                            }
+                          } else {
+                            toast({
+                              title: 'No New Content',
+                              description: 'All AI-generated technology trends already exist in your list.',
+                              variant: 'default',
+                            })
+                          }
+                        } else {
+                          toast({
+                            title: 'No Valid Content',
+                            description: `AI research returned content that was too short (minimum ${MIN_LENGTH} characters required).`,
+                            variant: 'destructive',
+                          })
+                        }
+                      }
+                    } catch (e) {
+                      console.error('AI research error:', e)
+                      toast({ title: 'AI Research Failed', description: 'Could not fetch technology data. Configure Perplexity API and try again.', variant: 'destructive' })
+                    } finally {
+                      setIsResearching(false)
+                    }
+                  }}
+                  disabled={isResearching}
+                >
+                  {isResearching ? 'Researching…' : 'Research with AI'}
+                </Button>
+              )}
+              {editingCategory === 'community_expectations' && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={async () => {
+                    try {
+                      setIsResearching(true)
+                      const res = await researchCommunityExpectations(department_id)
+                      if (res?.content?.length) {
+                        const bullets = res.content.filter(b => b.trim().length >= MIN_LENGTH)
+                        
+                        if (bullets.length > 0) {
+                          const newScan = { ...scan }
+                          const existingItems = newScan.community_expectations.map(item => item.toLowerCase())
+                          
+                          const newBullets = bullets.filter(bullet => 
+                            !existingItems.includes(bullet.toLowerCase())
+                          )
+                          
+                          if (newBullets.length > 0) {
+                            newScan.community_expectations = [...newScan.community_expectations, ...newBullets]
+                            setScan(newScan)
+                            setIsEditDialogOpen(false)
+                            
+                            setIsSaving(true)
+                            try {
+                              await onSave(newScan)
+                              toast({
+                                title: 'AI Research Complete',
+                                description: `Added ${newBullets.length} new community expectation${newBullets.length === 1 ? '' : 's'} from AI research.`,
+                              })
+                            } catch (error) {
+                              console.error('Error saving AI research results:', error)
+                              toast({
+                                title: 'Error',
+                                description: 'Failed to save AI research results. Please try again.',
+                                variant: 'destructive',
+                              })
+                              setScan(scan)
+                            } finally {
+                              setIsSaving(false)
+                            }
+                          } else {
+                            toast({
+                              title: 'No New Content',
+                              description: 'All AI-generated community expectations already exist in your list.',
+                              variant: 'default',
+                            })
+                          }
+                        } else {
+                          toast({
+                            title: 'No Valid Content',
+                            description: `AI research returned content that was too short (minimum ${MIN_LENGTH} characters required).`,
+                            variant: 'destructive',
+                          })
+                        }
+                      }
+                    } catch (e) {
+                      console.error('AI research error:', e)
+                      toast({ title: 'AI Research Failed', description: 'Could not fetch community expectations data. Configure Perplexity API and try again.', variant: 'destructive' })
                     } finally {
                       setIsResearching(false)
                     }

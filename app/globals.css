@@ -233,4 +233,29 @@ body {
   .shadow-soft-lg {
     box-shadow: var(--shadow-soft-lg);
   }
+
+  /* Markdown content utilities */
+  .markdown-content {
+    @apply whitespace-pre-line;
+  }
+
+  .markdown-content a {
+    @apply text-blue-600 hover:text-blue-800 underline break-words;
+  }
+
+  .markdown-content strong {
+    @apply font-semibold text-gray-900;
+  }
+
+  .markdown-content p {
+    @apply mb-2 last:mb-0;
+  }
+
+  .markdown-content ul, .markdown-content ol {
+    @apply ml-4 mb-2;
+  }
+
+  .markdown-content li {
+    @apply mb-1;
+  }
 }

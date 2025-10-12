@@ -1,11 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Sparkles } from 'lucide-react'
 import { updateStrategicPlan } from '@/app/actions/strategic-plans'
+import { generateExecutiveSummary } from '@/app/actions/ai-research'
 import { useToast } from '@/hooks/use-toast'
+import { MarkdownEditor } from '@/components/ui/markdown-editor'
 
 interface PlanMetadataFormProps {
   planId: string
@@ -30,6 +34,7 @@ export function PlanMetadataForm({
     initialData.department_vision || ''
   )
   const [isSaving, setIsSaving] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
   const { toast } = useToast()
 
   const handleSave = async (
@@ -61,6 +66,43 @@ export function PlanMetadataForm({
     }
   }
 
+  // Force re-render when content changes
+  useEffect(() => {
+    // This ensures the component properly re-renders when state changes
+  }, [executiveSummary])
+
+  const handleGenerateExecutiveSummary = async () => {
+    setIsGenerating(true)
+    try {
+      const generatedSummary = await generateExecutiveSummary(planId)
+      
+      // Update state immediately
+      setExecutiveSummary(generatedSummary)
+      
+      // Auto-save the generated summary
+      await updateStrategicPlan({
+        id: planId,
+        executive_summary: generatedSummary,
+      })
+
+      toast({
+        title: 'Executive Summary Generated',
+        description: 'AI has generated a comprehensive executive summary using your strategic plan data',
+      })
+
+      onSave?.()
+    } catch (error) {
+      console.error('AI Generation Error:', error)
+      toast({
+        title: 'Generation Failed',
+        description: error instanceof Error ? error.message : 'Failed to generate executive summary',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   return (
     <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6">
       <div>
@@ -87,19 +129,33 @@ export function PlanMetadataForm({
 
         {/* Executive Summary */}
         <div>
-          <Label htmlFor="executive_summary">Executive Summary</Label>
-          <Textarea
-            id="executive_summary"
+          <div className="flex items-center justify-between mb-2">
+            <Label htmlFor="executive_summary">Executive Summary</Label>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleGenerateExecutiveSummary}
+              disabled={isSaving || isGenerating}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              {isGenerating ? 'Generating...' : 'Generate with AI (Claude)'}
+            </Button>
+          </div>
+          <MarkdownEditor
+            key={`executive-summary-${executiveSummary.length}`}
             value={executiveSummary}
-            onChange={(e) => setExecutiveSummary(e.target.value)}
+            onChange={setExecutiveSummary}
             onBlur={() => handleSave('executive_summary', executiveSummary)}
-            disabled={isSaving}
-            placeholder="Provide a high-level overview of your strategic plan..."
-            rows={6}
-            className="mt-1"
+            disabled={isSaving || isGenerating}
+            placeholder={isGenerating ? "AI is generating your executive summary with Markdown formatting..." : "Provide a high-level overview of your strategic plan using Markdown formatting, or click 'Generate with AI (Claude)' to create one automatically..."}
+            rows={10}
+            showPreview={true}
           />
           <p className="mt-1 text-xs text-gray-500">
-            Summarize the key points of your strategic plan
+            {executiveSummary.length === 0 
+              ? '🤖 Click "Generate with AI (Claude)" to create a comprehensive Markdown-formatted executive summary using your strategic goals, analysis data, and department information.' 
+              : `${executiveSummary.length} characters - Use the Preview tab to see your Markdown formatting. Claude generates professional Markdown content automatically.`}
           </p>
         </div>
 

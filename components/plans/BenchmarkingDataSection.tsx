@@ -6,10 +6,11 @@ import { updateBenchmarkingData } from '@/app/actions/strategic-plans'
 
 interface BenchmarkingDataSectionProps {
   planId: string
+  departmentId: string
   initialData?: BenchmarkingData
 }
 
-export function BenchmarkingDataSection({ planId, initialData }: BenchmarkingDataSectionProps) {
+export function BenchmarkingDataSection({ planId, departmentId, initialData }: BenchmarkingDataSectionProps) {
   const handleSave = async (data: BenchmarkingData) => {
     await updateBenchmarkingData(planId, data)
   }
@@ -23,7 +24,7 @@ export function BenchmarkingDataSection({ planId, initialData }: BenchmarkingDat
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <BenchmarkingDataForm initialData={initialData} onSave={handleSave} />
+        <BenchmarkingDataForm initialData={initialData} onSave={handleSave} departmentId={departmentId} />
       </CardContent>
     </Card>
   )

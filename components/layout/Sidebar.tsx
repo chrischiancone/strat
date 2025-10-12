@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Gift,
   BarChart3,
+  Flag,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -42,6 +43,7 @@ const financeNavigation: NavItem[] = [
 const adminNavigation: NavItem[] = [
   { name: 'Users', href: '/admin/users', icon: Users, roles: ['admin'] },
   { name: 'Departments', href: '/admin/departments', icon: Building2, roles: ['admin'] },
+  { name: 'Council Goals', href: '/admin/council-goals', icon: Flag, roles: ['admin'] },
   { name: 'Fiscal Years', href: '/admin/fiscal-years', icon: Calendar, roles: ['admin'] },
   { name: 'Settings', href: '/admin/settings', icon: Settings, roles: ['admin'] },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText, roles: ['admin'] },

@@ -1229,3 +1229,19 @@ Import trace for requested module:
  ✓ Compiled in 268ms (3619 modules)
  ✓ Compiled in 196ms (3619 modules)
  ✓ Compiled in 93ms (1379 modules)
+ ✓ Compiled in 199ms (3619 modules)
+   Reload env: .env.local
+ ✓ Compiled in 197ms (4091 modules)
+ ✓ Compiled in 206ms (3619 modules)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+ ⚠ Port 3000 is in use, trying 3001 instead.
+ ⚠ Port 3001 is in use, trying 3002 instead.
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · turbo
+
+ ✓ Starting...
+ ✓ Ready in 889ms
+[?25h

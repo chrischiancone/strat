@@ -3,6 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { callPerplexityApi } from '@/lib/perplexity/config'
+import { generateExecutiveSummary as generateExecutiveSummaryWithClaude } from '@/lib/ai-selector'
 
 interface ResearchResponse {
   content: string[]
@@ -1441,39 +1442,15 @@ Use professional, confident language appropriate for city leadership and elected
 
 **CRITICAL**: Ensure your response is complete and ends with a proper conclusion. Do not cut off mid-sentence.`
 
-  console.log('AI Research (Executive Summary): Calling Perplexity API...')
-  const response = await callPerplexityApi([
-    { 
-      role: 'system', 
-      content: 'You are an expert strategic planning consultant specializing in municipal government strategic plans. Write professional, compelling executive summaries that effectively communicate strategic value to city leadership. ALWAYS complete your response with a proper conclusion - never cut off mid-sentence.' 
-    },
-    { role: 'user', content: prompt }
-  ])
-
-  // Check for truncated response
-  const content = response.content.trim()
-  if (content.length > 0 && !content.match(/[.!]\s*$/) && !content.endsWith('.')) {
-    console.warn('Executive Summary appears to be truncated, attempting to complete...')
-    
-    // Try to get a completion for the truncated response
-    const completionPrompt = `Please complete this executive summary that was cut off mid-sentence. Here is the incomplete text:
-
-${content}
-
-Please provide ONLY the missing completion text to finish the summary properly with a strong conclusion. Do not repeat the existing text.`
-    
-    const completionResponse = await callPerplexityApi([
-      { 
-        role: 'system', 
-        content: 'You are completing a municipal strategic plan executive summary. Provide only the missing conclusion text.' 
-      },
-      { role: 'user', content: completionPrompt }
-    ])
-    
-    return content + ' ' + completionResponse.content.trim()
-  }
-
-  return content
+  console.log('AI Research (Executive Summary): Using Claude for executive summary generation...')
+  
+  // Use Claude via our AI selector for executive summary generation
+  const claudeResponse = await generateExecutiveSummaryWithClaude(
+    prompt,
+    `Municipal Strategic Plan for ${departmentName}`
+  )
+  
+  return claudeResponse.content
 }
 
 export interface StrategicGoalSuggestion {

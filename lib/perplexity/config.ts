@@ -18,32 +18,54 @@ interface ApiError {
 }
 
 export async function callPerplexityApi(messages: Array<{ role: string; content: string }>) {
+  console.log('🔥 Calling Perplexity API with working configuration')
+  
   try {
+    console.log('Calling Perplexity API with messages:', messages.length)
+    
     const response = await fetch(PERPLEXITY_API_URL, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-'Authorization': `Bearer ${getApiKey()}`
+        'Authorization': `Bearer ${getApiKey()}`
       },
       body: JSON.stringify({
-        model: 'mistral-7b-instruct',
+        model: process.env.PPLX_MODEL || 'llama-3.1-sonar-small-128k-online',
         messages,
         max_tokens: 1024,
       })
     })
 
-    const data = await response.json()
+    console.log('Perplexity API response status:', response.status)
+    console.log('Perplexity API response headers:', Object.fromEntries(response.headers.entries()))
+
+    const responseText = await response.text()
+    console.log('Perplexity API raw response:', responseText.slice(0, 500))
+
+    let data
+    try {
+      data = JSON.parse(responseText)
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', parseError)
+      throw new Error(`Perplexity API returned invalid JSON. This usually means API key authentication failed. Response: ${responseText.slice(0, 200)}`)
+    }
 
     if (!response.ok) {
       const error = data as ApiError
       throw new Error(
         error.error?.message ||
-        `API call failed with status ${error.status}`
+        `Perplexity API call failed with status ${response.status}: ${responseText.slice(0, 200)}`
       )
     }
 
-    return data.choices[0].message.content
+    console.log('✅ Successfully received data from Perplexity API')
+    
+    // Return both content and citations
+    return {
+      content: data.choices[0].message.content,
+      citations: data.citations || []
+    }
   } catch (error) {
     console.error('Perplexity API error:', error)
     throw error instanceof Error 
