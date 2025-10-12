@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { signOut } from '@/app/actions/auth'
 import { ChevronDown, LogOut, User, Settings } from 'lucide-react'
 
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const router = useRouter()
 
   const userInitials = user?.full_name
     ? user.full_name
@@ -76,7 +78,7 @@ export function Header({ user }: HeaderProps) {
                       className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       onClick={() => {
                         setShowUserMenu(false)
-                        // Navigate to profile page when implemented
+                        router.push('/profile')
                       }}
                     >
                       <User className="h-4 w-4" />
@@ -86,7 +88,7 @@ export function Header({ user }: HeaderProps) {
                       className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       onClick={() => {
                         setShowUserMenu(false)
-                        // Navigate to settings page when implemented
+                        router.push('/settings')
                       }}
                     >
                       <Settings className="h-4 w-4" />

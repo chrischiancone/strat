@@ -58,3 +58,60 @@ export async function signOut() {
   revalidatePath('/', 'layout')
   redirect('/login')
 }
+
+export interface ChangePasswordInput {
+  currentPassword: string
+  newPassword: string
+}
+
+export async function changePassword(input: ChangePasswordInput): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  // Validate input
+  if (!input.currentPassword.trim()) {
+    throw new Error('Current password is required')
+  }
+
+  if (!input.newPassword.trim()) {
+    throw new Error('New password is required')
+  }
+
+  if (input.newPassword.length < 6) {
+    throw new Error('New password must be at least 6 characters long')
+  }
+
+  if (input.currentPassword === input.newPassword) {
+    throw new Error('New password must be different from current password')
+  }
+
+  // First verify the current password by attempting to sign in
+  const { error: verifyError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password: input.currentPassword,
+  })
+
+  if (verifyError) {
+    throw new Error('Current password is incorrect')
+  }
+
+  // Update the password
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: input.newPassword,
+  })
+
+  if (updateError) {
+    console.error('Error updating password:', updateError)
+    throw new Error('Failed to change password')
+  }
+
+  revalidatePath('/settings')
+}
