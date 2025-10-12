@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export type PlanStatus = 'draft' | 'under_review' | 'approved' | 'active' | 'archived'
@@ -26,6 +27,7 @@ export async function updatePlanStatus(
   notes?: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -36,8 +38,8 @@ export async function updatePlanStatus(
     return { success: false, error: 'Unauthorized' }
   }
 
-  // Get user profile and role
-  const { data: profile } = await supabase
+  // Get user profile and role using admin client
+  const { data: profile } = await adminSupabase
     .from('users')
     .select('role, first_name, last_name')
     .eq('id', user.id)
@@ -53,7 +55,7 @@ export async function updatePlanStatus(
   }
 
   // Get current plan status
-  const { data: currentPlan, error: planError } = await supabase
+  const { data: currentPlan, error: planError } = await adminSupabase
     .from('strategic_plans')
     .select('status, title')
     .eq('id', planId)
@@ -139,6 +141,7 @@ export async function updatePlanStatus(
  */
 export async function getApprovalHistory(planId: string): Promise<ApprovalHistoryEntry[]> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -149,8 +152,8 @@ export async function getApprovalHistory(planId: string): Promise<ApprovalHistor
     throw new Error('Unauthorized')
   }
 
-  // Get audit logs for status changes
-  const { data: logs, error } = await supabase
+  // Get audit logs for status changes using admin client
+  const { data: logs, error } = await adminSupabase
     .from('audit_logs')
     .select('id, entity_id, action, user_id, changes, metadata, created_at')
     .eq('entity_type', 'strategic_plan')

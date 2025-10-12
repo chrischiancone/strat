@@ -560,3 +560,53 @@ Error loading plan: Error: Failed to fetch strategic plan
     at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:212:15)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
     at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+Error fetching strategic plan: {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+Error loading plan: Error: Failed to fetch strategic plan
+    at getStrategicPlanForEdit (webpack-internal:///(rsc)/./app/actions/strategic-plans.ts:212:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PlanEditPage (webpack-internal:///(rsc)/./app/(dashboard)/plans/[id]/edit/page.tsx:39:16)
+ GET /plans/752274f1-06f1-4ff9-b181-029bd2fec245/edit 404 in 76ms
+ GET /plans 200 in 76ms
+ POST /plans 200 in 87ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651 200 in 19ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651 200 in 11ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651 200 in 8ms
+Error fetching approval history: {
+  code: '42703',
+  details: null,
+  hint: null,
+  message: 'column audit_logs.entity_id does not exist'
+}
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651 200 in 9ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651 200 in 10ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651 200 in 8ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 200 in 13ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 200 in 11ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 200 in 15ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 200 in 10ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 200 in 9ms
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 200 in 10ms
+ ⨯ app/actions/strategic-plans.ts (480:11) @ updateStrategicPlan
+ ⨯ Error: Plan not found
+    at updateStrategicPlan (./app/actions/strategic-plans.ts:256:15)
+digest: "3610353485"
+[0m [90m 478 |[39m[0m
+[0m [90m 479 |[39m   [36mif[39m ([33m![39mplan) {[0m
+[0m[31m[1m>[22m[39m[90m 480 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([32m'Plan not found'[39m)[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 481 |[39m   }[0m
+[0m [90m 482 |[39m[0m
+[0m [90m 483 |[39m   [36mconst[39m { data[33m:[39m userProfile } [33m=[39m [36mawait[39m supabase[0m
+ POST /plans/5b2c1f65-d03e-491a-872f-b9204e568651/edit 500 in 36ms
+ ✓ Compiled in 180ms (3390 modules)
