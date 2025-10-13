@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClientSupabaseClient } from '@/lib/supabase/client'
+import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 
 interface DebugInfo {
   userRole: string | null
@@ -25,7 +25,7 @@ export function AuditLogsDebug() {
   useEffect(() => {
     async function checkDebugInfo() {
       try {
-        const supabase = createClientSupabaseClient()
+        const supabase = createBrowserSupabaseClient()
         
         // Check user authentication
         const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -50,7 +50,7 @@ export function AuditLogsDebug() {
         const hasPermissions = userRole && ['admin', 'city_manager'].includes(userRole)
 
         // Test audit logs table access
-        const { data, error: auditError, count } = await supabase
+        const { error: auditError, count } = await supabase
           .from('audit_logs')
           .select('id', { count: 'exact', head: true })
           .limit(1)

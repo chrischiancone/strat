@@ -108,7 +108,7 @@ export function AddInitiativeForm({
     setOutcomes(newOutcomes)
   }
 
-  const formatCurrency = (value: string) => {
+  const _formatCurrency = (amount: number) => {
     const number = parseFloat(value.replace(/[^0-9.-]+/g, ''))
     if (isNaN(number)) return ''
     return number.toLocaleString()

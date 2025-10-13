@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { getMainDashboardStats } from '@/app/actions/dashboard'
+import { logger } from '@/lib/logger'
+import { handleError } from '@/lib/errorHandler'
+import { AsyncError } from '@/components/ErrorBoundary'
 import { 
   Target, 
   FileText, 
   DollarSign, 
   TrendingUp, 
-  ArrowRight, 
   Clock,
   Users,
   Building2,
@@ -14,14 +16,16 @@ import {
   ActivityIcon
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '@/components/ui/badge'
 import { PageHeader } from '@/components/layouts/PageHeader'
 import { PageContainer, GridLayout } from '@/components/layouts/PageContainer'
-import { MetricCard, ListCard, QuickActionCard, ListItem } from '@/components/ui/cards-enhanced'
+import { MetricCard, ListCard, ListItem } from '@/components/ui/cards-enhanced'
 import { SimpleDashboardStats } from '@/components/dashboard/SimpleDashboardStats'
+import { AIInsightsDashboard } from '@/components/ai/AIInsightsDashboard'
 
 export async function DashboardContent() {
-  const data = await getMainDashboardStats()
+  try {
+    logger.info('Loading dashboard content', { action: 'DashboardContent' })
+    const data = await getMainDashboardStats()
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -61,24 +65,7 @@ export async function DashboardContent() {
     return 'Good evening'
   }
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'active':
-      case 'approved':
-      case 'completed':
-        return 'success' as const
-      case 'draft':
-      case 'in_progress':
-      case 'pending':
-        return 'warning' as const
-      case 'inactive':
-      case 'rejected':
-      case 'cancelled':
-        return 'error' as const
-      default:
-        return 'neutral' as const
-    }
-  }
+  // getStatusBadgeVariant removed - not used in this component
 
   // Transform data for simple dashboard stats
   const dashboardStats = {
@@ -148,15 +135,15 @@ export async function DashboardContent() {
         ]}
         actions={
           <div className="flex gap-2">
-            <Link href="/plans">
-              <Button variant="outline">
-                <Target className="mr-2 h-4 w-4" />
+            <Link href="/plans" aria-label="View all strategic plans">
+              <Button variant="outline" aria-describedby="view-plans-description">
+                <Target className="mr-2 h-4 w-4" aria-hidden="true" />
                 View Plans
               </Button>
             </Link>
-            <Link href="/plans">
-              <Button>
-                <PlusIcon className="mr-2 h-4 w-4" />
+            <Link href="/plans" aria-label="Create a new strategic plan">
+              <Button aria-describedby="new-plan-description">
+                <PlusIcon className="mr-2 h-4 w-4" aria-hidden="true" />
                 New Plan
               </Button>
             </Link>
@@ -165,6 +152,14 @@ export async function DashboardContent() {
       />
 
       <PageContainer>
+        {/* AI Insights Dashboard */}
+        <div className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200 p-6">
+          <AIInsightsDashboard 
+            planId={data.recentPlans?.[0]?.id} 
+            departmentId={data.userInfo.departmentId}
+          />
+        </div>
+        
         {/* Enhanced Statistics */}
         <SimpleDashboardStats stats={dashboardStats} />
         
@@ -319,5 +314,30 @@ export async function DashboardContent() {
         </div>
       </PageContainer>
     </div>
-  )
+  ) 
+  } catch (error) {
+    const errorMessage = handleError.client(error, {
+      component: 'DashboardContent',
+      action: 'loadDashboard'
+    })
+    
+    return (
+      <div className="flex h-full flex-col">
+        <PageHeader
+          title="Dashboard"
+          description="Overview of your strategic plans and initiatives"
+          breadcrumbs={[
+            { label: 'Dashboard', current: true }
+          ]}
+        />
+        <PageContainer>
+          <AsyncError 
+            error={errorMessage}
+            retry={() => window.location.reload()}
+            className="mt-8"
+          />
+        </PageContainer>
+      </div>
+    )
+  }
 }

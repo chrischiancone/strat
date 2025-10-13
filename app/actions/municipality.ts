@@ -28,26 +28,35 @@ export interface Municipality {
 
 export async function getMunicipality(): Promise<Municipality | null> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user to fetch their municipality_id
   const { data: { user: currentUser } } = await supabase.auth.getUser()
 
   if (!currentUser) {
+    console.error('No current user found')
     return null
   }
 
-  const { data: currentUserProfile } = await supabase
+  // Use admin client to fetch user profile (in case of RLS restrictions)
+  const { data: currentUserProfile, error: userError } = await adminSupabase
     .from('users')
     .select('municipality_id')
     .eq('id', currentUser.id)
     .single<{ municipality_id: string }>()
 
-  if (!currentUserProfile) {
+  if (userError) {
+    console.error('Error fetching user profile:', userError)
     return null
   }
 
-  // Fetch municipality
-  const { data, error } = await supabase
+  if (!currentUserProfile || !currentUserProfile.municipality_id) {
+    console.error('No municipality_id found for user:', currentUser.id)
+    return null
+  }
+
+  // Use admin client to fetch municipality (to bypass RLS)
+  const { data, error } = await adminSupabase
     .from('municipalities')
     .select(`
       id,
@@ -64,6 +73,7 @@ export async function getMunicipality(): Promise<Municipality | null> {
     return null
   }
 
+  console.log('Successfully fetched municipality:', data.name)
   return data as Municipality
 }
 

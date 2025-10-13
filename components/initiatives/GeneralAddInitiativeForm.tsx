@@ -344,7 +344,7 @@ export function GeneralAddInitiativeForm({
             ) : goals.length === 0 ? (
               <div className="rounded-lg border bg-yellow-50 p-4 text-center">
                 <p className="text-sm text-yellow-800 mb-2">No strategic goals found for this plan</p>
-                <p className="text-xs text-yellow-700">You'll need to add strategic goals to this plan before creating initiatives.</p>
+                <p className="text-xs text-yellow-700">You&apos;ll need to add strategic goals to this plan before creating initiatives.</p>
               </div>
             ) : (
               <>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
+import LoadingOverlay from '@/components/LoadingOverlay'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -66,23 +67,9 @@ export default function RootLayout({
         }} />
       </head>
       <body className={`${inter.className} h-full`}>
-        <div id="loading-overlay" className="loading-overlay">
-          <div className="loading-spinner"></div>
-        </div>
+        <LoadingOverlay />
         {children}
         <Toaster />
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            // Hide loading overlay once page is fully loaded
-            window.addEventListener('load', function() {
-              const overlay = document.getElementById('loading-overlay');
-              if (overlay) {
-                overlay.classList.add('loaded');
-                setTimeout(() => overlay.remove(), 300);
-              }
-            });
-          `
-        }} />
       </body>
     </html>
   )

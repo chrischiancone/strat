@@ -16,7 +16,7 @@ interface GeneratePlanPdfButtonProps {
 
 export function GeneratePlanPdfButton({
   planId,
-  planTitle,
+  planTitle: _planTitle,
   departmentName,
   variant = 'outline',
   size = 'md',

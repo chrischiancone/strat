@@ -188,14 +188,22 @@ export function LoadingSpinner({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-2">
-      <LoaderIcon className={cn(
-        'animate-spin text-primary-600',
-        sizeClasses[size],
-        className
-      )} />
+    <div 
+      className="flex flex-col items-center justify-center space-y-2"
+      role="status"
+      aria-live="polite"
+      aria-label={text || 'Loading content'}
+    >
+      <LoaderIcon 
+        className={cn(
+          'animate-spin text-primary-600',
+          sizeClasses[size],
+          className
+        )}
+        aria-hidden="true"
+      />
       {text && (
-        <p className="text-sm font-medium text-gray-600">{text}</p>
+        <p className="text-sm font-medium text-gray-600" aria-live="polite">{text}</p>
       )}
     </div>
   )

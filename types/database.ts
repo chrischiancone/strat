@@ -34,6 +34,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      backups: {
+        Row: {
+          id: string
+          name: string
+          type: string
+          status: string
+          size: number | null
+          duration: number | null
+          file_count: number | null
+          file_path: string | null
+          checksum: string | null
+          includes: Json | null
+          error_message: string | null
+          municipality_id: string
+          created_by: string | null
+          created_at: string | null
+          completed_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          type: string
+          status?: string
+          size?: number | null
+          duration?: number | null
+          file_count?: number | null
+          file_path?: string | null
+          checksum?: string | null
+          includes?: Json | null
+          error_message?: string | null
+          municipality_id: string
+          created_by?: string | null
+          created_at?: string | null
+          completed_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          type?: string
+          status?: string
+          size?: number | null
+          duration?: number | null
+          file_count?: number | null
+          file_path?: string | null
+          checksum?: string | null
+          includes?: Json | null
+          error_message?: string | null
+          municipality_id?: string
+          created_by?: string | null
+          created_at?: string | null
+          completed_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backups_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string

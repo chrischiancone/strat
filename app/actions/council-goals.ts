@@ -168,7 +168,15 @@ export async function updateCouncilGoal(input: UpdateCouncilGoalInput): Promise<
   }
 
   // Update the goal
-  const updateData: { [key: string]: any } = {}
+  interface CouncilGoalUpdateData {
+    title?: string
+    description?: string | null
+    key_points?: string[]
+    sort_order?: number
+    is_active?: boolean
+  }
+  
+  const updateData: CouncilGoalUpdateData = {}
   if (input.title !== undefined) updateData.title = input.title
   if (input.description !== undefined) updateData.description = input.description
   if (input.key_points !== undefined) updateData.key_points = input.key_points

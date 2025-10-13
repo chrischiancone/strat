@@ -26,7 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Pencil, Trash2, GripVertical, Flag, Target } from 'lucide-react'
+import { Plus, Pencil, Trash2, Flag, Target } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { 
   CouncilGoal, 

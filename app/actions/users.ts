@@ -3,6 +3,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { createUserSchema, updateUserSchema, type CreateUserInput, type UpdateUserInput } from '@/lib/validations/user'
+import { logger } from '@/lib/logger'
+import { createError, handleError, safeAsync } from '@/lib/errorHandler'
 import { revalidatePath } from 'next/cache'
 
 export interface UserFilters {
@@ -51,7 +53,9 @@ export interface UsersResponse {
 export async function getUsers(
   filters: UserFilters = {}
 ): Promise<UsersResponse> {
-  const supabase = createServerSupabaseClient()
+  const result = await safeAsync(async () => {
+    logger.info('Fetching users with filters', { filters, action: 'getUsers' })
+    const supabase = createServerSupabaseClient()
 
   const {
     role,
@@ -114,8 +118,8 @@ export async function getUsers(
   const { data, error, count } = await query
 
   if (error) {
-    console.error('Error fetching users:', error)
-    throw new Error('Failed to fetch users')
+    logger.dbError('fetch users', error, { filters })
+    throw createError.database('Failed to fetch users', error, { filters })
   }
 
   // Transform data to include department name
@@ -131,27 +135,45 @@ export async function getUsers(
     updated_at: user.updated_at,
   }))
 
-  const total = count || 0
-  const totalPages = Math.ceil(total / limit)
-
-  return {
-    users,
-    total,
-    page,
-    limit,
-    totalPages,
+    const total = count || 0
+    const totalPages = Math.ceil(total / limit)
+    
+    const result = {
+      users,
+      total,
+      page,
+      limit,
+      totalPages,
+    }
+    
+    logger.info('Users fetched successfully', {
+      total,
+      page,
+      limit,
+      appliedFilters: filters
+    })
+    
+    return result
+  }, { action: 'getUsers' })
+  
+  if (!result.success) {
+    throw new Error(result.error)
   }
+  
+  return result.data
 }
 
 export async function getDepartments() {
-  // Get current user's municipality_id first
-  const serverSupabase = createServerSupabaseClient()
-  const { data: { user } } = await serverSupabase.auth.getUser()
-  
-  if (!user) {
-    console.error('User not authenticated when fetching departments')
-    return []
-  }
+  const result = await safeAsync(async () => {
+    logger.info('Fetching departments for user', { action: 'getDepartments' })
+    
+    // Get current user's municipality_id first
+    const serverSupabase = createServerSupabaseClient()
+    const { data: { user } } = await serverSupabase.auth.getUser()
+    
+    if (!user) {
+      throw createError.auth('User not authenticated')
+    }
   
   const { data: userProfile } = await serverSupabase
     .from('users')
@@ -160,8 +182,7 @@ export async function getDepartments() {
     .single<{ municipality_id: string }>()
     
   if (!userProfile) {
-    console.error('User profile not found when fetching departments')
-    return []
+    throw createError.notFound('User profile')
   }
   
   // Use admin client to bypass RLS for reading departments
@@ -174,12 +195,23 @@ export async function getDepartments() {
     .eq('is_active', true)
     .order('name', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching departments:', error)
+    if (error) {
+      logger.dbError('fetch departments', error)
+      throw createError.database('Failed to fetch departments', error)
+    }
+    
+    const departments = data || []
+    logger.info('Departments fetched successfully', { count: departments.length })
+    
+    return departments
+  }, { action: 'getDepartments' })
+  
+  if (!result.success) {
+    logger.warn('Failed to fetch departments, returning empty array', { error: result.error })
     return []
   }
-
-  return data || []
+  
+  return result.data
 }
 
 export async function getUserById(userId: string) {
@@ -208,7 +240,9 @@ export async function getUserById(userId: string) {
 }
 
 export async function createUser(input: CreateUserInput) {
-  try {
+  const result = await handleError.server(async () => {
+    logger.info('Creating new user', { email: input.email, role: input.role, action: 'createUser' })
+    
     // Validate input
     const validatedInput = createUserSchema.parse(input)
 
@@ -217,7 +251,7 @@ export async function createUser(input: CreateUserInput) {
     const { data: { user: currentUser } } = await supabase.auth.getUser()
 
     if (!currentUser) {
-      return { error: 'Not authenticated' }
+      throw createError.auth('Not authenticated')
     }
 
     const { data: currentUserProfile, error: profileFetchError } = await supabase
@@ -227,7 +261,7 @@ export async function createUser(input: CreateUserInput) {
       .single<{ municipality_id: string }>()
 
     if (profileFetchError || !currentUserProfile) {
-      return { error: 'User profile not found' }
+      throw createError.notFound('User profile', profileFetchError || new Error('Profile not found'))
     }
 
     const municipalityId = currentUserProfile.municipality_id
@@ -246,8 +280,8 @@ export async function createUser(input: CreateUserInput) {
     })
 
     if (authError || !authUser.user) {
-      console.error('Error creating auth user:', authError)
-      return { error: authError?.message || 'Failed to create user' }
+      logger.error('Failed to create auth user', { email: validatedInput.email, error: authError?.message })
+      throw createError.auth('Failed to create user', authError || new Error('No user returned'))
     }
 
     // Create public user profile
@@ -265,14 +299,20 @@ export async function createUser(input: CreateUserInput) {
       })
 
     if (profileError) {
-      console.error('Error creating user profile:', profileError)
+      logger.error('Failed to create user profile', { userId: authUser.user.id, error: profileError.message })
       // Try to clean up auth user
       await adminClient.auth.admin.deleteUser(authUser.user.id)
-      return { error: 'Failed to create user profile' }
+      throw createError.database('Failed to create user profile', profileError)
     }
 
     // Revalidate users list page
     revalidatePath('/admin/users')
+    
+    logger.info('User created successfully', {
+      userId: authUser.user.id,
+      email: validatedInput.email,
+      role: validatedInput.role
+    })
 
     // Return success with login credentials
     return { 
@@ -280,13 +320,9 @@ export async function createUser(input: CreateUserInput) {
       userId: authUser.user.id,
       message: `User created successfully! They can log in with:\nEmail: ${validatedInput.email}\nPassword: password123`
     }
-  } catch (error) {
-    console.error('Error in createUser:', error)
-    if (error instanceof Error) {
-      return { error: error.message }
-    }
-    return { error: 'An unexpected error occurred' }
-  }
+  }, { email: input.email, role: input.role, action: 'createUser' })
+  
+  return result
 }
 
 export async function updateUser(userId: string, input: UpdateUserInput) {

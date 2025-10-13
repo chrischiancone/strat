@@ -2,7 +2,11 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
+import { logger } from '@/lib/logger'
+import { createError, safeAsync } from '@/lib/errorHandler'
 import type { SwotAnalysis, EnvironmentalScan, BenchmarkingData } from './strategic-plans'
+// Import database types for future use
+// import type { ... } from '@/lib/types/database'
 
 export interface DashboardData {
   plan: {
@@ -58,41 +62,44 @@ export interface DashboardData {
 }
 
 export async function getDashboardData(planId: string): Promise<DashboardData> {
-  const supabase = createServerSupabaseClient()
-  const adminClient = createAdminSupabaseClient()
+  const result = await safeAsync(async () => {
+    logger.info('Loading dashboard data', { planId, action: 'getDashboardData' })
+    
+    const supabase = createServerSupabaseClient()
+    const adminClient = createAdminSupabaseClient()
 
-  // Get current user for authentication
-  const {
-    data: { user: currentUser },
-  } = await supabase.auth.getUser()
+    // Get current user for authentication
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser()
 
-  if (!currentUser) {
-    throw new Error('Unauthorized')
-  }
+    if (!currentUser) {
+      throw createError.auth('User not authenticated', undefined, { planId })
+    }
 
-  // Use admin client for data queries to bypass RLS
-  // We've already verified user authentication above
-  const { data: plan, error: planError } = await adminClient
-    .from('strategic_plans')
-    .select(`
-      id,
-      title,
-      status,
-      created_by,
-      swot_analysis,
-      environmental_scan,
-      benchmarking_data,
-      departments(name),
-      start_fiscal_year:fiscal_years!start_fiscal_year_id(year),
-      end_fiscal_year:fiscal_years!end_fiscal_year_id(year)
-    `)
-    .eq('id', planId)
-    .single()
+    // Use admin client for data queries to bypass RLS
+    // We've already verified user authentication above
+    const { data: plan, error: planError } = await adminClient
+      .from('strategic_plans')
+      .select(`
+        id,
+        title,
+        status,
+        created_by,
+        swot_analysis,
+        environmental_scan,
+        benchmarking_data,
+        departments(name),
+        start_fiscal_year:fiscal_years!start_fiscal_year_id(year),
+        end_fiscal_year:fiscal_years!end_fiscal_year_id(year)
+      `)
+      .eq('id', planId)
+      .single()
 
-  if (planError || !plan) {
-    console.error('Error loading plan:', planError)
-    throw new Error('Plan not found')
-  }
+    if (planError || !plan) {
+      logger.error('Failed to load plan', { planId, error: planError?.message })
+      throw createError.notFound('Strategic Plan', new Error(planError?.message || 'Plan not found'), { planId })
+    }
 
   type PlanData = {
     id: string
@@ -108,71 +115,71 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
   }
   const typedPlan = plan as PlanData
 
-  // Get all goals for this plan
-  const { data: goals } = await adminClient
-    .from('strategic_goals')
-    .select('id')
-    .eq('strategic_plan_id', planId)
+    // Optimized query: Get all goals with their initiatives in a single query
+    const { data: goalsWithInitiatives } = await adminClient
+      .from('strategic_goals')
+      .select(`
+        id,
+        initiatives(id, priority_level, status, total_year_1_cost, total_year_2_cost, total_year_3_cost)
+      `)
+      .eq('strategic_plan_id', planId)
 
-  type Goal = { id: string }
-  const typedGoals = (goals || []) as Goal[]
-  const goalCount = typedGoals.length
-  const goalIds = typedGoals.map((g) => g.id)
-
-  // Initialize counts
-  const initiativesByPriority = {
-    NEED: 0,
-    WANT: 0,
-    NICE_TO_HAVE: 0,
-  }
-
-  const initiativesByStatus = {
-    not_started: 0,
-    in_progress: 0,
-    at_risk: 0,
-    completed: 0,
-    deferred: 0,
-  }
-
-  const budgetByYear = {
-    year_1: 0,
-    year_2: 0,
-    year_3: 0,
-  }
-
-  // Get all initiatives for this plan
-  if (goalIds.length > 0) {
-    const { data: initiatives } = await adminClient
-      .from('initiatives')
-      .select('priority_level, status, total_year_1_cost, total_year_2_cost, total_year_3_cost')
-      .in('strategic_goal_id', goalIds)
-
-    type Initiative = {
-      priority_level: string
-      status: string
-      total_year_1_cost: number
-      total_year_2_cost: number
-      total_year_3_cost: number
+    type GoalWithInitiatives = {
+      id: string
+      initiatives: Array<{
+        id: string
+        priority_level: string
+        status: string
+        total_year_1_cost: number | null
+        total_year_2_cost: number | null
+        total_year_3_cost: number | null
+      }>
     }
-    const typedInitiatives = (initiatives || []) as Initiative[]
+    
+    const typedGoalsWithInitiatives = (goalsWithInitiatives || []) as GoalWithInitiatives[]
+    const goalCount = typedGoalsWithInitiatives.length
+    const goalIds = typedGoalsWithInitiatives.map((g) => g.id)
+    
+    // Initialize counts
+    const initiativesByPriority = {
+      NEED: 0,
+      WANT: 0,
+      NICE_TO_HAVE: 0,
+    }
 
-    typedInitiatives.forEach((initiative) => {
-      // Count by priority
-      if (initiative.priority_level in initiativesByPriority) {
-        initiativesByPriority[initiative.priority_level as keyof typeof initiativesByPriority]++
-      }
+    const initiativesByStatus = {
+      not_started: 0,
+      in_progress: 0,
+      at_risk: 0,
+      completed: 0,
+      deferred: 0,
+    }
 
-      // Count by status
-      if (initiative.status in initiativesByStatus) {
-        initiativesByStatus[initiative.status as keyof typeof initiativesByStatus]++
-      }
+    const budgetByYear = {
+      year_1: 0,
+      year_2: 0,
+      year_3: 0,
+    }
+    
+    // Process all initiatives from the joined query
+    typedGoalsWithInitiatives.forEach((goal) => {
+      goal.initiatives.forEach((initiative) => {
+        // Count by priority
+        if (initiative.priority_level in initiativesByPriority) {
+          initiativesByPriority[initiative.priority_level as keyof typeof initiativesByPriority]++
+        }
 
-      // Sum budgets
-      budgetByYear.year_1 += initiative.total_year_1_cost || 0
-      budgetByYear.year_2 += initiative.total_year_2_cost || 0
-      budgetByYear.year_3 += initiative.total_year_3_cost || 0
+        // Count by status
+        if (initiative.status in initiativesByStatus) {
+          initiativesByStatus[initiative.status as keyof typeof initiativesByStatus]++
+        }
+
+        // Sum budgets
+        budgetByYear.year_1 += initiative.total_year_1_cost || 0
+        budgetByYear.year_2 += initiative.total_year_2_cost || 0
+        budgetByYear.year_3 += initiative.total_year_3_cost || 0
+      })
     })
-  }
 
   // Get funding sources
   let budgetByFundingSource: Array<{ source_name: string; total: number }> = []
@@ -311,35 +318,51 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     }))
   )
 
-  return {
-    plan: {
-      id: typedPlan.id,
-      title: typedPlan.title,
-      status: typedPlan.status,
-      fiscal_year_start: typedPlan.start_fiscal_year.year.toString(),
-      fiscal_year_end: typedPlan.end_fiscal_year.year.toString(),
-      department_name: typedPlan.departments.name,
-      created_by: typedPlan.created_by,
-      swot_analysis:
-        typeof typedPlan.swot_analysis === 'object' && typedPlan.swot_analysis !== null
-          ? (typedPlan.swot_analysis as SwotAnalysis)
-          : null,
-      environmental_scan:
-        typeof typedPlan.environmental_scan === 'object' && typedPlan.environmental_scan !== null
-          ? (typedPlan.environmental_scan as EnvironmentalScan)
-          : null,
-      benchmarking_data:
-        typeof typedPlan.benchmarking_data === 'object' && typedPlan.benchmarking_data !== null
-          ? (typedPlan.benchmarking_data as BenchmarkingData)
-          : null,
-    },
-    goalCount,
-    initiativesByPriority,
-    initiativesByStatus,
-    budgetByYear,
-    budgetByFundingSource,
-    kpiProgress,
+    const dashboardData: DashboardData = {
+      plan: {
+        id: typedPlan.id,
+        title: typedPlan.title,
+        status: typedPlan.status,
+        fiscal_year_start: typedPlan.start_fiscal_year.year.toString(),
+        fiscal_year_end: typedPlan.end_fiscal_year.year.toString(),
+        department_name: typedPlan.departments.name,
+        created_by: typedPlan.created_by,
+        swot_analysis:
+          typeof typedPlan.swot_analysis === 'object' && typedPlan.swot_analysis !== null
+            ? (typedPlan.swot_analysis as SwotAnalysis)
+            : null,
+        environmental_scan:
+          typeof typedPlan.environmental_scan === 'object' && typedPlan.environmental_scan !== null
+            ? (typedPlan.environmental_scan as EnvironmentalScan)
+            : null,
+        benchmarking_data:
+          typeof typedPlan.benchmarking_data === 'object' && typedPlan.benchmarking_data !== null
+            ? (typedPlan.benchmarking_data as BenchmarkingData)
+            : null,
+      },
+      goalCount,
+      initiativesByPriority,
+      initiativesByStatus,
+      budgetByYear,
+      budgetByFundingSource,
+      kpiProgress,
+    }
+
+    logger.info('Dashboard data loaded successfully', {
+      planId,
+      goalCount,
+      totalInitiatives: Object.values(initiativesByStatus).reduce((sum, count) => sum + count, 0),
+      totalBudget: Object.values(budgetByYear).reduce((sum, amount) => sum + amount, 0)
+    })
+
+    return dashboardData
+  }, { planId, action: 'getDashboardData' })
+
+  if (!result.success) {
+    throw new Error(result.error)
   }
+
+  return result.data
 }
 
 // Main dashboard statistics
@@ -379,17 +402,20 @@ export interface MainDashboardStats {
 }
 
 export async function getMainDashboardStats(): Promise<MainDashboardStats> {
-  const supabase = createServerSupabaseClient()
-  const adminSupabase = createAdminSupabaseClient()
+  const result = await safeAsync(async () => {
+    logger.info('Loading main dashboard stats', { action: 'getMainDashboardStats' })
+    
+    const supabase = createServerSupabaseClient()
+    const adminSupabase = createAdminSupabaseClient()
 
-  // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    // Get current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-  if (!user) {
-    throw new Error('Not authenticated')
-  }
+    if (!user) {
+      throw createError.auth('User not authenticated')
+    }
 
   // Get user profile with department using admin client
   const { data: profile } = await adminSupabase
@@ -463,41 +489,22 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
   let totalInitiatives = 0
   let activeInitiatives = 0
 
-  // Fetch total initiatives using admin client
+  // Fetch total initiatives using admin client with optimized queries
   if (!hasFullAccess && departmentId) {
-    // For department users, filter initiatives by department through strategic plans
-    const { data: planIds } = await adminSupabase
-      .from('strategic_plans')
-      .select('id')
-      .eq('department_id', departmentId)
+    // For department users, use joins instead of separate queries
+    const { count: totalInitiativesCount } = await adminSupabase
+      .from('initiatives')
+      .select('id, strategic_goals!inner(strategic_plans!inner(department_id))', { count: 'exact' })
+      .eq('strategic_goals.strategic_plans.department_id', departmentId)
     
-    const planIdList = planIds?.map(p => p.id) || []
+    const { count: activeInitiativesCount } = await adminSupabase
+      .from('initiatives')
+      .select('id, strategic_goals!inner(strategic_plans!inner(department_id))', { count: 'exact' })
+      .eq('strategic_goals.strategic_plans.department_id', departmentId)
+      .eq('status', 'in_progress')
     
-    if (planIdList.length > 0) {
-      const { data: goalIds } = await adminSupabase
-        .from('strategic_goals')
-        .select('id')
-        .in('strategic_plan_id', planIdList)
-      
-      const goalIdList = goalIds?.map(g => g.id) || []
-      
-      const { count: totalInitiativesCount } = await adminSupabase
-        .from('initiatives')
-        .select('id', { count: 'exact' })
-        .in('strategic_goal_id', goalIdList.length > 0 ? goalIdList : [])
-      
-      const { count: activeInitiativesCount } = await adminSupabase
-        .from('initiatives')
-        .select('id', { count: 'exact' })
-        .in('strategic_goal_id', goalIdList.length > 0 ? goalIdList : [])
-        .eq('status', 'in_progress')
-      
-      totalInitiatives = totalInitiativesCount || 0
-      activeInitiatives = activeInitiativesCount || 0
-    } else {
-      totalInitiatives = 0
-      activeInitiatives = 0
-    }
+    totalInitiatives = totalInitiativesCount || 0
+    activeInitiatives = activeInitiativesCount || 0
   } else {
     // For admin/city manager/finance, show all initiatives
     const { count: totalInitiativesCount } = await adminSupabase
@@ -513,34 +520,16 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
     activeInitiatives = activeInitiativesCount || 0
   }
 
-  // Fetch total budget using admin client
+  // Fetch total budget using admin client with optimized queries
   let budgetData
   if (!hasFullAccess && departmentId) {
-    // For department users, filter budget by department
-    const { data: planIds } = await adminSupabase
-      .from('strategic_plans')
-      .select('id')
-      .eq('department_id', departmentId)
+    // For department users, use joins to filter budget by department
+    const { data } = await adminSupabase
+      .from('initiatives')
+      .select('year_1_cost, year_2_cost, year_3_cost, strategic_goals!inner(strategic_plans!inner(department_id))')
+      .eq('strategic_goals.strategic_plans.department_id', departmentId)
     
-    const planIdList = planIds?.map(p => p.id) || []
-    
-    if (planIdList.length > 0) {
-      const { data: goalIds } = await adminSupabase
-        .from('strategic_goals')
-        .select('id')
-        .in('strategic_plan_id', planIdList)
-      
-      const goalIdList = goalIds?.map(g => g.id) || []
-      
-      const { data } = await adminSupabase
-        .from('initiatives')
-        .select('year_1_cost, year_2_cost, year_3_cost')
-        .in('strategic_goal_id', goalIdList.length > 0 ? goalIdList : [])
-      
-      budgetData = data
-    } else {
-      budgetData = []
-    }
+    budgetData = data
   } else {
     // For admin/city manager/finance, show all budget data
     const { data } = await adminSupabase
@@ -594,53 +583,40 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
   // Fetch recent initiatives (last 5) using admin client
   let recentInitiativesData
   if (!hasFullAccess && departmentId) {
-    // For department users, filter recent initiatives by department
-    const { data: planIds } = await adminSupabase
-      .from('strategic_plans')
-      .select('id')
-      .eq('department_id', departmentId)
-    
-    const planIdList = planIds?.map(p => p.id) || []
-    
-    if (planIdList.length > 0) {
-      const { data: goalIds } = await adminSupabase
-        .from('strategic_goals')
-        .select('id, strategic_plan_id')
-        .in('strategic_plan_id', planIdList)
+    // For department users, use joins to get initiatives with plan titles
+    const { data } = await adminSupabase
+      .from('initiatives')
+      .select('id, name, status, strategic_goal_id, strategic_goals!inner(strategic_plan_id, strategic_plans!inner(id, title, department_id))')
+      .eq('strategic_goals.strategic_plans.department_id', departmentId)
+      .order('created_at', { ascending: false })
+      .limit(5)
       
-      const goalIdList = goalIds?.map(g => g.id) || []
-      const goalToPlanMap = new Map(goalIds?.map(g => [g.id, g.strategic_plan_id]) || [])
-      
-      const { data } = await adminSupabase
-        .from('initiatives')
-        .select('id, name, status, strategic_goal_id')
-        .in('strategic_goal_id', goalIdList.length > 0 ? goalIdList : [])
-        .order('created_at', { ascending: false })
-        .limit(5)
-      
-      // Get plan titles for each initiative
-      const planData = planIds || []
-      const planTitleMap = new Map()
-      
-      for (const plan of planData) {
-        const { data: planDetails } = await adminSupabase
-          .from('strategic_plans')
-          .select('id, title')
-          .eq('id', plan.id)
-          .single()
-        if (planDetails) {
-          planTitleMap.set(planDetails.id, planDetails.title)
+    // Define the shape of the nested query result
+    type DepartmentInitiativeWithNestedPlans = {
+      id: string
+      name: string
+      status: string
+      strategic_goal_id: string
+      strategic_goals: {
+        strategic_plan_id: string
+        strategic_plans: {
+          id: string
+          title: string
+          department_id: string
         }
       }
-      
-      recentInitiativesData = data?.map(init => ({
-        ...init,
-        plan_id: goalToPlanMap.get(init.strategic_goal_id) || '',
-        strategic_plans: { title: planTitleMap.get(goalToPlanMap.get(init.strategic_goal_id)) || 'Unknown Plan' }
-      })) || []
-    } else {
-      recentInitiativesData = []
     }
+    
+    const typedDepartmentData = data as DepartmentInitiativeWithNestedPlans[] | null
+    
+    recentInitiativesData = typedDepartmentData?.map(init => ({
+      id: init.id,
+      name: init.name,
+      status: init.status,
+      strategic_goal_id: init.strategic_goal_id,
+      plan_id: init.strategic_goals?.strategic_plans?.id || '',
+      strategic_plans: { title: init.strategic_goals?.strategic_plans?.title || 'Unknown Plan' }
+    })) || []
   } else {
     // For admin/city manager/finance, show all recent initiatives
     const { data } = await adminSupabase
@@ -649,13 +625,30 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
       .order('created_at', { ascending: false })
       .limit(5)
     
-    recentInitiativesData = data?.map(init => ({
+    // Define the shape of the nested query result
+    type InitiativeWithNestedPlans = {
+      id: string
+      name: string
+      status: string
+      strategic_goal_id: string
+      strategic_goals: {
+        strategic_plan_id: string
+        strategic_plans: {
+          id: string
+          title: string
+        }
+      }
+    }
+    
+    const typedData = data as InitiativeWithNestedPlans[] | null
+    
+    recentInitiativesData = typedData?.map(init => ({
       id: init.id,
       name: init.name,
       status: init.status,
       strategic_goal_id: init.strategic_goal_id,
-      plan_id: (init.strategic_goals as any)?.strategic_plans?.id || '',
-      strategic_plans: { title: (init.strategic_goals as any)?.strategic_plans?.title || 'Unknown Plan' }
+      plan_id: init.strategic_goals?.strategic_plans?.id || '',
+      strategic_plans: { title: init.strategic_goals?.strategic_plans?.title || 'Unknown Plan' }
     })) || []
   }
 
@@ -676,22 +669,39 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
     plan_title: init.strategic_plans?.title || 'Unknown Plan',
   }))
 
-  return {
-    userInfo: {
-      name: userName,
-      email: user.email || '',
-      role: userRole,
-      departmentName,
-    },
-    fiscalYear: currentFiscalYear,
-    stats: {
+    const dashboardStats: MainDashboardStats = {
+      userInfo: {
+        name: userName,
+        email: user.email || '',
+        role: userRole,
+        departmentName,
+      },
+      fiscalYear: currentFiscalYear,
+      stats: {
+        totalPlans: totalPlans || 0,
+        activePlans: activePlans || 0,
+        totalInitiatives: totalInitiatives || 0,
+        activeInitiatives: activeInitiatives || 0,
+        totalBudget,
+      },
+      recentPlans,
+      recentInitiatives,
+    }
+
+    logger.info('Main dashboard stats loaded successfully', {
+      userId: user.id,
       totalPlans: totalPlans || 0,
-      activePlans: activePlans || 0,
-      totalInitiatives: totalInitiatives || 0,
-      activeInitiatives: activeInitiatives || 0,
-      totalBudget,
-    },
-    recentPlans,
-    recentInitiatives,
+      totalInitiatives,
+      userRole,
+      departmentId: departmentId || 'none'
+    })
+
+    return dashboardStats
+  }, { action: 'getMainDashboardStats' })
+
+  if (!result.success) {
+    throw new Error(result.error)
   }
+
+  return result.data
 }

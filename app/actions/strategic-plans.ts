@@ -239,20 +239,31 @@ export async function createStrategicPlan(
   if (error) {
     console.error('Error creating strategic plan:', error)
     console.error('Strategic plan data that failed:', newPlan)
+    
+    // Type the error properly
+    interface PostgrestError {
+      code?: string
+      message?: string
+      details?: string
+      hint?: string
+    }
+    
+    const typedError = error as PostgrestError
+    
     console.error('Error details:', {
-      code: (error as any)?.code,
-      message: (error as any)?.message,
-      details: (error as any)?.details,
-      hint: (error as any)?.hint,
+      code: typedError?.code,
+      message: typedError?.message,
+      details: typedError?.details,
+      hint: typedError?.hint,
     })
     
     // Provide more specific error messages
-    if ((error as any)?.code === '23505') {
+    if (typedError?.code === '23505') {
       throw new Error('A strategic plan already exists for this department and time period')
-    } else if ((error as any)?.code === '42501') {
+    } else if (typedError?.code === '42501') {
       throw new Error('Permission denied: Unable to create strategic plan')
     } else {
-      throw new Error(`Failed to create strategic plan: ${(error as any)?.message || 'Unknown error'}`)
+      throw new Error(`Failed to create strategic plan: ${typedError?.message || 'Unknown error'}`)
     }
   }
 

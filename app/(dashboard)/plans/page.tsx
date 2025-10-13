@@ -7,7 +7,8 @@ import { PlansTable } from '@/components/plans/PlansTable'
 import { PageHeader } from '@/components/layouts/PageHeader'
 import { PageContainer, ContentCard } from '@/components/layouts/PageContainer'
 import { TableSkeleton, NoDataEmptyState } from '@/components/ui/loading-states'
-import { PlusIcon, FileTextIcon } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Users, MessageSquare, Activity } from 'lucide-react'
 
 async function getUserProfile() {
   const supabase = createServerSupabaseClient()

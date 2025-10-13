@@ -17,11 +17,17 @@ interface Department {
   name: string
 }
 
+interface UserPreferences {
+  phone?: string
+  mobile?: string
+  [key: string]: string | number | boolean | undefined
+}
+
 interface UserProfile {
   id: string
   full_name: string
   email: string
-  preferences: { [key: string]: any } | null
+  preferences: UserPreferences | null
   role: string
   department_id: string | null
   municipality_id: string
@@ -41,8 +47,8 @@ export function ProfileForm({ user, departments, currentUserRole }: ProfileFormP
   
   const [fullName, setFullName] = useState(user.full_name || '')
   const [email, setEmail] = useState(user.email || '')
-  const [phone, setPhone] = useState((user.preferences?.phone as string) || '')
-  const [mobile, setMobile] = useState((user.preferences?.mobile as string) || '')
+  const [phone, setPhone] = useState(user.preferences?.phone || '')
+  const [mobile, setMobile] = useState(user.preferences?.mobile || '')
   const [departmentId, setDepartmentId] = useState(user.department_id || 'none')
   const [isSaving, setIsSaving] = useState(false)
 

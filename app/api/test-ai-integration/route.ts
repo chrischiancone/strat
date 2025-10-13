@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { generateExecutiveSummary } from '@/lib/ai-selector'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: Request) {
   try {
     // Test Claude integration with a sample executive summary
     const testContent = `

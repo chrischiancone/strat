@@ -103,8 +103,7 @@ export default async function AddInitiativePage({ params, searchParams }: PagePr
     // Get fiscal years for cost estimation
     const fiscalYears = await getFiscalYears()
 
-    // Find the selected goal if goalId is provided
-    const selectedGoal = goalId ? goals.find(g => g.id === goalId) : null
+    // Note: selectedGoalId is passed to the form component instead
 
     return (
       <div className="flex h-full flex-col">

@@ -108,8 +108,6 @@ export function CreatePlanDialog({
     }
   }
 
-  const isAdmin = userRole === 'admin'
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

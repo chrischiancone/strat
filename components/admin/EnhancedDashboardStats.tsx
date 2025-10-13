@@ -1,7 +1,5 @@
 import React from 'react'
 import { 
-  BarChart, 
-  Bar, 
   PieChart, 
   Pie, 
   Cell, 
@@ -22,8 +20,6 @@ import {
   Calendar, 
   FileText, 
   Activity, 
-  TrendingUp,
-  TrendingDown,
   ArrowUpIcon,
   ArrowDownIcon,
   MinusIcon

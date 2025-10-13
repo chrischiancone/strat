@@ -154,7 +154,7 @@ export function SwotAnalysisForm({
             title: 'Saved',
             description: 'Item updated successfully',
           })
-        } catch (error) {
+        } catch {
           toast({
             title: 'Error',
             description: 'Failed to save changes',
@@ -242,7 +242,7 @@ export function SwotAnalysisForm({
                 description: 'Item added successfully',
               })
             }
-          } catch (error) {
+          } catch {
             toast({
               title: 'Error',
               description: 'Failed to save changes',
@@ -285,7 +285,7 @@ export function SwotAnalysisForm({
         title: 'Saved',
         description: 'Item deleted successfully',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to save changes',
@@ -313,7 +313,7 @@ export function SwotAnalysisForm({
     // Auto-save to database
     try {
       await onSave(newSwot)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to save changes',
@@ -341,7 +341,7 @@ export function SwotAnalysisForm({
     // Auto-save to database
     try {
       await onSave(newSwot)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to save changes',

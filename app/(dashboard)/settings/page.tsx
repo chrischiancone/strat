@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { PasswordChangeForm } from '@/components/settings/PasswordChangeForm'
 import { AccountDangerZone } from '@/components/settings/AccountDangerZone'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Settings as SettingsIcon, Shield, Key } from 'lucide-react'
+import { Settings as SettingsIcon, Shield } from 'lucide-react'
 
 export default async function SettingsPage() {
   const supabase = createServerSupabaseClient()

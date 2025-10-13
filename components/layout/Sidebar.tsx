@@ -33,6 +33,7 @@ const mainNavigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Strategic Plans', href: '/plans', icon: Target },
   { name: 'Add Initiative', href: '/initiatives/new', icon: Plus, roles: ['admin', 'city_manager', 'department_director'] },
+  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 const financeNavigation: NavItem[] = [
@@ -47,7 +48,7 @@ const adminNavigation: NavItem[] = [
   { name: 'Departments', href: '/admin/departments', icon: Building2, roles: ['admin'] },
   { name: 'Council Goals', href: '/admin/council-goals', icon: Flag, roles: ['admin'] },
   { name: 'Fiscal Years', href: '/admin/fiscal-years', icon: Calendar, roles: ['admin'] },
-  { name: 'Settings', href: '/admin/settings', icon: Settings, roles: ['admin'] },
+  { name: 'System Settings', href: '/admin/settings', icon: Settings, roles: ['admin'] },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText, roles: ['admin'] },
 ]
 

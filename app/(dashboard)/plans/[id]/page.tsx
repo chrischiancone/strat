@@ -18,6 +18,7 @@ import { CommentsSection } from '@/components/comments/CommentsSection'
 import { PlanStatusBadge } from '@/components/plans/PlanStatusBadge'
 import { PlanApprovalActions } from '@/components/plans/PlanApprovalActions'
 import { ApprovalHistory } from '@/components/plans/ApprovalHistory'
+import { CollaborationWrapper } from '@/components/collaboration'
 import type { PlanStatus } from '@/app/actions/plan-approval'
 
 interface PageProps {
@@ -64,9 +65,33 @@ export default async function PlanDashboardPage({ params }: PageProps) {
   const backLink = userRole === 'city_manager' ? '/city-manager' : '/plans'
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="-mx-6 -mt-6 border-b border-gray-200 bg-white px-6 py-4">
+    <CollaborationWrapper
+      resourceId={id}
+      resourceType="plan"
+      currentUserId={userId || ''}
+      currentUserName="User" // TODO: Get real user name
+      onNavigate={(type, resourceId) => {
+        switch (type) {
+          case 'goal':
+            return `/goals/${resourceId}`
+          case 'initiative':
+            return `/initiatives/${resourceId}`
+          default:
+            return `/${type}s/${resourceId}`
+        }
+      }}
+      onInviteUser={() => {
+        // TODO: Implement user invitation
+        console.log('Invite user clicked')
+      }}
+      onMention={(mentionUserId) => {
+        // TODO: Handle user mention
+        console.log('Mention user:', mentionUserId)
+      }}
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="-mx-6 -mt-6 border-b border-gray-200 bg-white px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href={backLink}>
@@ -182,7 +207,8 @@ export default async function PlanDashboardPage({ params }: PageProps) {
             entityOwnerId={dashboardData.plan.created_by}
           />
         )}
+        </div>
       </div>
-    </div>
+    </CollaborationWrapper>
   )
 }

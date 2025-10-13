@@ -8,7 +8,6 @@ import {
   FileText, 
   Activity, 
   TrendingUp,
-  TrendingDown,
   ArrowUpIcon,
   ArrowDownIcon,
   MinusIcon
