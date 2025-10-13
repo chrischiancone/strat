@@ -435,7 +435,7 @@ export async function getMainDashboardStats(): Promise<MainDashboardStats> {
       const startYear = new Date(fiscalYear.start_date).getFullYear()
       const endYear = new Date(fiscalYear.end_date).getFullYear()
       currentFiscalYear = {
-        current: `${startYear} - ${endYear}`,
+        current: fiscalYear.year.toString(),
         start: startYear,
         end: endYear
       }
