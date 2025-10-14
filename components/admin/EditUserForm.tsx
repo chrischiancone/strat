@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateUserSchema, type UpdateUserInput } from '@/lib/validations/user'
-import { updateUser } from '@/app/actions/users'
+import { updateUser, getPotentialSupervisors } from '@/app/actions/users'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +16,13 @@ interface Department {
   name: string
 }
 
+interface Supervisor {
+  id: string
+  full_name: string | null
+  role: string
+  title: string | null
+}
+
 interface User {
   id: string
   full_name: string | null
@@ -24,6 +31,7 @@ interface User {
   title: string | null
   is_active: boolean | null
   department_id: string | null
+  reports_to: string | null
 }
 
 interface EditUserFormProps {
@@ -47,6 +55,7 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [supervisors, setSupervisors] = useState<Supervisor[]>([])
 
   const {
     register,
@@ -61,6 +70,7 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
       role: user.role as UpdateUserInput['role'],
       departmentId: user.department_id || undefined,
       title: user.title || '',
+      reportsTo: user.reports_to || undefined,
       isActive: user.is_active ?? true,
     },
   })
@@ -68,6 +78,20 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
   const selectedRole = watch('role')
   const isActive = watch('isActive')
   const requiresDepartment = selectedRole ? rolesThatRequireDepartment.includes(selectedRole) : false
+
+  // Load supervisors on component mount
+  useEffect(() => {
+    const loadSupervisors = async () => {
+      try {
+        const supervisorList = await getPotentialSupervisors(user.id)
+        setSupervisors(supervisorList)
+      } catch (error) {
+        console.error('Failed to load supervisors:', error)
+      }
+    }
+    
+    loadSupervisors()
+  }, [user.id])
 
   const onSubmit = async (data: UpdateUserInput) => {
     setIsSubmitting(true)
@@ -189,6 +213,29 @@ export function EditUserForm({ user, departments }: EditUserFormProps) {
         {errors.title && (
           <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
         )}
+      </div>
+
+      <div>
+        <Label htmlFor="reportsTo">Reports To (Supervisor)</Label>
+        <select
+          id="reportsTo"
+          {...register('reportsTo')}
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="">No supervisor / Direct report to leadership</option>
+          {supervisors.map((supervisor) => (
+            <option key={supervisor.id} value={supervisor.id}>
+              {supervisor.full_name} ({supervisor.role})
+              {supervisor.title && ` - ${supervisor.title}`}
+            </option>
+          ))}
+        </select>
+        {errors.reportsTo && (
+          <p className="mt-1 text-sm text-red-600">{errors.reportsTo.message}</p>
+        )}
+        <p className="mt-1 text-xs text-gray-500">
+          Select who this user reports to for strategic plan reviews and approvals
+        </p>
       </div>
 
       <div>

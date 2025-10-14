@@ -5,7 +5,11 @@
 
 import { logger } from '../logger'
 import { createError } from '../errorHandler'
-import { createServerSupabaseClient } from '../supabase/server'
+import { createBrowserSupabaseClient } from '@/lib/supabase/client'
+import { Database } from '@/types/database'
+
+// Client-side Supabase client for collaboration features
+const createClientSupabaseClient = createBrowserSupabaseClient
 
 // Types for Collaboration System
 export interface CollaborationSession {
@@ -174,12 +178,38 @@ export class CollaborationEngine {
   private activeSessions = new Map<string, CollaborationSession>()
   private userPresence = new Map<string, PresenceInfo>()
   private wsConnections = new Map<string, WebSocket>()
+  // Simple in-memory event emitter for client components
+  private listeners = new Map<string, Set<(payload: any) => void>>()
 
-  static getInstance(): CollaborationEngine {
+static getInstance(): CollaborationEngine {
     if (!CollaborationEngine.instance) {
       CollaborationEngine.instance = new CollaborationEngine()
     }
     return CollaborationEngine.instance
+  }
+
+  // Lightweight event subscription API used by UI components
+  on(event: string, callback: (payload: any) => void): () => void {
+    const set = this.listeners.get(event) || new Set<(payload: any) => void>()
+    set.add(callback)
+    this.listeners.set(event, set)
+    // Return unsubscribe
+    return () => {
+      const current = this.listeners.get(event)
+      if (current) {
+        current.delete(callback)
+        if (current.size === 0) this.listeners.delete(event)
+      }
+    }
+  }
+
+  private emit(event: string, payload: any): void {
+    const set = this.listeners.get(event)
+    if (!set || set.size === 0) return
+    // Clone to avoid mutation during iteration
+    Array.from(set).forEach(fn => {
+      try { fn(payload) } catch {}
+    })
   }
 
   // Session Management
@@ -189,7 +219,7 @@ export class CollaborationEngine {
     userId: string
   ): Promise<CollaborationSession> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
       
       // Get user info
       const { data: user } = await supabase
@@ -273,6 +303,9 @@ export class CollaborationEngine {
         resourceId, 
         resourceType 
       })
+      
+      // Emit participant joined for initial participant
+      this.emit('participantJoined', { sessionId: session.id, participant: session.participants[0] })
 
       return session
 
@@ -284,7 +317,7 @@ export class CollaborationEngine {
 
   async joinSession(sessionId: string, userId: string): Promise<CollaborationSession> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
       
       // Get session
       let session = Array.from(this.activeSessions.values()).find(s => s.id === sessionId)
@@ -397,6 +430,8 @@ export class CollaborationEngine {
         type: 'user_left',
         data: { userId },
       })
+      // Emit locally
+      this.emit('participantLeft', { sessionId, userId })
 
       // Clean up if no active participants
       const hasActiveParticipants = session.participants.some(p => p.status === 'online')
@@ -414,7 +449,7 @@ export class CollaborationEngine {
   // Comment System
   async addComment(commentData: Omit<Comment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Comment> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
 
       const comment: Comment = {
         ...commentData,
@@ -458,6 +493,8 @@ export class CollaborationEngine {
           data: comment,
         })
       }
+      // Emit locally
+      this.emit('comment', comment)
 
       // Add to activity feed
       await this.addActivityItem({
@@ -488,7 +525,7 @@ export class CollaborationEngine {
 
   async updateComment(commentId: string, updates: Partial<Comment>, userId: string): Promise<Comment> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
 
       // Get existing comment
       const { data: existingComment } = await supabase
@@ -566,7 +603,7 @@ export class CollaborationEngine {
   // Notification System
   async createNotification(notificationData: Omit<Notification, 'id' | 'createdAt'>): Promise<Notification> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
 
       const notification: Notification = {
         ...notificationData,
@@ -609,6 +646,9 @@ export class CollaborationEngine {
         userId: notification.userId,
         type: notification.type 
       })
+      
+      // Emit locally
+      this.emit('notification', notification)
 
       return notification
 
@@ -621,7 +661,7 @@ export class CollaborationEngine {
   // Activity Feed
   async addActivityItem(itemData: Omit<ActivityFeedItem, 'id' | 'createdAt'>): Promise<ActivityFeedItem> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
 
       const activityItem: ActivityFeedItem = {
         ...itemData,
@@ -653,6 +693,9 @@ export class CollaborationEngine {
         type: activityItem.type,
         actorId: activityItem.actorId 
       })
+
+      // Emit locally
+      this.emit('activity', activityItem)
 
       return activityItem
 
@@ -717,6 +760,8 @@ export class CollaborationEngine {
 
     // Broadcast presence update to relevant sessions
     this.broadcastPresenceUpdate(updatedPresence)
+    // Emit locally for UI consumers
+    this.emit('presenceUpdate', updatedPresence)
 
     logger.info('User presence updated', { userId, status: updatedPresence.status })
   }
@@ -741,7 +786,7 @@ export class CollaborationEngine {
 
   private async getResourceTitle(resourceId: string, resourceType: string): Promise<string> {
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = createClientSupabaseClient()
       const tableName = resourceType === 'plan' ? 'plans' : 
                        resourceType === 'goal' ? 'goals' :
                        resourceType === 'initiative' ? 'initiatives' : 'dashboards'
@@ -792,6 +837,11 @@ export class CollaborationEngine {
     })
   }
 
+  getSessionParticipants(sessionId: string): SessionParticipant[] {
+    const session = Array.from(this.activeSessions.values()).find(s => s.id === sessionId)
+    return session ? session.participants : []
+  }
+
   private cleanupSession(sessionId: string): void {
     const session = Array.from(this.activeSessions.values())
       .find(s => s.id === sessionId)
@@ -823,3 +873,6 @@ export class CollaborationEngine {
 
 // Export singleton instance
 export const collaborationEngine = CollaborationEngine.getInstance()
+
+// Convenience helpers for UI components
+export type { CollaborationSession, SessionParticipant }

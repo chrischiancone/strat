@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { SecurityAudit, securityHeaders } from '@/lib/security'
 import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
+import { securitySettingsSchema } from '@/lib/validations/security'
 
 // Security constants
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
@@ -46,6 +47,26 @@ function isRateLimited(clientIP: string, path: string): boolean {
 
   existing.count++
   return false
+}
+
+async function getSecuritySettingsEdge() {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+    const { data } = await supabase
+      .from('municipalities')
+      .select('settings')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle<{ settings: any }>()
+    const existing = (data?.settings?.security as unknown) || undefined
+    return securitySettingsSchema.parse(existing)
+  } catch (e) {
+    logger.warn('Failed to load security settings in middleware, using defaults')
+    return securitySettingsSchema.parse(undefined)
+  }
 }
 
 function detectSuspiciousActivity(request: NextRequest, clientIP: string): boolean {
@@ -175,6 +196,18 @@ export async function middleware(request: NextRequest) {
       return addSecurityHeaders(response)
     }
 
+    // Load security settings (once per request)
+    const sec = await getSecuritySettingsEdge()
+
+    // IP whitelist enforcement (simple exact match list)
+    if (sec.access.ipWhitelistEnabled) {
+      const allowed = (sec.access.allowedIPs || []).map(ip => ip.trim()).filter(Boolean)
+      if (allowed.length > 0 && !allowed.includes(clientIP)) {
+        SecurityAudit.logSecurityEvent('IP_BLOCKED', { clientIP, path }, 'high')
+        return new NextResponse('Access restricted by IP policy', { status: 403 })
+      }
+    }
+
     // Detect suspicious activity
     if (detectSuspiciousActivity(request, clientIP)) {
       logger.warn('Blocking suspicious request', {
@@ -200,7 +233,7 @@ export async function middleware(request: NextRequest) {
         : collaborationAuthResponse
     }
 
-    // Apply rate limiting to sensitive endpoints
+    // Apply rate limiting to sensitive endpoints (respect settings)
     const sensitiveEndpoints = ['/api/auth', '/login', '/signup', '/api/collaboration']
     const isSensitiveEndpoint = sensitiveEndpoints.some(endpoint => path.startsWith(endpoint))
     

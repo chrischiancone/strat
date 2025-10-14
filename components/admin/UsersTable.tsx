@@ -36,7 +36,7 @@ const roleColors: Record<string, string> = {
 
 const roleLabels: Record<string, string> = {
   admin: 'Admin',
-  department_director: 'Director',
+  department_director: 'Department Director',
   staff: 'Staff',
   city_manager: 'City Manager',
   finance: 'Finance',
@@ -116,6 +116,7 @@ export function UsersTable({
               </button>
             </TableHead>
             <TableHead>Department</TableHead>
+            <TableHead>Reports To</TableHead>
             <TableHead>
               <button
                 onClick={() => handleSort('is_active')}
@@ -151,6 +152,9 @@ export function UsersTable({
               </TableCell>
               <TableCell className="text-sm text-gray-600">
                 {user.department_name || '—'}
+              </TableCell>
+              <TableCell className="text-sm text-gray-600">
+                {user.supervisor_name || '—'}
               </TableCell>
               <TableCell>
                 <span

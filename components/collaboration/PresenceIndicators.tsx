@@ -24,7 +24,7 @@ import {
   Mail,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { type Participant, type UserPresence, CollaborationEngine } from '@/lib/collaboration/collaboration-engine'
+import { type SessionParticipant, CollaborationEngine } from '@/lib/collaboration/collaboration-engine'
 
 interface PresenceIndicatorsProps {
   sessionId: string
@@ -73,10 +73,12 @@ const getActivityIcon = (activity: string) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'active':
+    case 'online':
       return 'bg-green-500'
     case 'idle':
       return 'bg-yellow-500'
     case 'away':
+    case 'offline':
       return 'bg-gray-400'
     default:
       return 'bg-gray-400'
@@ -92,7 +94,7 @@ export function PresenceIndicators({
   onInviteUser,
   onUserClick,
 }: PresenceIndicatorsProps) {
-  const [participants, setParticipants] = useState<Participant[]>([])
+  const [participants, setParticipants] = useState<SessionParticipant[]>([])
   const [cursors, setCursors] = useState<CursorPosition[]>([])
   const [loading, setLoading] = useState(true)
   
@@ -104,10 +106,11 @@ export function PresenceIndicators({
     const loadPresence = async () => {
       setLoading(true)
       try {
-        const sessionParticipants = await collaborationEngine.getSessionParticipants(sessionId)
-        setParticipants(sessionParticipants)
+        const sessionParticipants = collaborationEngine.getSessionParticipants(sessionId)
+        setParticipants(sessionParticipants || [])
       } catch (error) {
         console.error('Failed to load presence:', error)
+        setParticipants([])
       } finally {
         setLoading(false)
       }
@@ -115,69 +118,13 @@ export function PresenceIndicators({
 
     loadPresence()
 
-    // Subscribe to presence updates
-    const unsubscribe = collaborationEngine.on('presenceUpdate', (data) => {
-      if (data.sessionId === sessionId) {
-        setParticipants(prev => 
-          prev.map(p => 
-            p.userId === data.userId 
-              ? { ...p, presence: data.presence }
-              : p
-          )
-        )
-      }
-    })
-
-    // Subscribe to cursor updates
-    const unsubscribeCursor = collaborationEngine.on('cursorMove', (data) => {
-      if (data.sessionId === sessionId) {
-        setCursors(prev => {
-          const existing = prev.findIndex(c => c.userId === data.userId)
-          const newCursor: CursorPosition = {
-            userId: data.userId,
-            userName: data.userName,
-            userAvatar: data.userAvatar,
-            x: data.x,
-            y: data.y,
-            color: data.color || PRESENCE_COLORS[Math.floor(Math.random() * PRESENCE_COLORS.length)],
-            elementId: data.elementId,
-          }
-
-          if (existing >= 0) {
-            const updated = [...prev]
-            updated[existing] = newCursor
-            return updated
-          } else {
-            return [...prev, newCursor]
-          }
-        })
-      }
-    })
-
-    // Subscribe to participant changes
-    const unsubscribeParticipants = collaborationEngine.on('participantJoined', (data) => {
-      if (data.sessionId === sessionId) {
-        setParticipants(prev => {
-          if (prev.some(p => p.userId === data.participant.userId)) {
-            return prev
-          }
-          return [...prev, data.participant]
-        })
-      }
-    })
-
-    const unsubscribeParticipantLeft = collaborationEngine.on('participantLeft', (data) => {
-      if (data.sessionId === sessionId) {
-        setParticipants(prev => prev.filter(p => p.userId !== data.userId))
-        setCursors(prev => prev.filter(c => c.userId !== data.userId))
-      }
-    })
+    // Use polling instead of event subscriptions until events are implemented
+    const pollInterval = setInterval(() => {
+      loadPresence()
+    }, 10000) // Poll every 10 seconds
 
     return () => {
-      unsubscribe()
-      unsubscribeCursor()
-      unsubscribeParticipants()
-      unsubscribeParticipantLeft()
+      clearInterval(pollInterval)
     }
   }, [sessionId, collaborationEngine])
 
@@ -260,31 +207,27 @@ export function PresenceIndicators({
                           color: PRESENCE_COLORS[index % PRESENCE_COLORS.length]
                         }}
                       >
-                        {participant.name.split(' ').map(n => n[0]).join('')}
+                        {participant.userName.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     
                     {/* Status indicator */}
                     <div className={cn(
                       "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white",
-                      getStatusColor(participant.presence?.status || 'away')
+                      getStatusColor(participant.status || 'away')
                     )} />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   <div className="space-y-1">
-                    <div className="font-medium">{participant.name}</div>
-                    {participant.presence && (
-                      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                        {getActivityIcon(participant.presence.activity)}
-                        <span className="capitalize">{participant.presence.activity}</span>
-                      </div>
-                    )}
-                    {participant.presence?.location && (
-                      <div className="text-xs text-muted-foreground">
-                        At: {participant.presence.location}
-                      </div>
-                    )}
+                    <div className="font-medium">{participant.userName}</div>
+                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                      {getActivityIcon('viewing')}
+                      <span className="capitalize">viewing</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Status: {participant.status}
+                    </div>
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -311,24 +254,22 @@ export function PresenceIndicators({
                       <Avatar className="w-6 h-6">
                         <AvatarImage src={participant.avatar} />
                         <AvatarFallback className="text-xs">
-                          {participant.name.split(' ').map(n => n[0]).join('')}
+                          {participant.userName.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div className={cn(
                         "absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white",
-                        getStatusColor(participant.presence?.status || 'away')
+                        getStatusColor(participant.status || 'away')
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium truncate">
-                        {participant.name}
+                        {participant.userName}
                       </div>
-                      {participant.presence && (
-                        <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                          {getActivityIcon(participant.presence.activity)}
-                          <span className="capitalize">{participant.presence.activity}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        {getActivityIcon('viewing')}
+                        <span className="capitalize">viewing</span>
+                      </div>
                     </div>
                   </DropdownMenuItem>
                 ))}
@@ -359,24 +300,12 @@ export function PresenceIndicators({
           </div>
         )}
 
-        {/* Activity Summary */}
-        {showDetails && participants.some(p => p.presence?.activity !== 'viewing') && (
+        {/* Activity Summary - Simplified for now */}
+        {showDetails && participants.length > 0 && (
           <div className="flex items-center space-x-1">
-            {participants
-              .filter(p => p.presence?.activity && p.presence.activity !== 'viewing')
-              .map((participant, index) => (
-                <Tooltip key={participant.userId}>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center space-x-1 px-2 py-1 bg-muted rounded text-xs">
-                      {getActivityIcon(participant.presence!.activity)}
-                      <span>{participant.name.split(' ')[0]}</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{participant.name} is {participant.presence!.activity}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
+            <div className="text-xs text-muted-foreground">
+              {participants.length} active collaborator{participants.length !== 1 ? 's' : ''}
+            </div>
           </div>
         )}
       </div>
@@ -394,10 +323,14 @@ export function useCursorTracking(sessionId: string, userId: string, userName: s
     const handleMouseMove = (e: MouseEvent) => {
       const elementId = (e.target as Element)?.id || undefined
       
-      collaborationEngine.updatePresence(sessionId, userId, {
-        status: 'active',
-        activity: 'viewing',
-        location: window.location.pathname,
+      collaborationEngine.updateUserPresence(userId, {
+        userName,
+        status: 'online',
+        currentResource: {
+          id: sessionId,
+          type: 'plan',
+          title: 'Session'
+        },
         cursor: {
           x: e.clientX,
           y: e.clientY,
@@ -407,11 +340,15 @@ export function useCursorTracking(sessionId: string, userId: string, userName: s
     }
 
     const handleMouseLeave = () => {
-      collaborationEngine.updatePresence(sessionId, userId, {
-        status: 'active',
-        activity: 'viewing',
-        location: window.location.pathname,
-        cursor: null,
+      collaborationEngine.updateUserPresence(userId, {
+        userName,
+        status: 'online',
+        currentResource: {
+          id: sessionId,
+          type: 'plan',
+          title: 'Session'
+        },
+        cursor: undefined,
       })
     }
 

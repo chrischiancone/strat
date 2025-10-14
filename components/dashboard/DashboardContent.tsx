@@ -52,6 +52,7 @@ export async function DashboardContent() {
       admin: 'Administrator',
       finance: 'Finance Manager',
       city_manager: 'City Manager',
+      department_director: 'Department Director',
       department_head: 'Department Head',
       staff: 'Staff Member',
     }

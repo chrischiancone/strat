@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createUserSchema, type CreateUserInput } from '@/lib/validations/user'
-import { createUser } from '@/app/actions/users'
+import { createUser, getPotentialSupervisors } from '@/app/actions/users'
 import { handleError } from '@/lib/errorHandler'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +18,13 @@ import { CheckCircle2Icon, UserPlusIcon } from 'lucide-react'
 interface Department {
   id: string
   name: string
+}
+
+interface Supervisor {
+  id: string
+  full_name: string | null
+  role: string
+  title: string | null
 }
 
 interface CreateUserFormProps {
@@ -49,6 +56,7 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [supervisors, setSupervisors] = useState<Supervisor[]>([])
 
   const {
     register,
@@ -61,6 +69,20 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
 
   const selectedRole = watch('role')
   const requiresDepartment = selectedRole ? rolesThatRequireDepartment.includes(selectedRole) : false
+
+  // Load supervisors on component mount
+  useEffect(() => {
+    const loadSupervisors = async () => {
+      try {
+        const supervisorList = await getPotentialSupervisors()
+        setSupervisors(supervisorList)
+      } catch (error) {
+        console.error('Failed to load supervisors:', error)
+      }
+    }
+    
+    loadSupervisors()
+  }, [])
 
   const onSubmit = async (data: CreateUserInput) => {
     setIsSubmitting(true)
@@ -179,7 +201,7 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
         <select
           id="role"
           {...register('role')}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-base sm:text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[44px] no-zoom"
           aria-describedby="role-help"
           aria-required="true"
         >
@@ -211,7 +233,7 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
         <select
           id="departmentId"
           {...register('departmentId')}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-base sm:text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[44px] no-zoom"
           disabled={!selectedRole}
         >
           <option value="">Select a department</option>
@@ -239,11 +261,34 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
         )}
       </div>
 
-      <div className="flex items-center gap-3 border-t border-gray-200 pt-6">
+      <div>
+        <Label htmlFor="reportsTo">Reports To (Supervisor)</Label>
+        <select
+          id="reportsTo"
+          {...register('reportsTo')}
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-base sm:text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-[44px] no-zoom"
+        >
+          <option value="">No supervisor / Direct report to leadership</option>
+          {supervisors.map((supervisor) => (
+            <option key={supervisor.id} value={supervisor.id}>
+              {supervisor.full_name} ({supervisor.role})
+              {supervisor.title && ` - ${supervisor.title}`}
+            </option>
+          ))}
+        </select>
+        {errors.reportsTo && (
+          <p className="mt-1 text-sm text-red-600">{errors.reportsTo.message}</p>
+        )}
+        <p className="mt-1 text-xs text-gray-500">
+          Select who this user reports to for strategic plan reviews and approvals
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center">
         <Button 
           type="submit" 
           disabled={isSubmitting || !!successMessage}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 justify-center w-full sm:w-auto"
         >
           {isSubmitting ? (
             <>
@@ -262,8 +307,8 @@ export function CreateUserForm({ departments }: CreateUserFormProps) {
             </>
           )}
         </Button>
-        <Link href="/admin/users">
-          <Button type="button" variant="outline" disabled={isSubmitting}>
+        <Link href="/admin/users" className="w-full sm:w-auto">
+          <Button type="button" variant="outline" disabled={isSubmitting} className="w-full sm:w-auto">
             Cancel
           </Button>
         </Link>

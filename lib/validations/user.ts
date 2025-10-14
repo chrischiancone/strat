@@ -18,6 +18,7 @@ export const createUserSchema = z.object({
   role: roleEnum,
   departmentId: z.string().optional(),
   title: z.string().max(100, 'Title must be less than 100 characters').optional(),
+  reportsTo: z.string().optional(),
 }).refine(
   (data) => {
     // Department is required for staff and department_director roles
@@ -37,6 +38,7 @@ export const updateUserSchema = z.object({
   role: roleEnum,
   departmentId: z.string().optional(),
   title: z.string().max(100, 'Title must be less than 100 characters').optional(),
+  reportsTo: z.string().optional(),
   isActive: z.boolean(),
 }).refine(
   (data) => {

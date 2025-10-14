@@ -117,21 +117,15 @@ export function CollaborationWrapper({
 
   const initializeSession = async () => {
     try {
-      const newSessionId = await collaborationEngine.createSession(
+      const session = await collaborationEngine.createSession(
         resourceId,
         resourceType,
         currentUserId
       )
-      setSessionId(newSessionId)
+      setSessionId(session.id)
 
-      // Join the session
-      await collaborationEngine.joinSession(newSessionId, {
-        userId: currentUserId,
-        name: currentUserName,
-        avatar: currentUserAvatar,
-        role: 'editor', // Could be dynamic based on permissions
-        joinedAt: new Date(),
-      })
+      // Note: joinSession is not required for the creator; session already includes the participant.
+      // Additional participants will be handled by the engine or future sockets.
     } catch (error) {
       console.error('Failed to initialize collaboration session:', error)
       toast({

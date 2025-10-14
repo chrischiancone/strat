@@ -67,7 +67,13 @@ export function LoginForm() {
         // Clear any existing errors on success
         setError(null)
         setValidationErrors({})
-        router.push('/dashboard')
+        
+        // Check if 2FA setup is required
+        if (result.requiresTwoFactorSetup && result.redirectTo) {
+          router.push(result.redirectTo)
+        } else {
+          router.push('/dashboard')
+        }
         router.refresh()
       }
     } catch (err) {

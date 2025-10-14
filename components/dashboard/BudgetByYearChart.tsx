@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import type { DashboardData } from '@/app/actions/dashboard'
@@ -9,6 +10,12 @@ interface BudgetByYearChartProps {
 }
 
 export function BudgetByYearChart({ data }: BudgetByYearChartProps) {
+  const [isMounted, setIsMounted] = useState(false)
+  
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+  
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`
@@ -44,6 +51,7 @@ export function BudgetByYearChart({ data }: BudgetByYearChartProps) {
       <CardContent>
         {totalBudget > 0 ? (
           <>
+            {isMounted ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -56,6 +64,11 @@ export function BudgetByYearChart({ data }: BudgetByYearChartProps) {
                 <Bar dataKey="budget" fill="#3b82f6" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+            ) : (
+              <div className="flex h-[300px] items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            )}
             <div className="mt-4 space-y-2">
               {chartData.map((item) => (
                 <div key={item.year} className="flex items-center justify-between text-sm">

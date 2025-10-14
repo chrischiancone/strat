@@ -47,7 +47,10 @@ export function CommentList({
       try {
         await deleteComment(commentId)
         toast.success('Comment deleted successfully')
-        router.refresh()
+        // Use a small delay to avoid DOM manipulation conflicts
+        setTimeout(() => {
+          router.refresh()
+        }, 150)
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Failed to delete comment')
       }
@@ -59,7 +62,10 @@ export function CommentList({
       try {
         await resolveComment(commentId)
         toast.success('Comment marked as resolved')
-        router.refresh()
+        // Use a small delay to avoid DOM manipulation conflicts
+        setTimeout(() => {
+          router.refresh()
+        }, 150)
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Failed to resolve comment')
       }

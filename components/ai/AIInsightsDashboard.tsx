@@ -43,9 +43,13 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
   useEffect(() => {
     if (planId) {
       loadCachedAnalysis()
-      loadTrendData()
     }
-  }, [planId, departmentId])
+  }, [planId])
+
+  // Load trend data separately to avoid dependency conflicts
+  useEffect(() => {
+    loadTrendData()
+  }, [departmentId])
 
   const loadCachedAnalysis = async () => {
     if (!planId) return
@@ -80,11 +84,25 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
       })
 
       const data = await response.json()
-      if (data.success) {
-        setTrends(data.trends)
+      if (data.success && data.trends) {
+        // Transform the API response to match our TrendAnalysis interface
+        const transformedTrends = data.trends.map((trend: any) => ({
+          metric: trend.metric || trend.category || 'unknown',
+          timeframe: 'monthly' as const,
+          trend: trend.trend || 'stable' as const,
+          changeRate: trend.changeRate || 0,
+          data: trend.data || [],
+          forecast: trend.forecast || [],
+        }))
+        setTrends(transformedTrends)
+      } else {
+        // Set empty array if no trends data
+        setTrends([])
       }
     } catch (error) {
       console.error('Failed to load trend data:', error)
+      // Set empty array on error
+      setTrends([])
     }
   }
 
@@ -156,18 +174,29 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
   }
 
   const formatTrendData = (trend: TrendAnalysis) => {
-    return trend.data.map(point => ({
+    // Safely handle trend data with fallbacks
+    const trendData = trend.data || []
+    const forecastData = trend.forecast || []
+    
+    if (trendData.length === 0 && forecastData.length === 0) {
+      // No real data available — return an empty series instead of mock values
+      return []
+    }
+
+    const formattedData = trendData.map(point => ({
       date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       value: point.value,
       predicted: false,
-    })).concat(
-      (trend.forecast || []).map(point => ({
-        date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        value: point.predicted,
-        predicted: true,
-        confidence: point.confidence,
-      }))
-    )
+    }))
+
+    const formattedForecast = forecastData.map(point => ({
+      date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      value: point.predicted,
+      predicted: true,
+      confidence: point.confidence,
+    }))
+
+    return formattedData.concat(formattedForecast)
   }
 
   return (
@@ -234,19 +263,19 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
                   <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="flex items-center space-x-2">
                       <CheckCircle className="w-4 h-4 text-green-600" />
-                      <span className="text-sm">{planAnalysis.strengths.length} Strengths</span>
+                      <span className="text-sm">{planAnalysis.strengths?.length || 0} Strengths</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <XCircle className="w-4 h-4 text-red-600" />
-                      <span className="text-sm">{planAnalysis.weaknesses.length} Areas for Improvement</span>
+                      <span className="text-sm">{planAnalysis.weaknesses?.length || 0} Areas for Improvement</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <AlertTriangle className="w-4 h-4 text-orange-600" />
-                      <span className="text-sm">{planAnalysis.risks.length} Risks Identified</span>
+                      <span className="text-sm">{planAnalysis.risks?.length || 0} Risks Identified</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Lightbulb className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm">{planAnalysis.opportunities.length} Opportunities</span>
+                      <span className="text-sm">{planAnalysis.opportunities?.length || 0} Opportunities</span>
                     </div>
                   </div>
                 </CardContent>
@@ -339,10 +368,10 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
 
         {/* Insights Tab */}
         <TabsContent value="insights" className="space-y-4">
-          {planAnalysis ? (
+          {planAnalysis && planAnalysis.insights?.length > 0 ? (
             <div className="grid gap-4">
               {planAnalysis.insights.map((insight, index) => (
-                <Card key={insight.id}>
+                <Card key={insight.id || index}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-sm flex items-center space-x-2">
@@ -385,43 +414,51 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
         {/* Trends Tab */}
         <TabsContent value="trends" className="space-y-4">
           <div className="grid gap-6">
-            {trends.map((trend, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center space-x-2">
-                      {getTrendIcon(trend.trend)}
-                      <span className="capitalize">{trend.metric.replace('_', ' ')}</span>
-                    </CardTitle>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={trend.trend === 'increasing' ? 'default' : 'secondary'}>
-                        {trend.changeRate > 0 ? '+' : ''}{trend.changeRate.toFixed(1)}%
-                      </Badge>
-                      <Badge variant="outline">{trend.trend}</Badge>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={formatTrendData(trend)}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip />
-                        <Area 
-                          type="monotone" 
-                          dataKey="value" 
-                          stroke="#8884d8" 
-                          fill="#8884d8" 
-                          fillOpacity={0.6} 
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
+            {trends.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center text-sm text-muted-foreground">
+                  No trend data available yet.
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              trends.map((trend, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center space-x-2">
+                        {getTrendIcon(trend.trend)}
+                        <span className="capitalize">{trend.metric.replace('_', ' ')}</span>
+                      </CardTitle>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={trend.trend === 'increasing' ? 'default' : 'secondary'}>
+                          {trend.changeRate > 0 ? '+' : ''}{trend.changeRate.toFixed(1)}%
+                        </Badge>
+                        <Badge variant="outline">{trend.trend}</Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={formatTrendData(trend)}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="date" />
+                          <YAxis />
+                          <Tooltip />
+                          <Area 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="#8884d8" 
+                            fill="#8884d8" 
+                            fillOpacity={0.6} 
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </TabsContent>
 
@@ -430,7 +467,7 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
           {planAnalysis ? (
             <div className="space-y-4">
               {/* High Priority Recommendations */}
-              {planAnalysis.insights.filter(i => i.type === 'recommendation' && i.severity === 'high').length > 0 && (
+              {planAnalysis.insights?.filter(i => i.type === 'recommendation' && i.severity === 'high').length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2 text-red-700">
@@ -439,7 +476,7 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {planAnalysis.insights
+                    {(planAnalysis.insights || [])
                       .filter(i => i.type === 'recommendation' && i.severity === 'high')
                       .map((insight, index) => (
                         <div key={insight.id} className="border-l-4 border-red-500 pl-4">
@@ -461,7 +498,7 @@ export function AIInsightsDashboard({ planId, departmentId }: AIInsightsDashboar
 
               {/* Other Recommendations */}
               <div className="grid gap-4">
-                {planAnalysis.insights
+                {(planAnalysis.insights || [])
                   .filter(i => i.type === 'recommendation' && i.severity !== 'high')
                   .map((insight) => (
                     <Card key={insight.id}>

@@ -27,6 +27,8 @@ export interface UserWithDepartment {
   is_active: boolean | null
   department_id: string | null
   department_name: string | null
+  reports_to: string | null
+  supervisor_name: string | null
   updated_at: string | null
 }
 
@@ -38,7 +40,9 @@ interface UserQueryResult {
   title: string | null
   is_active: boolean | null
   department_id: string | null
+  reports_to: string | null
   departments: { name: string } | null
+  supervisor: { full_name: string } | null
   updated_at: string | null
 }
 
@@ -80,8 +84,12 @@ export async function getUsers(
       title,
       is_active,
       department_id,
+      reports_to,
       departments:department_id (
         name
+      ),
+      supervisor:reports_to (
+        full_name
       ),
       updated_at
     `,
@@ -122,7 +130,7 @@ export async function getUsers(
     throw createError.database('Failed to fetch users', error, { filters })
   }
 
-  // Transform data to include department name
+  // Transform data to include department name and supervisor
   const users: UserWithDepartment[] = (data as unknown as UserQueryResult[] || []).map((user) => ({
     id: user.id,
     full_name: user.full_name,
@@ -132,6 +140,8 @@ export async function getUsers(
     is_active: user.is_active,
     department_id: user.department_id,
     department_name: user.departments?.name || null,
+    reports_to: user.reports_to,
+    supervisor_name: user.supervisor?.full_name || null,
     updated_at: user.updated_at,
   }))
 
@@ -158,6 +168,64 @@ export async function getUsers(
   
   if (!result.success) {
     throw new Error(result.error)
+  }
+  
+  return result.data
+}
+
+export async function getPotentialSupervisors(excludeUserId?: string) {
+  const result = await safeAsync(async () => {
+    logger.info('Fetching potential supervisors', { excludeUserId, action: 'getPotentialSupervisors' })
+    
+    // Get current user's municipality_id first
+    const serverSupabase = createServerSupabaseClient()
+    const { data: { user } } = await serverSupabase.auth.getUser()
+    
+    if (!user) {
+      throw createError.auth('User not authenticated')
+    }
+  
+  const { data: userProfile } = await serverSupabase
+    .from('users')
+    .select('municipality_id')
+    .eq('id', user.id)
+    .single<{ municipality_id: string }>()
+    
+  if (!userProfile) {
+    throw createError.notFound('User profile')
+  }
+  
+  // Use admin client to bypass RLS for reading users
+  const supabase = createAdminSupabaseClient()
+
+  let query = supabase
+    .from('users')
+    .select('id, full_name, role, title')
+    .eq('municipality_id', userProfile.municipality_id)
+    .eq('is_active', true)
+    .order('full_name', { ascending: true })
+
+  // Exclude the user being edited (can't report to themselves)
+  if (excludeUserId) {
+    query = query.neq('id', excludeUserId)
+  }
+
+  const { data, error } = await query
+
+    if (error) {
+      logger.dbError('fetch potential supervisors', error)
+      throw createError.database('Failed to fetch potential supervisors', error)
+    }
+    
+    const supervisors = data || []
+    logger.info('Potential supervisors fetched successfully', { count: supervisors.length })
+    
+    return supervisors
+  }, { action: 'getPotentialSupervisors' })
+  
+  if (!result.success) {
+    logger.warn('Failed to fetch potential supervisors, returning empty array', { error: result.error })
+    return []
   }
   
   return result.data
@@ -226,7 +294,8 @@ export async function getUserById(userId: string) {
       role,
       title,
       is_active,
-      department_id
+      department_id,
+      reports_to
     `)
     .eq('id', userId)
     .single()
@@ -240,7 +309,7 @@ export async function getUserById(userId: string) {
 }
 
 export async function createUser(input: CreateUserInput) {
-  const result = await handleError.server(async () => {
+  const result = await safeAsync(async () => {
     logger.info('Creating new user', { email: input.email, role: input.role, action: 'createUser' })
     
     // Validate input
@@ -295,6 +364,7 @@ export async function createUser(input: CreateUserInput) {
         role: validatedInput.role,
         title: validatedInput.title || null,
         department_id: validatedInput.departmentId || null,
+        reports_to: validatedInput.reportsTo || null,
         is_active: true,
       })
 
@@ -322,7 +392,11 @@ export async function createUser(input: CreateUserInput) {
     }
   }, { email: input.email, role: input.role, action: 'createUser' })
   
-  return result
+  if (!result.success) {
+    return { error: result.error }
+  }
+  
+  return result.data
 }
 
 export async function updateUser(userId: string, input: UpdateUserInput) {
@@ -340,6 +414,7 @@ export async function updateUser(userId: string, input: UpdateUserInput) {
         role: validatedInput.role,
         department_id: validatedInput.departmentId || null,
         title: validatedInput.title || null,
+        reports_to: validatedInput.reportsTo || null,
         is_active: validatedInput.isActive,
       })
       .eq('id', userId)

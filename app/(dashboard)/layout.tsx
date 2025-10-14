@@ -1,7 +1,4 @@
-import { Header } from '@/components/layout/Header'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
-import { Toaster } from '@/components/ui/toaster'
+import { DashboardLayoutClient } from '@/components/layout/DashboardLayoutClient'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -28,18 +25,8 @@ export default async function DashboardLayout({
     .single<{ full_name: string; email: string; role: string; department_id: string | null }>()
 
   return (
-    <div className="flex h-screen flex-col">
-      <Header user={userProfile || undefined} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar userRole={userProfile?.role} />
-        <main className="flex flex-1 flex-col overflow-y-auto bg-gray-50">
-          <div className="border-b border-gray-200 bg-white px-6 py-4">
-            <Breadcrumbs />
-          </div>
-          <div className="flex-1 p-6">{children}</div>
-        </main>
-      </div>
-      <Toaster />
-    </div>
+    <DashboardLayoutClient userProfile={userProfile || undefined}>
+      {children}
+    </DashboardLayoutClient>
   )
 }

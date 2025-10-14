@@ -7,8 +7,16 @@ import { InputValidator, RateLimiter, AuthSecurity, SecurityAudit } from '@/lib/
 import { logger } from '@/lib/logger'
 import { createError } from '@/lib/errorHandler'
 import { headers } from 'next/headers'
+import { getSecuritySettingsForAuth } from './settings'
 
-export async function signIn(formData: FormData) {
+export interface SignInResult {
+  success?: boolean
+  error?: string
+  requiresTwoFactorSetup?: boolean
+  redirectTo?: string
+}
+
+export async function signIn(formData: FormData): Promise<SignInResult> {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   
@@ -17,6 +25,9 @@ export async function signIn(formData: FormData) {
   const userAgent = headersList.get('user-agent') || 'unknown'
   
   try {
+    // Load org security settings
+    const sec = await getSecuritySettingsForAuth()
+
     // Validate inputs
     if (!email || !password) {
       SecurityAudit.logSecurityEvent('LOGIN_ATTEMPT_MISSING_FIELDS', {
@@ -37,9 +48,9 @@ export async function signIn(formData: FormData) {
       return { error: 'Invalid email format' }
     }
 
-    // Rate limiting
+    // Rate limiting (apply settings)
     const rateLimitKey = `login:${clientIp}:${sanitizedEmail}`
-    if (RateLimiter.isRateLimited(rateLimitKey, 5, 15)) { // 5 attempts per 15 minutes
+    if (RateLimiter.isRateLimited(rateLimitKey, sec.auth.maxLoginAttempts, 15)) {
       SecurityAudit.logSecurityEvent('LOGIN_RATE_LIMITED', {
         email: sanitizedEmail,
         clientIp,
@@ -76,6 +87,27 @@ export async function signIn(formData: FormData) {
       clientIp,
       userAgent,
     })
+
+    // Check if 2FA is required for this user
+    if (data.user?.id) {
+      const { checkTwoFactorRequiredAction } = await import('./2fa-actions')
+      const twoFactorRequirement = await checkTwoFactorRequiredAction()
+      
+      // If 2FA is required but not completed, user needs to set it up
+      if (twoFactorRequirement.required && !twoFactorRequirement.hasCompleted) {
+        SecurityAudit.logSecurityEvent('LOGIN_2FA_REQUIRED', {
+          userId: data.user.id,
+          email: sanitizedEmail,
+          clientIp,
+          userAgent,
+        })
+        return { 
+          success: true, 
+          requiresTwoFactorSetup: true,
+          redirectTo: '/auth/2fa-required'
+        }
+      }
+    }
 
     revalidatePath('/', 'layout')
     return { success: true }
@@ -126,15 +158,30 @@ export async function signUp(formData: FormData) {
       return { error: 'Full name must be between 2 and 100 characters' }
     }
 
-    // Validate password strength
-    if (AuthSecurity.isWeakPassword(password)) {
+    // Load org security settings
+    const sec = await getSecuritySettingsForAuth()
+
+    // Validate password strength per settings
+    const minLen = sec.auth.minPasswordLength
+    const requireSpecial = sec.auth.requireSpecialChars
+
+    const hasUpper = /[A-Z]/.test(password)
+    const hasLower = /[a-z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+    const hasSpecial = /[^A-Za-z0-9]/.test(password)
+
+    if (
+      password.length < minLen ||
+      !hasUpper || !hasLower || !hasNumber ||
+      (requireSpecial && !hasSpecial)
+    ) {
       SecurityAudit.logSecurityEvent('SIGNUP_WEAK_PASSWORD', {
         email: sanitizedEmail,
         clientIp,
         userAgent,
       })
       return {
-        error: 'Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters'
+        error: `Password must be at least ${minLen} characters long and contain uppercase, lowercase, numbers${requireSpecial ? ', and special characters' : ''}`
       }
     }
 
@@ -268,8 +315,23 @@ export async function changePassword(input: ChangePasswordInput): Promise<void> 
       throw createError.validation('New password is required')
     }
 
-    // Enhanced password validation
-    if (AuthSecurity.isWeakPassword(input.newPassword)) {
+    // Load org security settings
+    const sec = await getSecuritySettingsForAuth()
+
+    // Enhanced password validation per settings
+    const minLen = sec.auth.minPasswordLength
+    const requireSpecial = sec.auth.requireSpecialChars
+
+    const hasUpper = /[A-Z]/.test(input.newPassword)
+    const hasLower = /[a-z]/.test(input.newPassword)
+    const hasNumber = /[0-9]/.test(input.newPassword)
+    const hasSpecial = /[^A-Za-z0-9]/.test(input.newPassword)
+
+    if (
+      input.newPassword.length < minLen ||
+      !hasUpper || !hasLower || !hasNumber ||
+      (requireSpecial && !hasSpecial)
+    ) {
       SecurityAudit.logSecurityEvent('PASSWORD_CHANGE_WEAK_PASSWORD', {
         userId: user.id,
         email: user.email,
@@ -277,7 +339,7 @@ export async function changePassword(input: ChangePasswordInput): Promise<void> 
         userAgent,
       })
       throw createError.validation(
-        'New password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters'
+        `New password must be at least ${minLen} characters long and contain uppercase, lowercase, numbers${requireSpecial ? ', and special characters' : ''}`
       )
     }
 

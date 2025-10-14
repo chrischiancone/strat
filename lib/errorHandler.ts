@@ -112,6 +112,33 @@ export const createError = {
       cause,
       context,
     }),
+
+  server: (message: string, cause?: Error, context?: LogContext): AppError =>
+    new AppErrorClass(message, 'UNKNOWN_ERROR', {
+      statusCode: 500,
+      userMessage: 'A server error occurred. Please try again later.',
+      retryable: true,
+      cause,
+      context,
+    }),
+
+  forbidden: (message: string, cause?: Error, context?: LogContext): AppError =>
+    new AppErrorClass(message, 'AUTHORIZATION_ERROR', {
+      statusCode: 403,
+      userMessage: 'Access forbidden.',
+      retryable: false,
+      cause,
+      context,
+    }),
+
+  gone: (message: string, cause?: Error, context?: LogContext): AppError =>
+    new AppErrorClass(message, 'UNKNOWN_ERROR', {
+      statusCode: 410,
+      userMessage: 'The requested resource is no longer available.',
+      retryable: false,
+      cause,
+      context,
+    }),
 }
 
 // Error handler functions

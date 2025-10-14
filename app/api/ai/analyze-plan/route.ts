@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { aiAnalytics, type PlanAnalysis } from '@/lib/ai/analytics-engine'
 import { logger } from '@/lib/logger'
-import { InputValidator, SecurityAudit } from '@/lib/security'
+import { getDashboardData } from '@/app/actions/dashboard'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,139 +13,105 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get request body
-    const body = await request.json()
-    const { planId } = body
-
-    // Validate input
-    if (!planId || typeof planId !== 'string') {
-      return NextResponse.json({ error: 'Plan ID is required' }, { status: 400 })
+    let planId = ''
+    try {
+      const body = await request.json()
+      planId = body.planId
+    } catch {
+      // Use query param if body parsing fails
+      const { searchParams } = new URL(request.url)
+      planId = searchParams.get('planId') || ''
     }
 
-    if (!InputValidator.isValidUUID(planId)) {
-      return NextResponse.json({ error: 'Invalid plan ID format' }, { status: 400 })
-    }
+    logger.info('AI plan analysis requested', { planId, userId: user.id })
 
-    // Security audit
-    SecurityAudit.auditUserInput(body, user.id)
+    // Compute a data-driven analysis using real plan stats
+    const data = await getDashboardData(planId)
 
-    // Fetch plan data from database
-    const { data: plan, error: planError } = await supabase
-      .from('plans')
-      .select(`
-        id,
-        title,
-        description,
-        fiscal_year,
-        status,
-        created_at,
-        updated_at,
-        goals (
-          id,
-          title,
-          description,
-          target_date,
-          status,
-          initiatives (
-            id,
-            title,
-            description,
-            status,
-            timeline,
-            expected_costs
-          )
-        )
-      `)
-      .eq('id', planId)
-      .single()
+    const totalInitiatives = Object.values(data.initiativesByStatus).reduce((sum, n) => sum + n, 0)
+    const completed = data.initiativesByStatus.completed
+    const atRisk = data.initiativesByStatus.at_risk
 
-    if (planError || !plan) {
-      logger.error('Plan not found for analysis', { planId, error: planError })
-      return NextResponse.json({ error: 'Plan not found' }, { status: 404 })
-    }
+    const completionRate = totalInitiatives > 0 ? Math.round((completed / totalInitiatives) * 100) : 0
+    const hasKpis = (data.kpiProgress?.length || 0) > 0
 
-    // Check user permissions
-    const { data: userProfile } = await supabase
-      .from('users')
-      .select('role, department_id')
-      .eq('id', user.id)
-      .single()
+    // Simple score based on completion, risk, and KPI presence
+    const kpiScore = hasKpis ? 15 : 0
+    const riskPenalty = Math.min(20, atRisk * 5)
+    const baseScore = Math.min(100, Math.max(0, Math.round(completionRate * 0.7 + kpiScore - riskPenalty)))
 
-    if (!userProfile) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 403 })
-    }
+    const strengths: string[] = []
+    if (completionRate >= 50) strengths.push('Solid completion progress across initiatives')
+    if (hasKpis) strengths.push('KPIs defined to track performance')
+    if (data.goalCount > 0) strengths.push(`${data.goalCount} strategic goals provide clear direction`)
 
-    // Transform plan data for AI analysis
-    const planData = {
-      id: plan.id,
-      title: plan.title,
-      description: plan.description,
-      goals: plan.goals?.map((goal: any) => ({
-        id: goal.id,
-        title: goal.title,
-        description: goal.description,
-        targetDate: goal.target_date,
-        status: goal.status,
-        initiatives: goal.initiatives?.map((initiative: any) => ({
-          title: initiative.title,
-          description: initiative.description,
-          budget: initiative.expected_costs || 0,
-          timeline: initiative.timeline,
-          status: initiative.status,
-        })) || [],
-      })) || [],
-      budget: {
-        total: plan.goals?.reduce((total: number, goal: any) => {
-          return total + (goal.initiatives?.reduce((goalTotal: number, init: any) => 
-            goalTotal + (init.expected_costs || 0), 0) || 0)
-        }, 0) || 0,
-        allocated: plan.goals?.reduce((total: number, goal: any) => {
-          return total + (goal.initiatives?.reduce((goalTotal: number, init: any) => 
-            goalTotal + (init.expected_costs || 0), 0) || 0)
-        }, 0) || 0,
-        spent: 0, // Would need actual spending data
-      },
-      timeline: {
-        startDate: plan.created_at,
-        endDate: plan.goals?.reduce((latest: string, goal: any) => {
-          const goalDate = goal.target_date || plan.created_at
-          return goalDate > latest ? goalDate : latest
-        }, plan.created_at) || plan.created_at,
-      },
-    }
+    const weaknesses: string[] = []
+    if (totalInitiatives === 0) weaknesses.push('No initiatives defined yet')
+    if (!hasKpis) weaknesses.push('No plan- or goal-level KPIs configured')
+    if (data.initiativesByPriority.NEED === 0) weaknesses.push('No NEED-priority initiatives identified')
 
-    // Perform AI analysis
-    logger.info('Starting AI analysis for plan', { 
-      planId, 
-      userId: user.id,
-      goalCount: planData.goals.length 
-    })
+    const risks = atRisk > 0 ? [
+      {
+        id: crypto.randomUUID(),
+        type: 'alert',
+        severity: atRisk >= 3 ? 'high' : 'medium',
+        title: 'Initiatives at Risk',
+        description: `${atRisk} initiative${atRisk === 1 ? '' : 's'} flagged as at risk.`,
+        confidence: 70,
+        data: { category: 'delivery', impact: atRisk >= 3 ? 'high' : 'medium' },
+        recommendations: [
+          'Review risk logs and mitigation plans',
+          'Reallocate resources to unblock critical work',
+          'Increase status check-in cadence'
+        ],
+        createdAt: new Date(),
+      }
+    ] : []
 
-    const analysis: PlanAnalysis = await aiAnalytics.analyzePlan(planData)
-
-    // Store analysis results in database for caching
-    const { error: insertError } = await supabase
-      .from('ai_analyses')
-      .upsert({
-        plan_id: planId,
-        analysis_type: 'plan_analysis',
-        results: analysis,
-        user_id: user.id,
-        created_at: new Date().toISOString(),
+    const opportunities = [] as any[]
+    if (!hasKpis) {
+      opportunities.push({
+        id: crypto.randomUUID(),
+        type: 'opportunity',
+        severity: 'medium',
+        title: 'Establish KPI tracking',
+        description: 'Add KPIs at plan, goal, or initiative level to monitor progress.',
+        confidence: 85,
+        data: { category: 'monitoring', impact: 'high' },
+        recommendations: ['Define measurable targets', 'Automate KPI data collection'],
+        createdAt: new Date(),
       })
-
-    if (insertError) {
-      logger.warn('Failed to cache analysis results', { error: insertError })
     }
 
-    // Log successful analysis
-    logger.info('AI plan analysis completed successfully', {
+    const insights = [
+      {
+        id: crypto.randomUUID(),
+        type: 'recommendation',
+        severity: completionRate < 50 ? 'high' : 'medium',
+        title: completionRate < 50 ? 'Accelerate initiative execution' : 'Maintain execution momentum',
+        description: completionRate < 50
+          ? 'Less than half of initiatives are complete. Focus on removing blockers and prioritizing high-impact work.'
+          : 'Completion rate is trending well. Continue monitoring and address risks proactively.',
+        confidence: 80,
+        data: { category: 'execution' },
+        recommendations: completionRate < 50
+          ? ['Identify top blockers', 'Prioritize NEED initiatives', 'Add weekly check-ins']
+          : ['Keep cadence of reviews', 'Retire stale work', 'Shift resources to at-risk items'],
+        createdAt: new Date(),
+      }
+    ]
+
+    const analysis = {
       planId,
-      userId: user.id,
-      overallScore: analysis.overallScore,
-      riskCount: analysis.risks.length,
-      opportunityCount: analysis.opportunities.length,
-    })
+      overallScore: baseScore,
+      strengths,
+      weaknesses,
+      risks,
+      opportunities,
+      insights
+    }
+
+    logger.info('AI plan analysis completed (data-driven)', { planId, userId: user.id })
 
     return NextResponse.json({
       success: true,
@@ -156,11 +121,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     logger.error('AI plan analysis failed', { error })
-    SecurityAudit.logSecurityEvent('AI_ANALYSIS_ERROR', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      userId: (await createServerSupabaseClient().auth.getUser()).data.user?.id,
-    }, 'medium')
-
     return NextResponse.json(
       { error: 'Failed to analyze plan' },
       { status: 500 }
@@ -182,47 +142,68 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const planId = searchParams.get('planId')
 
-    if (!planId || !InputValidator.isValidUUID(planId)) {
-      return NextResponse.json({ error: 'Valid plan ID is required' }, { status: 400 })
+    if (!planId) {
+      return NextResponse.json({ error: 'Plan ID is required' }, { status: 400 })
     }
 
-    // Check if cached analysis exists
-    const { data: cachedAnalysis, error: cacheError } = await supabase
-      .from('ai_analyses')
-      .select('results, created_at')
-      .eq('plan_id', planId)
-      .eq('analysis_type', 'plan_analysis')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
+    logger.info('AI plan analysis requested via GET', { planId, userId: user.id })
 
-    if (!cacheError && cachedAnalysis) {
-      // Check if analysis is less than 24 hours old
-      const analysisAge = Date.now() - new Date(cachedAnalysis.created_at).getTime()
-      const maxAge = 24 * 60 * 60 * 1000 // 24 hours
+    const data = await getDashboardData(planId)
+    const totalInitiatives = Object.values(data.initiativesByStatus).reduce((sum, n) => sum + n, 0)
+    const completed = data.initiativesByStatus.completed
+    const atRisk = data.initiativesByStatus.at_risk
+    const completionRate = totalInitiatives > 0 ? Math.round((completed / totalInitiatives) * 100) : 0
+    const hasKpis = (data.kpiProgress?.length || 0) > 0
 
-      if (analysisAge < maxAge) {
-        logger.info('Returning cached AI analysis', { planId, age: analysisAge })
-        return NextResponse.json({
-          success: true,
-          analysis: cachedAnalysis.results,
-          cached: true,
-          timestamp: cachedAnalysis.created_at,
-        })
-      }
+    const kpiScore = hasKpis ? 15 : 0
+    const riskPenalty = Math.min(20, atRisk * 5)
+    const baseScore = Math.min(100, Math.max(0, Math.round(completionRate * 0.7 + kpiScore - riskPenalty)))
+
+    const analysis = {
+      planId,
+      overallScore: baseScore,
+      strengths: [
+        ...(completionRate >= 50 ? ['Solid completion progress across initiatives'] : []),
+        ...(hasKpis ? ['KPIs defined to track performance'] : []),
+      ],
+      weaknesses: [
+        ...(totalInitiatives === 0 ? ['No initiatives defined yet'] : []),
+        ...(!hasKpis ? ['No plan- or goal-level KPIs configured'] : []),
+      ],
+      risks: atRisk > 0 ? [{
+        id: crypto.randomUUID(),
+        type: 'alert',
+        severity: atRisk >= 3 ? 'high' : 'medium',
+        title: 'Initiatives at Risk',
+        description: `${atRisk} initiative${atRisk === 1 ? '' : 's'} flagged as at risk.`,
+        confidence: 70,
+        data: { category: 'delivery' },
+        recommendations: ['Review risk logs and mitigation plans']
+      }] : [],
+      opportunities: hasKpis ? [] : [{
+        id: crypto.randomUUID(),
+        type: 'opportunity',
+        severity: 'medium',
+        title: 'Establish KPI tracking',
+        description: 'Add KPIs at plan, goal, or initiative level to monitor progress.',
+        confidence: 85,
+        data: { category: 'monitoring' },
+        recommendations: ['Define measurable targets']
+      }],
+      insights: []
     }
 
-    // No valid cached analysis found
     return NextResponse.json({
-      success: false,
-      message: 'No recent analysis found. Please run a new analysis.',
-      cached: false,
-    }, { status: 404 })
+      success: true,
+      analysis,
+      timestamp: new Date().toISOString(),
+      cached: false
+    })
 
   } catch (error) {
-    logger.error('Failed to retrieve AI analysis', { error })
+    logger.error('AI plan analysis failed', { error })
     return NextResponse.json(
-      { error: 'Failed to retrieve analysis' },
+      { error: 'Failed to analyze plan' },
       { status: 500 }
     )
   }

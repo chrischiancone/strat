@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Comment, CommentEntityType, getComments, getUnresolvedCount } from '@/app/actions/comments'
 import { CommentForm } from './CommentForm'
 import { CommentList } from './CommentList'
+import { SafeCommentList } from './SafeCommentList'
 import { MessageSquare } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -46,10 +47,12 @@ export function CommentsSection({
     loadComments()
   }, [entityType, entityId, loadComments])
 
-  const handleCommentSuccess = () => {
-    router.refresh()
-    loadComments()
-  }
+  const handleCommentSuccess = useCallback(() => {
+    // Use a small delay to avoid DOM manipulation conflicts
+    setTimeout(() => {
+      loadComments()
+    }, 100)
+  }, [loadComments])
 
   return (
     <div className="rounded-lg bg-white p-6 shadow">
@@ -78,14 +81,16 @@ export function CommentsSection({
       {isLoading ? (
         <div className="py-8 text-center text-sm text-gray-500">Loading comments...</div>
       ) : (
-        <CommentList
-          comments={comments}
-          entityType={entityType}
-          entityId={entityId}
-          currentUserId={currentUserId}
-          currentUserRole={currentUserRole}
-          entityOwnerId={entityOwnerId}
-        />
+        <SafeCommentList>
+          <CommentList
+            comments={comments}
+            entityType={entityType}
+            entityId={entityId}
+            currentUserId={currentUserId}
+            currentUserRole={currentUserRole}
+            entityOwnerId={entityOwnerId}
+          />
+        </SafeCommentList>
       )}
     </div>
   )

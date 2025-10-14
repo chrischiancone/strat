@@ -37,21 +37,23 @@ export default async function UsersPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Users</h1>
+      <div className="flex flex-col gap-4 border-b border-gray-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl truncate">Users</h1>
           <p className="mt-1 text-sm text-gray-500">
             Manage user accounts and permissions
           </p>
         </div>
-        <Link href="/admin/users/new">
-          <Button>Create User</Button>
-        </Link>
+        <div className="flex-shrink-0">
+          <Link href="/admin/users/new">
+            <Button className="w-full sm:w-auto">Create User</Button>
+          </Link>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-auto bg-gray-50 p-6">
+      <div className="flex-1 overflow-auto bg-gray-50 p-4 sm:p-6">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-lg bg-white shadow">
+          <div className="rounded-lg bg-white shadow overflow-hidden">
             <Suspense fallback={<div className="p-4">Loading filters...</div>}>
               <UsersFilters
                 departments={departments}
@@ -64,14 +66,16 @@ export default async function UsersPage({ searchParams }: PageProps) {
               />
             </Suspense>
 
-            <UsersTable
-              users={usersResponse.users}
-              total={usersResponse.total}
-              page={usersResponse.page}
-              totalPages={usersResponse.totalPages}
-              sortBy={params.sortBy || 'full_name'}
-              sortOrder={params.sortOrder || 'asc'}
-            />
+            <div className="overflow-x-auto">
+              <UsersTable
+                users={usersResponse.users}
+                total={usersResponse.total}
+                page={usersResponse.page}
+                totalPages={usersResponse.totalPages}
+                sortBy={params.sortBy || 'full_name'}
+                sortOrder={params.sortOrder || 'asc'}
+              />
+            </div>
           </div>
         </div>
       </div>
