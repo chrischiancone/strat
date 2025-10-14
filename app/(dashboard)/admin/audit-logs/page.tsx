@@ -5,7 +5,7 @@ import { AuditLogsFilters } from '@/components/admin/AuditLogsFilters'
 import { AuditLogsDebug } from '@/components/admin/AuditLogsDebug'
 import { PageHeader } from '@/components/layouts/PageHeader'
 import { PageContainer, ContentCard } from '@/components/layouts/PageContainer'
-import { TableSkeleton, NoDataEmptyState } from '@/components/ui/loading-states'
+import { TableSkeleton, NoDataEmptyState, EmptyState } from '@/components/ui/loading-states'
 import { ShieldIcon } from 'lucide-react'
 
 interface PageProps {
@@ -87,7 +87,7 @@ async function AuditLogsContent({ searchParams }: PageProps) {
         />
         <PageContainer>
           <ContentCard>
-            <NoDataEmptyState 
+            <EmptyState 
               variant="error"
               title="Unable to load audit logs"
               description="There was an error loading the audit logs. Please try again or contact support if the problem persists."

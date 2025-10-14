@@ -37,3 +37,6 @@ next-env.d.ts
 /supabase/.branches
 /supabase/.temp
 /supabase/functions/**/node_modules
+
+# Local Netlify folder
+.netlify
