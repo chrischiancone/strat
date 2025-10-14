@@ -59,6 +59,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.13.5",
     "@playwright/test": "^1.40.1",
     "@testing-library/react": "^14.1.2",
     "@types/node": "^20.10.6",
