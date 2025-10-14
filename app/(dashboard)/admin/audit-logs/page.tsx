@@ -51,7 +51,7 @@ async function AuditLogsContent({ searchParams }: PageProps) {
               />
             </ContentCard>
           ) : (
-            <ContentCard padding="none">
+            <ContentCard padding="sm">
               <Suspense fallback={<div className="p-4">Loading filters...</div>}>
                 <AuditLogsFilters
                   currentFilters={{
