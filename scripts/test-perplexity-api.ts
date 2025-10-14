@@ -37,7 +37,7 @@ async function testPerplexityApi() {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'mistral-7b-instruct',
+        model: process.env.PPLX_MODEL || 'llama-3.1-sonar-small-128k-online',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: 'Say hello in exactly 5 words.' }

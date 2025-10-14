@@ -30,8 +30,7 @@ export interface FiscalYear {
 
 export interface CreatePlanInput {
   department_id: string
-  start_fiscal_year_id: string
-  end_fiscal_year_id: string
+  fiscal_year_id: string
 }
 
 export async function getStrategicPlans(): Promise<StrategicPlan[]> {
@@ -199,32 +198,38 @@ export async function createStrategicPlan(
     }
   }
 
-  // Fetch fiscal year data to generate title
-  const { data: startFY } = await supabase
-    .from('fiscal_years')
-    .select('year')
-    .eq('id', input.start_fiscal_year_id)
-    .single<{ year: number }>()
-
-  const { data: endFY } = await supabase
-    .from('fiscal_years')
-    .select('year')
-    .eq('id', input.end_fiscal_year_id)
-    .single<{ year: number }>()
-
-  // Generate default title - handle single year plans
-  const defaultTitle = startFY?.year === endFY?.year 
-    ? `FY${startFY?.year} Strategic Plan`
-    : `FY${startFY?.year}-${endFY?.year} Strategic Plan`
-
-  // Create the strategic plan using admin client to bypass RLS
+  // Create admin client for data lookups to bypass RLS
   // We've already verified user authentication and permissions above
   const adminClient = createAdminSupabaseClient()
   
+  // Fetch fiscal year data to generate title
+  const { data: fiscalYear } = await adminClient
+    .from('fiscal_years')
+    .select('year')
+    .eq('id', input.fiscal_year_id)
+    .single<{ year: number }>()
+
+  // Get department name for the title
+  const { data: department } = await adminClient
+    .from('departments')
+    .select('name')
+    .eq('id', input.department_id)
+    .single<{ name: string }>()
+
+  if (!department) {
+    throw new Error('Department not found')
+  }
+
+  // Generate default title with department name
+  const defaultTitle = `FY${fiscalYear?.year} ${department.name} Strategic Plan`
+
+  // Create the strategic plan using admin client to bypass RLS
+  // We've already verified user authentication and permissions above
+  
   const newPlan: TablesInsert<'strategic_plans'> = {
     department_id: input.department_id,
-    start_fiscal_year_id: input.start_fiscal_year_id,
-    end_fiscal_year_id: input.end_fiscal_year_id,
+    start_fiscal_year_id: input.fiscal_year_id,
+    end_fiscal_year_id: input.fiscal_year_id,
     title: defaultTitle,
     status: 'draft',
     created_by: currentUser.id,

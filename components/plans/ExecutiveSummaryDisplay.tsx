@@ -14,7 +14,7 @@ export function ExecutiveSummaryDisplay({ summary }: ExecutiveSummaryDisplayProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-gray-900">Executive Summary</CardTitle>
+        <CardTitle className="text-lg font-semibold text-gray-900">Executive Summary (Run Last)</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm max-w-none dark:prose-invert">

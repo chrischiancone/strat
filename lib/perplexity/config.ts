@@ -8,6 +8,25 @@ function getApiKey(): string {
   return key
 }
 
+function resolveModel(): string {
+  const raw = (process.env.PPLX_MODEL || '').trim().toLowerCase()
+  // Map common aliases to official model names
+  const aliases: Record<string, string> = {
+    sonar: 'sonar-small-online',
+    'sonar-small': 'sonar-small-online',
+    'sonar-large': 'sonar-large-online',
+    'sonar-huge': 'sonar-huge-online',
+    // Legacy names map to current
+    'llama-3.1-sonar-small': 'sonar-small-online',
+    'llama-3.1-sonar-large': 'sonar-large-online',
+    'llama-3.1-sonar-huge': 'sonar-huge-online',
+    'llama-3.1-sonar-small-128k-online': 'sonar-small-online',
+    'llama-3.1-sonar-large-128k-online': 'sonar-large-online',
+    'llama-3.1-sonar-huge-128k-online': 'sonar-huge-online',
+  }
+  return aliases[raw] || (raw || 'sonar-small-online')
+}
+
 interface ApiError {
   error?: {
     message: string
@@ -31,7 +50,7 @@ export async function callPerplexityApi(messages: Array<{ role: string; content:
         'Authorization': `Bearer ${getApiKey()}`
       },
       body: JSON.stringify({
-        model: process.env.PPLX_MODEL || 'llama-3.1-sonar-small-128k-online',
+        model: resolveModel(),
         messages,
         max_tokens: 1024,
       })
@@ -63,7 +82,7 @@ export async function callPerplexityApi(messages: Array<{ role: string; content:
     
     // Return both content and citations
     return {
-      content: data.choices[0].message.content,
+      content: data.choices?.[0]?.message?.content || '',
       citations: data.citations || []
     }
   } catch (error) {

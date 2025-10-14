@@ -130,7 +130,7 @@ export function PlanMetadataForm({
         {/* Executive Summary */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <Label htmlFor="executive_summary">Executive Summary</Label>
+            <Label htmlFor="executive_summary">Executive Summary (Run Last)</Label>
             <Button
               type="button"
               size="sm"
@@ -139,7 +139,7 @@ export function PlanMetadataForm({
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
             >
               <Sparkles className="h-4 w-4 mr-2" />
-              {isGenerating ? 'Generating...' : 'Generate with AI (Claude)'}
+              {isGenerating ? 'Generating...' : 'Generate with AI'}
             </Button>
           </div>
           <MarkdownEditor
@@ -148,14 +148,15 @@ export function PlanMetadataForm({
             onChange={setExecutiveSummary}
             onBlur={() => handleSave('executive_summary', executiveSummary)}
             disabled={isSaving || isGenerating}
-            placeholder={isGenerating ? "AI is generating your executive summary with Markdown formatting..." : "Provide a high-level overview of your strategic plan using Markdown formatting, or click 'Generate with AI (Claude)' to create one automatically..."}
+            placeholder={isGenerating ? "AI is generating your executive summary with Markdown formatting..." : "Provide a high-level overview of your strategic plan using Markdown formatting, or click 'Generate with AI' to create one automatically..."}
             rows={10}
             showPreview={true}
           />
           <p className="mt-1 text-xs text-gray-500">
             {executiveSummary.length === 0 
-              ? '🤖 Click "Generate with AI (Claude)" to create a comprehensive Markdown-formatted executive summary using your strategic goals, analysis data, and department information.' 
-              : `${executiveSummary.length} characters - Use the Preview tab to see your Markdown formatting. Claude generates professional Markdown content automatically.`}
+              ? '🤖 Click "Generate with AI" to create a comprehensive Markdown-formatted executive summary using your strategic goals, analysis data, and department information.' 
+              : `${executiveSummary.length} characters - Use the Preview tab to see your Markdown formatting. The AI generates professional Markdown content automatically.`
+            }
           </p>
         </div>
 
