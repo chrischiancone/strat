@@ -183,8 +183,8 @@ export async function useTwoFactorBackupCodeAction(backupCode: string, userId?: 
       return { success: false, error: 'User not authenticated' }
     }
 
-    const { useBackupCode } = await import('@/lib/auth/2fa')
-    const result = await useBackupCode(targetUserId, backupCode)
+    const { useBackupCode: useBackupCodeUtil } = await import('@/lib/auth/2fa')
+    const result = await useBackupCodeUtil(targetUserId, backupCode)
     
     return result
   } catch (error) {
