@@ -21,31 +21,47 @@ export async function GET() {
       .select('*', { count: 'exact', head: true })
     
     // Check if triggers exist
-    const { data: triggers, error: triggersError } = await supabase.rpc('exec_sql', {
-      sql: `
-        SELECT 
-          trigger_name, 
-          event_object_table, 
-          action_statement,
-          action_timing,
-          event_manipulation
-        FROM information_schema.triggers 
-        WHERE trigger_name LIKE '%audit%'
-        ORDER BY event_object_table, trigger_name;
-      `
-    }).catch(() => ({ data: null, error: 'RPC not available' }))
+    let triggers = null
+    let triggersError = null
+    try {
+      const result = await supabase.rpc('exec_sql', {
+        sql: `
+          SELECT 
+            trigger_name, 
+            event_object_table, 
+            action_statement,
+            action_timing,
+            event_manipulation
+          FROM information_schema.triggers 
+          WHERE trigger_name LIKE '%audit%'
+          ORDER BY event_object_table, trigger_name;
+        `
+      })
+      triggers = result.data
+      triggersError = result.error
+    } catch (e) {
+      triggersError = 'RPC not available'
+    }
 
     // Check if audit_trigger_function exists
-    const { data: functions, error: functionsError } = await supabase.rpc('exec_sql', {
-      sql: `
-        SELECT 
-          routine_name,
-          routine_type
-        FROM information_schema.routines
-        WHERE routine_name LIKE '%audit%'
-        ORDER BY routine_name;
-      `
-    }).catch(() => ({ data: null, error: 'RPC not available' }))
+    let functions = null
+    let functionsError = null
+    try {
+      const result = await supabase.rpc('exec_sql', {
+        sql: `
+          SELECT 
+            routine_name,
+            routine_type
+          FROM information_schema.routines
+          WHERE routine_name LIKE '%audit%'
+          ORDER BY routine_name;
+        `
+      })
+      functions = result.data
+      functionsError = result.error
+    } catch (e) {
+      functionsError = 'RPC not available'
+    }
 
     // Try to create a test record to see if trigger fires
     const testResult = await testAuditTrigger(supabase, user.id)
