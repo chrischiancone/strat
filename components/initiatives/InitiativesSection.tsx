@@ -17,7 +17,7 @@ import {
   type PriorityLevel,
 } from '@/app/actions/initiatives'
 import { getStrategicGoals, type StrategicGoal } from '@/app/actions/strategic-goals'
-import { Plus } from 'lucide-react'
+import { Plus, RefreshCw } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface InitiativesSectionProps {
@@ -43,10 +43,13 @@ export function InitiativesSection({
 
   const loadData = async () => {
     try {
+      console.log('InitiativesSection: Loading data for planId:', planId)
       const [goalsData, initiativesData] = await Promise.all([
         getStrategicGoals(planId),
         getInitiatives(planId),
       ])
+      console.log('InitiativesSection: Goals data received:', goalsData)
+      console.log('InitiativesSection: Initiatives data received:', initiativesData)
       setGoals(goalsData)
       setInitiatives(initiativesData)
     } catch {
@@ -61,7 +64,11 @@ export function InitiativesSection({
   }
 
   useEffect(() => {
-    loadData()
+    // Add a small delay to ensure goals have been loaded first
+    const timer = setTimeout(() => {
+      loadData()
+    }, 100)
+    return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planId])
 
@@ -125,10 +132,22 @@ export function InitiativesSection({
   }
 
   if (goals.length === 0) {
+    console.log('InitiativesSection: No goals found, showing empty state. Goals array:', goals)
     return (
       <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">Initiatives</h2>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => {
+              setIsLoading(true)
+              loadData()
+            }}
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Refresh
+          </Button>
         </div>
         <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
           <p className="text-sm text-gray-600">
@@ -139,6 +158,7 @@ export function InitiativesSection({
     )
   }
 
+  console.log('InitiativesSection: Rendering initiatives section with goals:', goals.length)
   return (
     <>
       <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6">

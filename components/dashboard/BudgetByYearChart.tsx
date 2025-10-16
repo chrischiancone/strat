@@ -25,18 +25,22 @@ export function BudgetByYearChart({ data }: BudgetByYearChartProps) {
     return `$${value.toFixed(0)}`
   }
 
+  const startYear = parseInt(data.plan.fiscal_year_start)
   const chartData = [
     {
-      year: `FY${data.plan.fiscal_year_start.slice(2, 4)}`,
+      year: `FY${String(startYear).slice(2, 4)}`,
       budget: data.budgetByYear.year_1,
+      key: 'year_1',
     },
     {
-      year: `FY${String(parseInt(data.plan.fiscal_year_start) + 1).slice(2, 4)}`,
+      year: `FY${String(startYear + 1).slice(2, 4)}`,
       budget: data.budgetByYear.year_2,
+      key: 'year_2',
     },
     {
-      year: `FY${data.plan.fiscal_year_end.slice(2, 4)}`,
+      year: `FY${String(startYear + 2).slice(2, 4)}`,
       budget: data.budgetByYear.year_3,
+      key: 'year_3',
     },
   ]
 
@@ -71,7 +75,7 @@ export function BudgetByYearChart({ data }: BudgetByYearChartProps) {
             )}
             <div className="mt-4 space-y-2">
               {chartData.map((item) => (
-                <div key={item.year} className="flex items-center justify-between text-sm">
+                <div key={item.key} className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{item.year}</span>
                   <span className="font-medium">{formatCurrency(item.budget)}</span>
                 </div>

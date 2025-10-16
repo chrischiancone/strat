@@ -88,7 +88,9 @@ export function UsersTable({
 
   return (
     <div>
-      <Table>
+      {/* Desktop Table */}
+      <div className="hidden lg:block">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -193,9 +195,76 @@ export function UsersTable({
           ))}
         </TableBody>
       </Table>
+      </div>
 
-      <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
-        <div className="text-sm text-gray-700">
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4 p-4">
+        {users.map((user) => (
+          <div key={user.id} className="bg-white rounded-lg shadow border p-4 space-y-3">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900 truncate">
+                  {user.full_name || 'N/A'}
+                </h3>
+                {user.title && (
+                  <p className="text-xs text-gray-500 mt-0.5">{user.title}</p>
+                )}
+                <p className="text-sm text-gray-600 mt-1 break-all">{user.email || 'N/A'}</p>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <span
+                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                  roleColors[user.role] || roleColors.public
+                }`}
+              >
+                {roleLabels[user.role] || user.role}
+              </span>
+              <span
+                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                  user.is_active
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
+                {user.is_active ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+
+            <div className="text-sm text-gray-600 space-y-1">
+              {user.department_name && (
+                <div><span className="font-medium">Department:</span> {user.department_name}</div>
+              )}
+              {user.supervisor_name && (
+                <div><span className="font-medium">Reports to:</span> {user.supervisor_name}</div>
+              )}
+              <div className="text-xs text-gray-500">
+                Last active: {user.updated_at
+                  ? formatDistanceToNow(new Date(user.updated_at), { addSuffix: true })
+                  : 'Never'}
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2 border-t">
+              <Link href={`/admin/users/${user.id}`} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full">
+                  Edit
+                </Button>
+              </Link>
+              <UserActionsMenu
+                userId={user.id}
+                userName={user.full_name || 'Unknown User'}
+                userEmail={user.email || 'No email'}
+                isActive={user.is_active ?? true}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 bg-gray-50 px-4 py-3">
+        <div className="text-xs sm:text-sm text-gray-700">
           Showing{' '}
           <span className="font-medium">
             {(page - 1) * 50 + 1}
@@ -206,7 +275,7 @@ export function UsersTable({
           </span>{' '}
           of <span className="font-medium">{total}</span> users
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap justify-center">
           <Button
             variant="outline"
             size="sm"
@@ -215,7 +284,7 @@ export function UsersTable({
           >
             Previous
           </Button>
-          <div className="flex items-center px-3 text-sm text-gray-700">
+          <div className="flex items-center px-2 sm:px-3 text-xs sm:text-sm text-gray-700">
             Page {page} of {totalPages}
           </div>
           <Button

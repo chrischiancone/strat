@@ -94,22 +94,16 @@ export async function createComment(commentData: {
   const { data, error } = await supabase
     .from('comments')
     .insert({
-      resource_id: commentData.resourceId,
-      resource_type: commentData.resourceType,
-      parent_id: commentData.parentId,
+      entity_id: commentData.resourceId,
+      entity_type: commentData.resourceType,
+      parent_comment_id: commentData.parentId,
       author_id: commentData.authorId,
       content: commentData.content,
-      mentions: commentData.mentions || [],
-      reactions: [],
-      resolved: false,
+      is_resolved: false,
     })
     .select(`
       *,
-      author:users!author_id(id, full_name, avatar_url),
-      replies:comments!parent_id(
-        *,
-        author:users!author_id(id, full_name, avatar_url)
-      )
+      users!author_id(full_name, email)
     `)
     .single()
   
@@ -128,20 +122,16 @@ export async function getComments(
     .from('comments')
     .select(`
       *,
-      author:users!author_id(id, full_name, avatar_url),
-      replies:comments!parent_id(
-        *,
-        author:users!author_id(id, full_name, avatar_url)
-      )
+      users!author_id(full_name, email)
     `)
-    .eq('resource_id', resourceId)
-    .eq('resource_type', resourceType)
-    .is('parent_id', null)
+    .eq('entity_id', resourceId)
+    .eq('entity_type', resourceType)
+    .is('parent_comment_id', null)
     .order('created_at', { ascending: false })
   
   if (error) throw error
   
-  return data.map(transformComment)
+  return (data || []).map(transformComment)
 }
 
 export async function updateComment(
@@ -338,21 +328,22 @@ export async function createActivity(activityData: {
 function transformComment(data: any): Comment {
   return {
     id: data.id,
-    resourceId: data.resource_id,
-    resourceType: data.resource_type,
-    parentId: data.parent_id,
+    resourceId: data.entity_id,
+    resourceType: data.entity_type,
+    parentId: data.parent_comment_id,
     authorId: data.author_id,
-    authorName: data.author.full_name,
-    authorAvatar: data.author.avatar_url,
+    authorName: data.users?.full_name || 'Unknown User',
+    authorAvatar: undefined,
     content: data.content,
-    mentions: data.mentions || [],
-    reactions: data.reactions || [],
-    resolved: data.resolved,
-    resolvedBy: data.resolved_by,
-    resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
+    mentions: [],
+    attachments: [],
+    reactions: [],
+    resolved: data.is_resolved,
+    resolvedBy: undefined,
+    resolvedAt: undefined,
+    position: undefined,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
-    replies: data.replies ? data.replies.map(transformComment) : [],
   }
 }
 

@@ -56,7 +56,7 @@ export default async function ProfilePage() {
 
       <div className="max-w-2xl">
         <ProfileForm
-          user={userProfile}
+          user={{ ...userProfile, full_name: userProfile.full_name || '' }}
           departments={departments || []}
           currentUserRole={userProfile.role}
         />

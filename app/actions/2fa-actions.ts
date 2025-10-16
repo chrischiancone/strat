@@ -2,13 +2,6 @@
 
 import { revalidatePath } from 'next/cache'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
-import { 
-  generateTwoFactorSecret, 
-  enableTwoFactor, 
-  disableTwoFactor, 
-  getTwoFactorStatus,
-  verifyTwoFactorToken 
-} from '@/lib/auth/2fa'
 import { getCurrentUser } from './auth-actions'
 
 export interface TwoFactorSetupResult {
@@ -41,6 +34,7 @@ export async function getTwoFactorStatusAction(): Promise<TwoFactorStatusResult>
       return { success: false, error: 'User not authenticated' }
     }
 
+    const { getTwoFactorStatus } = await import('@/lib/auth/2fa')
     const status = await getTwoFactorStatus(user.id)
     
     return {
@@ -64,8 +58,8 @@ export async function initializeTwoFactorSetupAction(): Promise<TwoFactorSetupRe
       return { success: false, error: 'User not authenticated' }
     }
 
+    const { generateTwoFactorSecret, generateQRCode, generateBackupCodes } = await import('@/lib/auth/2fa')
     const secretData = generateTwoFactorSecret(user.email || user.id)
-    const { generateQRCode, generateBackupCodes } = await import('@/lib/auth/2fa')
     
     const qrCodeUrl = await generateQRCode(secretData.otpauth_url!)
     const backupCodes = generateBackupCodes()
@@ -96,6 +90,8 @@ export async function enableTwoFactorAction(
       return { success: false, error: 'User not authenticated' }
     }
 
+    const { verifyTwoFactorToken, enableTwoFactor } = await import('@/lib/auth/2fa')
+    
     // Verify the token first
     const isValid = verifyTwoFactorToken(secret, token)
     if (!isValid) {
@@ -127,6 +123,7 @@ export async function disableTwoFactorAction(): Promise<TwoFactorToggleResult> {
       return { success: false, error: 'User not authenticated' }
     }
 
+    const { disableTwoFactor } = await import('@/lib/auth/2fa')
     const result = await disableTwoFactor(user.id)
     
     if (result.success) {
@@ -164,6 +161,7 @@ export async function verifyTwoFactorAction(token: string, userId?: string): Pro
       return { success: false, error: '2FA not enabled for this user' }
     }
 
+    const { verifyTwoFactorToken } = await import('@/lib/auth/2fa')
     const isValid = verifyTwoFactorToken(userData.two_factor_secret, token)
     
     return { success: isValid, error: isValid ? undefined : 'Invalid verification code' }
@@ -217,7 +215,7 @@ export async function checkTwoFactorRequiredAction(): Promise<{ required: boolea
     // Check if 2FA is required for admins from security settings
     const { getSecuritySettingsForAuth } = await import('./settings')
     const securitySettings = await getSecuritySettingsForAuth()
-    const twoFactorRequired = securitySettings.twoFactor?.requireForAdmins === true
+    const twoFactorRequired = securitySettings.auth.requireTwoFactorAdmin === true
 
     return {
       required: isAdmin && twoFactorRequired,

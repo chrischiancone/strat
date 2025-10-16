@@ -17,6 +17,7 @@ export interface DashboardData {
     fiscal_year_end: string
     department_name: string
     created_by: string
+    executive_summary: string | null
     swot_analysis: SwotAnalysis | null
     environmental_scan: EnvironmentalScan | null
     benchmarking_data: BenchmarkingData | null
@@ -86,6 +87,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
         title,
         status,
         created_by,
+        executive_summary,
         swot_analysis,
         environmental_scan,
         benchmarking_data,
@@ -106,6 +108,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
     title: string
     status: string
     created_by: string
+    executive_summary: string | null
     swot_analysis: unknown
     environmental_scan: unknown
     benchmarking_data: unknown
@@ -327,6 +330,7 @@ export async function getDashboardData(planId: string): Promise<DashboardData> {
         fiscal_year_end: typedPlan.end_fiscal_year.year.toString(),
         department_name: typedPlan.departments.name,
         created_by: typedPlan.created_by,
+        executive_summary: typedPlan.executive_summary,
         swot_analysis:
           typeof typedPlan.swot_analysis === 'object' && typedPlan.swot_analysis !== null
             ? (typedPlan.swot_analysis as SwotAnalysis)

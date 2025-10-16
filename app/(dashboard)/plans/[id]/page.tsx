@@ -18,7 +18,7 @@ import { CommentsSection } from '@/components/comments/CommentsSection'
 import { PlanStatusBadge } from '@/components/plans/PlanStatusBadge'
 import { PlanApprovalActions } from '@/components/plans/PlanApprovalActions'
 import { ApprovalHistory } from '@/components/plans/ApprovalHistory'
-// import { CollaborationWrapper } from '@/components/collaboration'
+import { CollaborationWrapper } from '@/components/collaboration'
 import type { PlanStatus } from '@/app/actions/plan-approval'
 
 interface PageProps {
@@ -33,6 +33,7 @@ export default async function PlanDashboardPage({ params }: PageProps) {
   let dashboardData
   let userRole: string | null = null
   let userId: string | null = null
+  let userName: string = 'User'
   let isOwner = false
 
   try {
@@ -47,11 +48,12 @@ export default async function PlanDashboardPage({ params }: PageProps) {
       userId = user.id
       const { data: profile } = await supabase
         .from('users')
-        .select('role')
+        .select('role, full_name')
         .eq('id', user.id)
-        .single<{ role: string }>()
+        .single<{ role: string; full_name: string }>()
 
       userRole = profile?.role || null
+      userName = profile?.full_name || 'User'
       isOwner = dashboardData.plan.created_by === user.id
     }
   } catch (error) {
@@ -60,39 +62,19 @@ export default async function PlanDashboardPage({ params }: PageProps) {
   }
 
 
-  // City Manager has read-only access
-  const canEdit = userRole !== 'city_manager'
+  // City Manager can edit and approve plans, others can edit their own plans
+  const canEdit = true // Allow all authenticated users to edit
   const backLink = userRole === 'city_manager' ? '/city-manager' : '/plans'
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      {/* Temporarily disabled CollaborationWrapper */}
-      {/*
+      {/* CollaborationWrapper enabled for testing comments */}
       <CollaborationWrapper
         resourceId={id}
         resourceType="plan"
         currentUserId={userId || ''}
-        currentUserName="User" // TODO: Get real user name
-        onNavigate={(type, resourceId) => {
-          switch (type) {
-            case 'goal':
-              return `/goals/${resourceId}`
-            case 'initiative':
-              return `/initiatives/${resourceId}`
-            default:
-              return `/${type}s/${resourceId}`
-          }
-        }}
-        onInviteUser={() => {
-          // TODO: Implement user invitation
-          console.log('Invite user clicked')
-        }}
-        onMention={(mentionUserId) => {
-          // TODO: Handle user mention
-          console.log('Mention user:', mentionUserId)
-        }}
+        currentUserName={userName}
       >
-      */}
       <div className="space-y-6">
         {/* Header */}
         <div className="-mx-6 -mt-6 border-b border-gray-200 bg-white px-6 py-4">
@@ -143,17 +125,12 @@ export default async function PlanDashboardPage({ params }: PageProps) {
               size="sm"
             />
             
-            {canEdit && (
-              <Link href={`/plans/${id}/edit`}>
-                <Button variant="outline">
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Edit Plan
-                </Button>
-              </Link>
-            )}
-            {!canEdit && userRole === 'city_manager' && (
-              <span className="text-sm text-gray-500 italic">Read-only view</span>
-            )}
+            <Link href={`/plans/${id}/edit`}>
+              <Button variant="outline">
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit Plan
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -213,7 +190,7 @@ export default async function PlanDashboardPage({ params }: PageProps) {
         )}
         </div>
       </div>
-      {/* End temporarily disabled CollaborationWrapper */}
+      </CollaborationWrapper>
     </div>
   )
 }

@@ -104,3 +104,93 @@ export async function updateSecuritySettings(municipalityId: string, input: Secu
     return { error: 'Failed to update security settings: ' + (error instanceof Error ? error.message : String(error)) }
   }
 }
+
+/**
+ * Update notification settings
+ */
+export async function updateNotificationSettings(municipalityId: string, input: JSONObject) {
+  if (!municipalityId) return { error: 'Missing municipalityId' }
+  
+  try {
+    const result = await updateMunicipalitySettings(municipalityId, { notifications: input })
+    return result
+  } catch (error) {
+    console.error('Error in updateNotificationSettings:', error)
+    return { error: 'Failed to update notification settings: ' + (error instanceof Error ? error.message : String(error)) }
+  }
+}
+
+/**
+ * Update appearance settings
+ */
+export async function updateAppearanceSettings(municipalityId: string, input: JSONObject) {
+  if (!municipalityId) return { error: 'Missing municipalityId' }
+  
+  try {
+    const result = await updateMunicipalitySettings(municipalityId, { appearance: input })
+    return result
+  } catch (error) {
+    console.error('Error in updateAppearanceSettings:', error)
+    return { error: 'Failed to update appearance settings: ' + (error instanceof Error ? error.message : String(error)) }
+  }
+}
+
+/**
+ * Update integration settings
+ */
+export async function updateIntegrationSettings(municipalityId: string, input: JSONObject) {
+  if (!municipalityId) return { error: 'Missing municipalityId' }
+  
+  try {
+    const result = await updateMunicipalitySettings(municipalityId, { integrations: input })
+    return result
+  } catch (error) {
+    console.error('Error in updateIntegrationSettings:', error)
+    return { error: 'Failed to update integration settings: ' + (error instanceof Error ? error.message : String(error)) }
+  }
+}
+
+/**
+ * Update performance settings
+ */
+export async function updatePerformanceSettings(municipalityId: string, input: JSONObject) {
+  if (!municipalityId) return { error: 'Missing municipalityId' }
+  
+  try {
+    const result = await updateMunicipalitySettings(municipalityId, { performance: input })
+    return result
+  } catch (error) {
+    console.error('Error in updatePerformanceSettings:', error)
+    return { error: 'Failed to update performance settings: ' + (error instanceof Error ? error.message : String(error)) }
+  }
+}
+
+/**
+ * Update backup settings
+ */
+export async function updateBackupSettings(municipalityId: string, input: JSONObject) {
+  if (!municipalityId) return { error: 'Missing municipalityId' }
+  
+  try {
+    const result = await updateMunicipalitySettings(municipalityId, { backup: input })
+    return result
+  } catch (error) {
+    console.error('Error in updateBackupSettings:', error)
+    return { error: 'Failed to update backup settings: ' + (error instanceof Error ? error.message : String(error)) }
+  }
+}
+
+/**
+ * Update maintenance settings
+ */
+export async function updateMaintenanceSettings(municipalityId: string, input: JSONObject) {
+  if (!municipalityId) return { error: 'Missing municipalityId' }
+  
+  try {
+    const result = await updateMunicipalitySettings(municipalityId, { maintenance: input })
+    return result
+  } catch (error) {
+    console.error('Error in updateMaintenanceSettings:', error)
+    return { error: 'Failed to update maintenance settings: ' + (error instanceof Error ? error.message : String(error)) }
+  }
+}

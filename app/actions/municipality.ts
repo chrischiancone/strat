@@ -105,6 +105,15 @@ export async function updateMunicipality(municipalityId: string, input: UpdateMu
           contact_email: validatedInput.contactEmail || null,
           contact_phone: validatedInput.contactPhone || null,
           website_url: validatedInput.websiteUrl || null,
+          timezone: validatedInput.timezone || existingSettings.timezone || 'America/Chicago',
+          currency: validatedInput.currency || existingSettings.currency || 'USD',
+          fiscal_year_start_month: validatedInput.fiscalYearStartMonth || existingSettings.fiscal_year_start_month || 10,
+          features: {
+            ...existingSettings.features,
+            ai_assistance: validatedInput.aiAssistance ?? existingSettings.features?.ai_assistance ?? false,
+            public_dashboard: validatedInput.publicDashboard ?? existingSettings.features?.public_dashboard ?? false,
+            multi_department_collaboration: validatedInput.multiDepartmentCollaboration ?? existingSettings.features?.multi_department_collaboration ?? true,
+          }
         }
       })
       .eq('id', municipalityId)

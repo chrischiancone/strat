@@ -34,74 +34,40 @@ export type Database = {
   }
   public: {
     Tables: {
-      backups: {
+      ai_analyses: {
         Row: {
-          id: string
-          name: string
-          type: string
-          status: string
-          size: number | null
-          duration: number | null
-          file_count: number | null
-          file_path: string | null
-          checksum: string | null
-          includes: Json | null
-          error_message: string | null
-          municipality_id: string
-          created_by: string | null
+          analysis_type: string
           created_at: string | null
-          completed_at: string | null
+          id: string
+          plan_id: string | null
+          results: Json
           updated_at: string | null
+          user_id: string
         }
         Insert: {
-          id?: string
-          name: string
-          type: string
-          status?: string
-          size?: number | null
-          duration?: number | null
-          file_count?: number | null
-          file_path?: string | null
-          checksum?: string | null
-          includes?: Json | null
-          error_message?: string | null
-          municipality_id: string
-          created_by?: string | null
+          analysis_type: string
           created_at?: string | null
-          completed_at?: string | null
+          id?: string
+          plan_id?: string | null
+          results: Json
           updated_at?: string | null
+          user_id: string
         }
         Update: {
-          id?: string
-          name?: string
-          type?: string
-          status?: string
-          size?: number | null
-          duration?: number | null
-          file_count?: number | null
-          file_path?: string | null
-          checksum?: string | null
-          includes?: Json | null
-          error_message?: string | null
-          municipality_id?: string
-          created_by?: string | null
+          analysis_type?: string
           created_at?: string | null
-          completed_at?: string | null
+          id?: string
+          plan_id?: string | null
+          results?: Json
           updated_at?: string | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "backups_municipality_id_fkey"
-            columns: ["municipality_id"]
+            foreignKeyName: "ai_analyses_plan_id_fkey"
+            columns: ["plan_id"]
             isOneToOne: false
-            referencedRelation: "municipalities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "backups_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "strategic_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -149,6 +115,78 @@ export type Database = {
             columns: ["changed_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backups: {
+        Row: {
+          checksum: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          duration: number | null
+          error_message: string | null
+          file_count: number | null
+          file_path: string | null
+          id: string
+          includes: Json | null
+          municipality_id: string
+          name: string
+          size: number | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          checksum?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration?: number | null
+          error_message?: string | null
+          file_count?: number | null
+          file_path?: string | null
+          id?: string
+          includes?: Json | null
+          municipality_id: string
+          name: string
+          size?: number | null
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          checksum?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration?: number | null
+          error_message?: string | null
+          file_count?: number | null
+          file_path?: string | null
+          id?: string
+          includes?: Json | null
+          municipality_id?: string
+          name?: string
+          size?: number | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backups_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
             referencedColumns: ["id"]
           },
         ]
@@ -203,6 +241,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      council_goals: {
+        Row: {
+          category: string
+          created_at: string | null
+          created_by: string
+          description: string
+          id: string
+          is_active: boolean
+          key_points: string[] | null
+          municipality_id: string
+          sort_order: number
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          created_by: string
+          description: string
+          id?: string
+          is_active?: boolean
+          key_points?: string[] | null
+          municipality_id: string
+          sort_order?: number
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          key_points?: string[] | null
+          municipality_id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "council_goals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "council_goals_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dashboard_messages: {
+        Row: {
+          bg_color: string
+          created_at: string | null
+          heading: string
+          id: string
+          location: string
+          message: string
+          updated_at: string | null
+        }
+        Insert: {
+          bg_color: string
+          created_at?: string | null
+          heading: string
+          id?: string
+          location: string
+          message: string
+          updated_at?: string | null
+        }
+        Update: {
+          bg_color?: string
+          created_at?: string | null
+          heading?: string
+          id?: string
+          location?: string
+          message?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       departments: {
         Row: {
@@ -336,6 +461,7 @@ export type Database = {
           id: string
           initiative_id: string
           notes: string | null
+          source_name: string | null
           updated_at: string | null
         }
         Insert: {
@@ -348,6 +474,7 @@ export type Database = {
           id?: string
           initiative_id: string
           notes?: string | null
+          source_name?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -360,6 +487,7 @@ export type Database = {
           id?: string
           initiative_id?: string
           notes?: string | null
+          source_name?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -547,6 +675,8 @@ export type Database = {
       }
       initiatives: {
         Row: {
+          budget_validated_at: string | null
+          budget_validated_by: string | null
           cost_benefit_analysis: Json | null
           created_at: string | null
           dependencies: Json | null
@@ -573,6 +703,8 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          budget_validated_at?: string | null
+          budget_validated_by?: string | null
           cost_benefit_analysis?: Json | null
           created_at?: string | null
           dependencies?: Json | null
@@ -599,6 +731,8 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          budget_validated_at?: string | null
+          budget_validated_by?: string | null
           cost_benefit_analysis?: Json | null
           created_at?: string | null
           dependencies?: Json | null
@@ -625,6 +759,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "initiatives_budget_validated_by_fkey"
+            columns: ["budget_validated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "initiatives_fiscal_year_id_fkey"
             columns: ["fiscal_year_id"]
@@ -742,7 +883,9 @@ export type Database = {
         Row: {
           city_priority_alignment: string | null
           created_at: string | null
+          created_by: string | null
           description: string | null
+          display_order: number
           goal_number: number
           id: string
           objectives: Json | null
@@ -754,7 +897,9 @@ export type Database = {
         Insert: {
           city_priority_alignment?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
+          display_order: number
           goal_number: number
           id?: string
           objectives?: Json | null
@@ -766,7 +911,9 @@ export type Database = {
         Update: {
           city_priority_alignment?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
+          display_order?: number
           goal_number?: number
           id?: string
           objectives?: Json | null
@@ -776,6 +923,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "strategic_goals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "strategic_goals_strategic_plan_id_fkey"
             columns: ["strategic_plan_id"]
@@ -896,10 +1050,16 @@ export type Database = {
           full_name: string | null
           id: string
           is_active: boolean | null
+          mobile: string | null
           municipality_id: string
+          phone: string | null
           preferences: Json | null
+          reports_to: string | null
           role: string
           title: string | null
+          two_factor_backup_codes: string[] | null
+          two_factor_enabled: boolean | null
+          two_factor_secret: string | null
           updated_at: string | null
         }
         Insert: {
@@ -910,10 +1070,16 @@ export type Database = {
           full_name?: string | null
           id: string
           is_active?: boolean | null
+          mobile?: string | null
           municipality_id: string
+          phone?: string | null
           preferences?: Json | null
+          reports_to?: string | null
           role?: string
           title?: string | null
+          two_factor_backup_codes?: string[] | null
+          two_factor_enabled?: boolean | null
+          two_factor_secret?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -924,10 +1090,16 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_active?: boolean | null
+          mobile?: string | null
           municipality_id?: string
+          phone?: string | null
           preferences?: Json | null
+          reports_to?: string | null
           role?: string
           title?: string | null
+          two_factor_backup_codes?: string[] | null
+          two_factor_enabled?: boolean | null
+          two_factor_secret?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -943,6 +1115,13 @@ export type Database = {
             columns: ["municipality_id"]
             isOneToOne: false
             referencedRelation: "municipalities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_reports_to_fkey"
+            columns: ["reports_to"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -1010,7 +1189,7 @@ export type Database = {
       }
       l2_normalize: {
         Args: { "": string } | { "": unknown } | { "": unknown }
-        Returns: unknown
+        Returns: string
       }
       sparsevec_out: {
         Args: { "": unknown }

@@ -12,6 +12,11 @@ interface PageProps {
   searchParams: Promise<{
     action?: string
     entityType?: string
+    entityId?: string
+    userId?: string
+    startDate?: string
+    endDate?: string
+    search?: string
     page?: string
   }>
 }
@@ -23,6 +28,11 @@ async function AuditLogsContent({ searchParams }: PageProps) {
     const result = await getAuditLogs({
       action: params.action,
       entityType: params.entityType,
+      entityId: params.entityId,
+      userId: params.userId,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      search: params.search,
       page: params.page ? parseInt(params.page) : 1,
     })
 
@@ -57,6 +67,10 @@ async function AuditLogsContent({ searchParams }: PageProps) {
                   currentFilters={{
                     action: params.action,
                     entityType: params.entityType,
+                    userId: params.userId,
+                    startDate: params.startDate,
+                    endDate: params.endDate,
+                    search: params.search,
                   }}
                 />
               </Suspense>

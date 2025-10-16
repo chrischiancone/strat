@@ -1,7 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-// import { revalidatePath } from 'next/cache' // Temporarily unused
+import { revalidatePath } from 'next/cache'
 
 export type CommentEntityType = 'strategic_plan' | 'initiative' | 'goal' | 'milestone'
 
@@ -135,12 +135,21 @@ export async function getComments(
 export async function createComment(
   input: CreateCommentInput
 ): Promise<{ id: string }> {
+  console.log('createComment: Function called with input:', input)
   const supabase = createServerSupabaseClient()
 
+  // Debug cookies
+  const { cookies } = await import('next/headers')
+  const cookieStore = cookies()
+  const allCookies = cookieStore.getAll()
+  console.log('createComment: Available cookies:', allCookies.map(c => c.name))
+  
   // Get current user
-  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser()
+  console.log('createComment: Current user:', currentUser?.id, 'Auth error:', authError)
 
   if (!currentUser) {
+    console.log('createComment: No authenticated user found')
     throw new Error('Unauthorized')
   }
 
@@ -148,38 +157,49 @@ export async function createComment(
   if (!input.content.trim()) {
     throw new Error('Comment content cannot be empty')
   }
+  
+  console.log('createComment: About to insert comment')
 
-  // Create comment - temporarily return a placeholder for build success
-  // TODO: Fix Supabase type inference issue with comments table
-  console.log('Would create comment:', { input, userId: currentUser.id })
-  const data = { id: 'temp-comment-id' }
-  const _error = null // Unused temporary variable
+  // Create comment
+  const insertData = {
+    entity_type: input.entity_type,
+    entity_id: input.entity_id,
+    parent_comment_id: input.parent_comment_id || null,
+    author_id: currentUser.id,
+    content: input.content.trim(),
+    is_resolved: false,
+  }
+  console.log('createComment: Insert data:', insertData)
+  
+  const { data, error } = await supabase
+    .from('comments')
+    .insert(insertData)
+    .select('id')
+    .single()
 
-  // if (error) {
-  //   console.error('Error creating comment:', error)
-  //   throw new Error('Failed to create comment')
-  // }
+  console.log('createComment: Database result:', { data, error })
 
-  // if (!data) {
-  //   throw new Error('No data returned after creating comment')
-  // }
+  if (error) {
+    console.error('Error creating comment:', error)
+    throw new Error('Failed to create comment')
+  }
+
+  if (!data) {
+    throw new Error('No data returned after creating comment')
+  }
 
   // Revalidate the page
-  // revalidatePath(`/plans/${input.entity_id}`)
+  revalidatePath(`/plans/${input.entity_id}`)
 
   return { id: data.id }
 }
 
 /**
  * Update a comment (only author can update)
- * TODO: Fix Supabase type inference issues
  */
 export async function updateComment(
   input: UpdateCommentInput
 ): Promise<void> {
-  console.log('Would update comment:', input)
-  return
-  /*
   const supabase = createServerSupabaseClient()
 
   // Get current user
@@ -195,17 +215,24 @@ export async function updateComment(
   }
 
   // Check if user is the author
+  interface CommentAuthCheck {
+    author_id: string
+    entity_id: string
+  }
+
   const { data: comment } = await supabase
     .from('comments')
     .select('author_id, entity_id')
     .eq('id', input.id)
-    .single<{ author_id: string; entity_id: string }>()
+    .single()
 
-  if (!comment) {
+  const typedComment = comment as unknown as CommentAuthCheck | null
+
+  if (!typedComment) {
     throw new Error('Comment not found')
   }
 
-  if (comment.author_id !== currentUser.id) {
+  if (typedComment.author_id !== currentUser.id) {
     throw new Error('You can only edit your own comments')
   }
 
@@ -224,18 +251,13 @@ export async function updateComment(
   }
 
   // Revalidate the page
-  revalidatePath(`/plans/${comment.entity_id}`)
-  */
+  revalidatePath(`/plans/${typedComment.entity_id}`)
 }
 
 /**
  * Delete a comment (only author can delete)
- * TODO: Fix Supabase type inference issues
  */
 export async function deleteComment(commentId: string): Promise<void> {
-  console.log('Would delete comment:', commentId)
-  return
-  /*
   const supabase = createServerSupabaseClient()
 
   // Get current user
@@ -246,17 +268,24 @@ export async function deleteComment(commentId: string): Promise<void> {
   }
 
   // Check if user is the author
+  interface CommentAuthCheck {
+    author_id: string
+    entity_id: string
+  }
+
   const { data: comment } = await supabase
     .from('comments')
     .select('author_id, entity_id')
     .eq('id', commentId)
-    .single<{ author_id: string; entity_id: string }>()
+    .single()
 
-  if (!comment) {
+  const typedComment = comment as unknown as CommentAuthCheck | null
+
+  if (!typedComment) {
     throw new Error('Comment not found')
   }
 
-  if (comment.author_id !== currentUser.id) {
+  if (typedComment.author_id !== currentUser.id) {
     throw new Error('You can only delete your own comments')
   }
 
@@ -272,18 +301,13 @@ export async function deleteComment(commentId: string): Promise<void> {
   }
 
   // Revalidate the page
-  revalidatePath(`/plans/${comment.entity_id}`)
-  */
+  revalidatePath(`/plans/${typedComment.entity_id}`)
 }
 
 /**
  * Mark comment as resolved (entity owner or comment author can resolve)
- * TODO: Fix Supabase type inference issues
  */
 export async function resolveComment(commentId: string): Promise<void> {
-  console.log('Would resolve comment:', commentId)
-  return
-  /*
   const supabase = createServerSupabaseClient()
 
   // Get current user
@@ -294,50 +318,81 @@ export async function resolveComment(commentId: string): Promise<void> {
   }
 
   // Get comment and check permissions
+  interface CommentData {
+    author_id: string
+    entity_id: string
+    entity_type: string
+  }
+
   const { data: comment } = await supabase
     .from('comments')
     .select('author_id, entity_id, entity_type')
     .eq('id', commentId)
-    .single<{ author_id: string; entity_id: string; entity_type: string }>()
+    .single()
 
-  if (!comment) {
+  const typedComment = comment as unknown as CommentData | null
+
+  if (!typedComment) {
     throw new Error('Comment not found')
   }
 
   // Get user profile to check role and department
+  interface UserProfile {
+    role: string
+    department_id: string | null
+  }
+
   const { data: userProfile } = await supabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
-    .single<{ role: string; department_id: string | null }>()
+    .single()
 
-  if (!userProfile) {
+  const typedProfile = userProfile as unknown as UserProfile | null
+
+  if (!typedProfile) {
     throw new Error('User profile not found')
   }
 
   // Check if user can resolve (author or entity owner)
-  let canResolve = comment.author_id === currentUser.id
+  let canResolve = typedComment.author_id === currentUser.id
 
   // City Manager and Admin can resolve any comment
-  if (userProfile.role === 'city_manager' || userProfile.role === 'admin') {
+  if (typedProfile.role === 'city_manager' || typedProfile.role === 'admin') {
     canResolve = true
   }
 
   if (!canResolve) {
     // Check if user owns the entity or is in the same department
-    if (comment.entity_type === 'strategic_plan') {
+    if (typedComment.entity_type === 'strategic_plan') {
+      interface PlanData {
+        created_by: string
+        department_id: string
+      }
+
       const { data: plan } = await supabase
         .from('strategic_plans')
         .select('created_by, department_id')
-        .eq('id', comment.entity_id)
-        .single<{ created_by: string; department_id: string }>()
+        .eq('id', typedComment.entity_id)
+        .single()
 
-      if (plan) {
-        canResolve = plan.created_by === currentUser.id ||
-                    userProfile.department_id === plan.department_id
+      const typedPlan = plan as unknown as PlanData | null
+
+      if (typedPlan) {
+        canResolve = typedPlan.created_by === currentUser.id ||
+                    typedProfile.department_id === typedPlan.department_id
       }
-    } else if (comment.entity_type === 'initiative') {
+    } else if (typedComment.entity_type === 'initiative') {
       // For initiatives, check department through goal → strategic_plan → department
+      interface InitiativeWithPlan {
+        goal: {
+          strategic_plan: {
+            department_id: string
+            created_by: string
+          }
+        }
+      }
+
       const { data: initiative } = await supabase
         .from('initiatives')
         .select(`
@@ -348,26 +403,18 @@ export async function resolveComment(commentId: string): Promise<void> {
             )
           )
         `)
-        .eq('id', comment.entity_id)
+        .eq('id', typedComment.entity_id)
         .single()
 
-      if (initiative) {
-        type InitiativeWithPlan = {
-          goal: {
-            strategic_plan: {
-              department_id: string
-              created_by: string
-            }
-          }
-        }
+      const typedInitiative = initiative as unknown as InitiativeWithPlan | null
 
-        const typedInitiative = initiative as unknown as InitiativeWithPlan
+      if (typedInitiative) {
         const plan = typedInitiative.goal.strategic_plan
 
         // Finance can resolve initiative budget comments
         // Department members can resolve comments on their initiatives
-        canResolve = userProfile.role === 'finance' ||
-                    userProfile.department_id === plan.department_id ||
+        canResolve = typedProfile.role === 'finance' ||
+                    typedProfile.department_id === plan.department_id ||
                     plan.created_by === currentUser.id
       }
     }
@@ -389,8 +436,7 @@ export async function resolveComment(commentId: string): Promise<void> {
   }
 
   // Revalidate the page
-  revalidatePath(`/plans/${comment.entity_id}`)
-  */
+  revalidatePath(`/plans/${typedComment.entity_id}`)
 }
 
 /**

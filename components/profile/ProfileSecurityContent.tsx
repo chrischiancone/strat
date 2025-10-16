@@ -88,7 +88,7 @@ export function ProfileSecurityContent({
       {/* Two-Factor Authentication Setup */}
       <TwoFactorSetup
         userId={user.id}
-        isEnabled={isEnabled}
+        isEnabled={isEnabled ?? false}
         backupCodesCount={backupCodesCount}
         onStatusChange={handleTwoFactorStatusChange}
       />

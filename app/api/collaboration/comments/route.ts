@@ -14,8 +14,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const resourceId = searchParams.get('resourceId')
     const resourceType = searchParams.get('resourceType')
-    const userId = request.headers.get('x-user-id') // Assume auth middleware sets this
-
+    
     if (!resourceId || !resourceType) {
       return NextResponse.json(
         { error: 'Missing resourceId or resourceType' },
@@ -23,15 +22,20 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    if (!userId) {
+    // Get user from Supabase auth
+    const { createServerSupabaseClient } = await import('@/lib/supabase/server')
+    const supabase = createServerSupabaseClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       )
     }
 
-    // Check if user has access to this resource
-    const hasAccess = await checkResourceAccess(userId, resourceType, resourceId)
+    // Check if user has access to this resource  
+    const hasAccess = await checkResourceAccess(user.id, resourceType, resourceId)
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Access denied' },
@@ -53,8 +57,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')
-    if (!userId) {
+    // Get user from Supabase auth
+    const { createServerSupabaseClient } = await import('@/lib/supabase/server')
+    const supabase = createServerSupabaseClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -72,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has access to this resource
-    const hasAccess = await checkResourceAccess(userId, resourceType, resourceId)
+    const hasAccess = await checkResourceAccess(user.id, resourceType, resourceId)
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Access denied' },
@@ -85,19 +93,19 @@ export async function POST(request: NextRequest) {
       resourceId,
       resourceType,
       parentId,
-      authorId: userId,
+      authorId: user.id,
       content,
       mentions,
     })
 
     // Get the author info for activity/notifications
-    const author = await getUserById(userId)
+    const author = await getUserById(user.id)
 
     // Create activity log entry
     await createActivity({
       resourceId,
       resourceType,
-      userId,
+      userId: user.id,
       action: 'comment_added',
       description: `${author.full_name} added a comment`,
       metadata: {

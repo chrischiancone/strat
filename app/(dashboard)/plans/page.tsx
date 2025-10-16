@@ -123,7 +123,7 @@ async function PlansContent() {
             />
           </ContentCard>
         ) : (
-          <PlansTable plans={plans} />
+          <PlansTable plans={plans} userRole={userProfile?.role || 'staff'} />
         )}
       </PageContainer>
     </div>

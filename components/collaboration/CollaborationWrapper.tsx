@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -43,9 +44,6 @@ interface CollaborationWrapperProps {
   className?: string
   showPresenceInline?: boolean
   defaultSidebarOpen?: boolean
-  onNavigate?: (resourceType: string, resourceId: string) => void
-  onInviteUser?: () => void
-  onMention?: (userId: string) => void
 }
 
 type SidebarTab = 'comments' | 'notifications' | 'activity'
@@ -60,9 +58,6 @@ export function CollaborationWrapper({
   className,
   showPresenceInline = true,
   defaultSidebarOpen = false,
-  onNavigate,
-  onInviteUser,
-  onMention,
 }: CollaborationWrapperProps) {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(defaultSidebarOpen)
@@ -75,7 +70,38 @@ export function CollaborationWrapper({
   })
   
   const { toast } = useToast()
+  const router = useRouter()
   const collaborationEngine = CollaborationEngine.getInstance()
+
+  // Internal navigation handler
+  const handleNavigate = (resourceType: string, resourceId: string) => {
+    switch (resourceType) {
+      case 'goal':
+        router.push(`/goals/${resourceId}`)
+        break
+      case 'initiative':
+        router.push(`/initiatives/${resourceId}`)
+        break
+      default:
+        router.push(`/${resourceType}s/${resourceId}`)
+        break
+    }
+  }
+
+  // Internal user invitation handler
+  const handleInviteUser = () => {
+    // TODO: Implement user invitation modal or functionality
+    toast({
+      title: 'Invite Users',
+      description: 'User invitation feature coming soon!',
+    })
+  }
+
+  // Internal mention handler
+  const handleMention = (userId: string) => {
+    // TODO: Handle user mention (e.g., add @mention to active comment)
+    console.log('Mention user:', userId)
+  }
 
   // Initialize collaboration session
   useEffect(() => {
@@ -195,8 +221,8 @@ export function CollaborationWrapper({
                 sessionId={sessionId}
                 currentUserId={currentUserId}
                 showDetails={true}
-                onInviteUser={onInviteUser}
-                onUserClick={onMention}
+                onInviteUser={handleInviteUser}
+                onUserClick={handleMention}
               />
               
               <div className="flex items-center space-x-2">
@@ -350,8 +376,8 @@ export function CollaborationWrapper({
                       currentUserId={currentUserId}
                       showDetails={true}
                       maxVisible={3}
-                      onInviteUser={onInviteUser}
-                      onUserClick={onMention}
+                      onInviteUser={handleInviteUser}
+                      onUserClick={handleMention}
                     />
                   </>
                 )}
@@ -390,14 +416,14 @@ export function CollaborationWrapper({
                         currentUserId={currentUserId}
                         currentUserName={currentUserName}
                         currentUserAvatar={currentUserAvatar}
-                        onMention={onMention}
+                        onMention={handleMention}
                       />
                     </TabsContent>
 
                     <TabsContent value="notifications" className="h-full m-0">
                       <NotificationsPanel
                         userId={currentUserId}
-                        onNavigate={onNavigate}
+                        onNavigate={handleNavigate}
                         maxHeight="calc(100vh - 200px)"
                       />
                     </TabsContent>
@@ -407,7 +433,7 @@ export function CollaborationWrapper({
                         sessionId={sessionId}
                         resourceId={resourceId}
                         resourceType={resourceType}
-                        onNavigate={onNavigate}
+                        onNavigate={handleNavigate}
                         maxHeight="calc(100vh - 200px)"
                       />
                     </TabsContent>

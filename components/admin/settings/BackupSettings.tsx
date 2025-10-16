@@ -214,10 +214,15 @@ export function BackupSettings({ municipality }: BackupSettingsProps) {
     setError(null)
     
     try {
-      // TODO: Implement save to database
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      setSuccess('Backup settings updated successfully!')
-      setTimeout(() => setSuccess(null), 3000)
+      const { updateBackupSettings } = await import('@/app/actions/settings')
+      const result = await updateBackupSettings(municipality.id, settings)
+      
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess('Backup settings updated successfully!')
+        setTimeout(() => setSuccess(null), 3000)
+      }
     } catch (err) {
       setError('Failed to save backup settings')
     } finally {

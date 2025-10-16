@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { updateNotificationSettings } from '@/app/actions/settings'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -106,12 +107,14 @@ export function NotificationSettings({ municipality }: NotificationSettingsProps
     setError(null)
     
     try {
-      // TODO: Implement save to municipality.settings.notifications
-      // This would typically call an API endpoint to update the municipality settings
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+      const result = await updateNotificationSettings(municipality.id, settings)
       
-      setSuccess('Notification settings updated successfully!')
-      setTimeout(() => setSuccess(null), 3000)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess('Notification settings updated successfully!')
+        setTimeout(() => setSuccess(null), 3000)
+      }
     } catch (err) {
       setError('Failed to save notification settings')
     } finally {

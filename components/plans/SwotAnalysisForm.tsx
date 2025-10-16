@@ -454,85 +454,87 @@ export function SwotAnalysisForm({
     )
   }
 
-  return <>
-    <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
-        {renderCategory('strengths')}
-        {renderCategory('weaknesses')}
-        {renderCategory('opportunities')}
-        {renderCategory('threats')}
-      </div>
+  return (
+    <>
+        <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            {renderCategory('strengths')}
+            {renderCategory('weaknesses')}
+            {renderCategory('opportunities')}
+            {renderCategory('threats')}
+          </div>
 
-      <div className="flex justify-end border-t border-gray-200 pt-4">
-        <Button onClick={handleSave} disabled={disabled || isSaving}>
-          {isSaving ? 'Saving...' : 'Save SWOT Analysis'}
-        </Button>
-      </div>
-    </div>
-
-    {/* Add/Edit Dialog */}
-    <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {editingIndex !== null ? 'Edit' : 'Add'}{' '}
-            {editingCategory && CATEGORY_LABELS[editingCategory].slice(0, -1)}
-          </DialogTitle>
-          <DialogDescription>
-            {editingIndex !== null
-              ? 'Update the item text below'
-              : 'Enter items below (10-500 characters each)\nAdd multiple items by putting each on a new line'}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <Textarea
-            value={editingText}
-            onChange={(e) => setEditingText(e.target.value)}
-            placeholder="Enter item text..."
-            rows={8}
-            maxLength={500}
-            className="resize-none"
-          />
-          <p className="text-xs text-muted-foreground text-right">
-            {editingText.length}/500 characters
-          </p>
+          <div className="flex justify-end border-t border-gray-200 pt-4">
+            <Button onClick={handleSave} disabled={disabled || isSaving}>
+              {isSaving ? 'Saving...' : 'Save SWOT Analysis'}
+            </Button>
+          </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setShowDialog(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleSaveItem}>
-            {editingIndex !== null ? 'Update' : 'Add'} Item
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        {/* Add/Edit Dialog */}
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>
+                {editingIndex !== null ? 'Edit' : 'Add'}{' '}
+                {editingCategory && CATEGORY_LABELS[editingCategory].slice(0, -1)}
+              </DialogTitle>
+              <DialogDescription>
+                {editingIndex !== null
+                  ? 'Update the item text below'
+                  : 'Enter items below (10-500 characters each)\nAdd multiple items by putting each on a new line'}
+              </DialogDescription>
+            </DialogHeader>
 
-    {/* Delete Confirmation Dialog */}
-    <AlertDialog
-      open={!!deleteConfirm}
-      onOpenChange={() => setDeleteConfirm(null)}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Item?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to delete this item? This action cannot be
-            undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={confirmDelete}
-            className="bg-red-600 hover:bg-red-700"
-          >
-            Delete Item
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  </>
+            <div className="space-y-4">
+              <Textarea
+                value={editingText}
+                onChange={(e) => setEditingText(e.target.value)}
+                placeholder="Enter item text..."
+                rows={8}
+                maxLength={500}
+                className="resize-none"
+              />
+              <p className="text-xs text-muted-foreground text-right">
+                {editingText.length}/500 characters
+              </p>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveItem}>
+                {editingIndex !== null ? 'Update' : 'Add'} Item
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog
+          open={!!deleteConfirm}
+          onOpenChange={() => setDeleteConfirm(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Item?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this item? This action cannot be
+                undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmDelete}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Item
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+    </>
+  )
 }

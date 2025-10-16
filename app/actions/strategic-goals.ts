@@ -43,6 +43,9 @@ export interface UpdateGoalInput {
 export async function getStrategicGoals(
   planId: string
 ): Promise<StrategicGoal[]> {
+  // Add some debug logging
+  console.log('getStrategicGoals called with planId:', planId)
+  
   const supabase = createServerSupabaseClient()
   const adminSupabase = createAdminSupabaseClient()
 
@@ -81,6 +84,8 @@ export async function getStrategicGoals(
     console.error('Error fetching strategic goals:', error)
     throw new Error('Failed to fetch strategic goals')
   }
+  
+  console.log('Raw goals data from database:', data)
 
   // Type the response
   interface GoalQueryResult {
@@ -127,7 +132,8 @@ export async function getStrategicGoals(
       }
     })
   )
-
+  
+  console.log('Final goals being returned:', goalsWithCounts)
   return goalsWithCounts
 }
 

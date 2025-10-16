@@ -161,7 +161,6 @@ export function FilterBar({ filters, values, onChange }: FilterBarProps) {
               date={value ? new Date(value as string) : undefined}
               onDateChange={(date) => updateFilter(filter.id, date?.toISOString())}
               placeholder={`Select ${filter.label.toLowerCase()}`}
-              className="h-8 text-sm"
             />
           </div>
         )
@@ -181,7 +180,6 @@ export function FilterBar({ filters, values, onChange }: FilterBarProps) {
                   })
                 }
                 placeholder="From"
-                className="h-8 text-sm flex-1"
               />
               <DatePicker
                 date={dateRange.to ? new Date(dateRange.to) : undefined}
@@ -192,7 +190,6 @@ export function FilterBar({ filters, values, onChange }: FilterBarProps) {
                   })
                 }
                 placeholder="To"
-                className="h-8 text-sm flex-1"
               />
             </div>
           </div>

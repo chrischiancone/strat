@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     // SMTP configuration for development (using Mailpit)
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || '127.0.0.1',
       port: Number(process.env.SMTP_PORT || 1025),
       secure: (process.env.SMTP_SECURE || 'false') === 'true',

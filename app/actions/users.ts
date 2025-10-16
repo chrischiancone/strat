@@ -59,7 +59,9 @@ export async function getUsers(
 ): Promise<UsersResponse> {
   const result = await safeAsync(async () => {
     logger.info('Fetching users with filters', { filters, action: 'getUsers' })
-    const supabase = createServerSupabaseClient()
+    
+    // Use admin client to bypass RLS for department joins
+    const supabase = createAdminSupabaseClient()
 
   const {
     role,

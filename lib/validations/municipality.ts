@@ -30,6 +30,26 @@ export const updateMunicipalitySchema = z.object({
     .url('Invalid URL format')
     .optional()
     .or(z.literal('')),
+  timezone: z
+    .string()
+    .optional(),
+  currency: z
+    .string()
+    .optional(),
+  fiscalYearStartMonth: z
+    .number()
+    .min(1)
+    .max(12)
+    .optional(),
+  aiAssistance: z
+    .boolean()
+    .optional(),
+  publicDashboard: z
+    .boolean()
+    .optional(),
+  multiDepartmentCollaboration: z
+    .boolean()
+    .optional(),
 })
 
 export type UpdateMunicipalityInput = z.infer<typeof updateMunicipalitySchema>

@@ -185,10 +185,15 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
     setError(null)
     
     try {
-      // TODO: Implement save to database
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      setSuccess('Performance settings updated successfully!')
-      setTimeout(() => setSuccess(null), 3000)
+      const { updatePerformanceSettings } = await import('@/app/actions/settings')
+      const result = await updatePerformanceSettings(municipality.id, settings)
+      
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess('Performance settings updated successfully!')
+        setTimeout(() => setSuccess(null), 3000)
+      }
     } catch (err) {
       setError('Failed to save performance settings')
     } finally {

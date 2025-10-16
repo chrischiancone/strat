@@ -79,7 +79,7 @@ export function BudgetBySourceChart({ data }: BudgetBySourceChartProps) {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={renderCustomLabel}
+                  label={renderCustomLabel as any}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
@@ -95,14 +95,13 @@ export function BudgetBySourceChart({ data }: BudgetBySourceChartProps) {
                 <Legend
                   verticalAlign="bottom"
                   height={36}
-                  formatter={(value, entry) => {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const entryValue = (entry as any).payload?.value
+                  formatter={((value: any, entry: any) => {
+                    const entryValue = entry?.payload?.value
                     const percentage = entryValue
                       ? ((entryValue / totalFunding) * 100).toFixed(1)
                       : '0'
                     return `${value} (${percentage}%)`
-                  }}
+                  }) as any}
                 />
               </PieChart>
             </ResponsiveContainer>

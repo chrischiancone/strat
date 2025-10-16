@@ -49,12 +49,21 @@ export async function POST(request: NextRequest) {
       .eq('id', planId)
       .single()
 
-    // Get strategic goals
+    // Get strategic goals with complete data
     const { data: goals } = await adminClient
       .from('strategic_goals')
-      .select('id, name, description, success_criteria')
+      .select(`
+        id, 
+        goal_number,
+        title,
+        description, 
+        city_priority_alignment,
+        objectives,
+        success_measures,
+        display_order
+      `)
       .eq('strategic_plan_id', planId)
-      .order('created_at')
+      .order('display_order', { ascending: true })
 
     const goalIds = goals?.map(g => g.id) || []
 

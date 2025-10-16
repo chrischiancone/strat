@@ -20,22 +20,22 @@ export function DashboardLayoutClient({ children, userProfile }: DashboardLayout
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen min-h-0 flex-col">
       <Header 
         user={userProfile} 
         onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar 
           userRole={userProfile?.role} 
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
-        <main className="flex flex-1 flex-col overflow-y-auto bg-gray-50">
+        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-gray-50">
           <div className="border-b border-gray-200 bg-white px-4 py-4 sm:px-6">
             <Breadcrumbs />
           </div>
-          <div className="flex-1 p-4 sm:p-6">{children}</div>
+          <div className="flex-1 p-4 pb-24 sm:p-6">{children}</div>
         </main>
       </div>
       <Toaster />

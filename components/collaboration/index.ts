@@ -11,8 +11,8 @@ export type {
   CommentReaction,
   Notification,
   ActivityFeedItem,
-  Participant,
-  UserPresence,
+  SessionParticipant,
+  PresenceInfo,
   LiveEdit,
   CollaborationSession,
 } from '@/lib/collaboration/collaboration-engine'

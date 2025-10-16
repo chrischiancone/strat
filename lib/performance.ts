@@ -2,6 +2,7 @@
  * Performance monitoring and optimization utilities
  */
 
+import React from 'react'
 import { logger } from './logger'
 
 // Web Vitals tracking

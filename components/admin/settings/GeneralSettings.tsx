@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { updateMunicipalitySchema, type UpdateMunicipalityInput } from '@/lib/validations/municipality'
 import { updateMunicipality } from '@/app/actions/municipality'
@@ -63,6 +63,7 @@ export function GeneralSettings({ municipality }: GeneralSettingsProps) {
     formState: { errors, isDirty },
     setValue,
     watch,
+    control,
   } = useForm<UpdateMunicipalityInput>({
     resolver: zodResolver(updateMunicipalitySchema),
     defaultValues: {
@@ -72,6 +73,12 @@ export function GeneralSettings({ municipality }: GeneralSettingsProps) {
       contactEmail: municipality.settings?.contact_email || '',
       contactPhone: municipality.settings?.contact_phone || '',
       websiteUrl: municipality.settings?.website_url || '',
+      timezone: municipality.settings?.timezone || 'America/Chicago',
+      currency: municipality.settings?.currency || 'USD',
+      fiscalYearStartMonth: municipality.settings?.fiscal_year_start_month || 10,
+      aiAssistance: municipality.settings?.features?.ai_assistance || false,
+      publicDashboard: municipality.settings?.features?.public_dashboard || false,
+      multiDepartmentCollaboration: municipality.settings?.features?.multi_department_collaboration ?? true,
     },
   })
 
@@ -297,50 +304,71 @@ export function GeneralSettings({ municipality }: GeneralSettingsProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label>Timezone</Label>
-                <Select defaultValue={municipality.settings?.timezone || 'America/Chicago'}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timezones.map((tz) => (
-                      <SelectItem key={tz.value} value={tz.value}>
-                        {tz.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="timezone"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select timezone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timezones.map((tz) => (
+                          <SelectItem key={tz.value} value={tz.value}>
+                            {tz.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
 
               <div>
                 <Label>Currency</Label>
-                <Select defaultValue={municipality.settings?.currency || 'USD'}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.value} value={currency.value}>
-                        {currency.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="currency"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currencies.map((currency) => (
+                          <SelectItem key={currency.value} value={currency.value}>
+                            {currency.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
 
               <div>
                 <Label>Fiscal Year Start</Label>
-                <Select defaultValue={String(municipality.settings?.fiscal_year_start_month || 10)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select month" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {fiscalYearMonths.map((month) => (
-                      <SelectItem key={month.value} value={String(month.value)}>
-                        {month.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="fiscalYearStartMonth"
+                  control={control}
+                  render={({ field }) => (
+                    <Select 
+                      value={String(field.value)} 
+                      onValueChange={(val) => field.onChange(Number(val))}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fiscalYearMonths.map((month) => (
+                          <SelectItem key={month.value} value={String(month.value)}>
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
             </div>
           </CardContent>
@@ -366,7 +394,16 @@ export function GeneralSettings({ municipality }: GeneralSettingsProps) {
                     Enable AI-powered insights and analysis features
                   </p>
                 </div>
-                <Switch defaultChecked={municipality.settings?.features?.ai_assistance || false} />
+                <Controller
+                  name="aiAssistance"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch 
+                      checked={field.value} 
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
               </div>
 
               <div className="flex items-center justify-between">
@@ -376,7 +413,16 @@ export function GeneralSettings({ municipality }: GeneralSettingsProps) {
                     Allow public access to read-only dashboard views
                   </p>
                 </div>
-                <Switch defaultChecked={municipality.settings?.features?.public_dashboard || false} />
+                <Controller
+                  name="publicDashboard"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch 
+                      checked={field.value} 
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
               </div>
 
               <div className="flex items-center justify-between">
@@ -386,7 +432,16 @@ export function GeneralSettings({ municipality }: GeneralSettingsProps) {
                     Enable cross-department initiative collaboration
                   </p>
                 </div>
-                <Switch defaultChecked={municipality.settings?.features?.multi_department_collaboration || true} />
+                <Controller
+                  name="multiDepartmentCollaboration"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch 
+                      checked={field.value} 
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
               </div>
             </div>
           </CardContent>

@@ -203,7 +203,7 @@ static getInstance(): CollaborationEngine {
     }
   }
 
-  private emit(event: string, payload: any): void {
+  emit(event: string, payload: any): void {
     const set = this.listeners.get(event)
     if (!set || set.size === 0) return
     // Clone to avoid mutation during iteration
@@ -873,6 +873,3 @@ static getInstance(): CollaborationEngine {
 
 // Export singleton instance
 export const collaborationEngine = CollaborationEngine.getInstance()
-
-// Convenience helpers for UI components
-export type { CollaborationSession, SessionParticipant }

@@ -242,8 +242,13 @@ export async function createStrategicPlan(
     .single()
 
   if (error) {
-    console.error('Error creating strategic plan:', error)
-    console.error('Strategic plan data that failed:', newPlan)
+    console.error('Error creating strategic plan:', {
+      error,
+      planData: newPlan,
+      userId: currentUser.id,
+      departmentId: input.department_id,
+      fiscalYearId: input.fiscal_year_id,
+    })
     
     // Type the error properly
     interface PostgrestError {
@@ -255,20 +260,20 @@ export async function createStrategicPlan(
     
     const typedError = error as PostgrestError
     
-    console.error('Error details:', {
-      code: typedError?.code,
-      message: typedError?.message,
-      details: typedError?.details,
-      hint: typedError?.hint,
-    })
-    
     // Provide more specific error messages
     if (typedError?.code === '23505') {
-      throw new Error('A strategic plan already exists for this department and time period')
+      throw new Error('A strategic plan already exists for this department and fiscal year. Please edit the existing plan instead.')
+    } else if (typedError?.code === '23503') {
+      throw new Error('Invalid department or fiscal year selected. Please refresh and try again.')
     } else if (typedError?.code === '42501') {
-      throw new Error('Permission denied: Unable to create strategic plan')
+      throw new Error('You do not have permission to create strategic plans for this department.')
+    } else if (typedError?.code === '23514') {
+      // Constraint violation - possibly the fiscal year constraint if not dropped
+      throw new Error('Database constraint error: This may occur if single-year plans are not allowed. Please contact support.')
+    } else if (typedError?.message) {
+      throw new Error(`Failed to create strategic plan: ${typedError.message}`)
     } else {
-      throw new Error(`Failed to create strategic plan: ${typedError?.message || 'Unknown error'}`)
+      throw new Error('An unexpected error occurred while creating the strategic plan. Please try again or contact support.')
     }
   }
 
@@ -507,10 +512,11 @@ export async function updateStrategicPlan(
     throw new Error('User profile not found')
   }
 
-  // Check permissions: creator, same department, or admin
+  // Check permissions: creator, same department, city manager, or admin
   const canEdit =
     plan.created_by === currentUser.id ||
     userProfile.role === 'admin' ||
+    userProfile.role === 'city_manager' ||
     (userProfile.department_id === plan.department_id &&
       (userProfile.role === 'department_director' || userProfile.role === 'staff'))
 
@@ -580,9 +586,10 @@ export async function updateDepartmentInfo(
     throw new Error('User profile not found')
   }
 
-  // Check permissions: same department or admin
+  // Check permissions: same department, city manager, or admin
   const canEdit =
     userProfile.role === 'admin' ||
+    userProfile.role === 'city_manager' ||
     (userProfile.department_id === input.id &&
       (userProfile.role === 'department_director' || userProfile.role === 'staff'))
 
@@ -655,10 +662,11 @@ export async function updateSwotAnalysis(
     throw new Error('User profile not found')
   }
 
-  // Check permissions: creator, same department, or admin
+  // Check permissions: creator, same department, city manager, or admin
   const canEdit =
     plan.created_by === currentUser.id ||
     userProfile.role === 'admin' ||
+    userProfile.role === 'city_manager' ||
     (userProfile.department_id === plan.department_id &&
       (userProfile.role === 'department_director' || userProfile.role === 'staff'))
 
@@ -723,10 +731,11 @@ export async function updateEnvironmentalScan(
     throw new Error('User profile not found')
   }
 
-  // Check permissions: creator, same department, or admin
+  // Check permissions: creator, same department, city manager, or admin
   const canEdit =
     plan.created_by === currentUser.id ||
     userProfile.role === 'admin' ||
+    userProfile.role === 'city_manager' ||
     (userProfile.department_id === plan.department_id &&
       (userProfile.role === 'department_director' || userProfile.role === 'staff'))
 
@@ -791,10 +800,11 @@ export async function updateBenchmarkingData(
     throw new Error('User profile not found')
   }
 
-  // Check permissions: creator, same department, or admin
+  // Check permissions: creator, same department, city manager, or admin
   const canEdit =
     plan.created_by === currentUser.id ||
     userProfile.role === 'admin' ||
+    userProfile.role === 'city_manager' ||
     (userProfile.department_id === plan.department_id &&
       (userProfile.role === 'department_director' || userProfile.role === 'staff'))
 

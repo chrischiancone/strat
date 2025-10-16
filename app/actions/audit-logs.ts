@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import AuditLogService from '@/lib/services/audit-logs'
 
 export interface AuditLogFilters {
   startDate?: string
@@ -8,6 +9,9 @@ export interface AuditLogFilters {
   userId?: string
   action?: string
   entityType?: string
+  entityId?: string
+  ipAddress?: string
+  search?: string
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
   page?: number
@@ -49,6 +53,9 @@ export async function getAuditLogs(
     userId,
     action,
     entityType,
+    entityId,
+    ipAddress,
+    search,
     sortBy = 'changed_at',
     sortOrder = 'desc',
     page = 1,
@@ -126,6 +133,18 @@ export async function getAuditLogs(
 
   if (entityType) {
     query = query.eq('table_name', entityType)
+  }
+
+  if (entityId) {
+    query = query.eq('record_id', entityId)
+  }
+
+  if (ipAddress) {
+    query = query.eq('ip_address', ipAddress)
+  }
+
+  if (search) {
+    query = query.or(`action.ilike.%${search}%,table_name.ilike.%${search}%,users.full_name.ilike.%${search}%,users.email.ilike.%${search}%`)
   }
 
   // Apply sorting

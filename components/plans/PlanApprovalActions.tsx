@@ -54,19 +54,23 @@ export function PlanApprovalActions({
   const [notes, setNotes] = useState('')
 
   const handleSubmitForReview = async () => {
+    console.log('handleSubmitForReview: Starting submission for planId:', planId)
     setIsLoading(true)
     try {
       const result = await submitPlanForReview(planId)
+      console.log('handleSubmitForReview: Result received:', result)
       if (result.success) {
         toast.success('Plan submitted for review')
         setShowSubmitDialog(false)
+        console.log('handleSubmitForReview: Refreshing router')
         router.refresh()
       } else {
+        console.error('handleSubmitForReview: Failed with error:', result.error)
         toast.error(result.error || 'Failed to submit plan')
       }
     } catch (error) {
+      console.error('handleSubmitForReview: Exception occurred:', error)
       toast.error('An error occurred')
-      console.error(error)
     } finally {
       setIsLoading(false)
     }

@@ -29,12 +29,12 @@ export function PageHeader({
   return (
     <div className={cn(
       'border-b border-gray-200 bg-white',
-      variant === 'compact' ? 'px-4 py-3' : 'px-6 py-6',
+      variant === 'compact' ? 'px-3 py-2 md:px-4 md:py-3' : 'px-4 py-4 md:px-6 md:py-6',
       className
     )}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="mb-4" aria-label="Breadcrumb">
-          <ol className="flex items-center space-x-2 text-sm text-gray-500">
+        <nav className="mb-3 md:mb-4" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm text-gray-500">
             <li>
               <Link 
                 href="/" 
@@ -68,18 +68,18 @@ export function PageHeader({
         </nav>
       )}
       
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="min-w-0 flex-1">
           <h1 className={cn(
             "font-bold tracking-tight text-gray-900",
-            variant === 'compact' ? "text-xl" : "text-3xl"
+            variant === 'compact' ? "text-lg md:text-xl" : "text-2xl md:text-3xl"
           )}>
             {title}
           </h1>
           {description && (
             <p className={cn(
               "text-gray-600 leading-relaxed",
-              variant === 'compact' ? "mt-1 text-sm" : "mt-2 text-lg"
+              variant === 'compact' ? "mt-1 text-xs md:text-sm" : "mt-1 md:mt-2 text-sm md:text-lg"
             )}>
               {description}
             </p>
@@ -87,8 +87,8 @@ export function PageHeader({
         </div>
         
         {actions && (
-          <div className="ml-6 flex-shrink-0">
-            <div className="flex items-center gap-3">
+          <div className="flex-shrink-0 w-full sm:w-auto">
+            <div className="flex items-center gap-2 md:gap-3 flex-wrap">
               {actions}
             </div>
           </div>

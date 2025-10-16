@@ -10,7 +10,7 @@ import { Progress } from '@/components/ui/progress'
 import { CollaborationWrapper } from '@/components/collaboration'
 import { StatusBadge } from '@/components/plans/StatusBadge'
 import { formatDistanceToNow, format, isAfter, isBefore } from 'date-fns'
-import { createClient } from '@/lib/supabase/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { StrategicPlan, StrategicGoal } from '@/lib/types/plans'
 
 interface GoalsPageProps {
@@ -307,7 +307,7 @@ function GoalCard({ goal }: { goal: StrategicGoal }) {
                 <span>{goal.collaboration_stats?.total_comments || 0} comments</span>
                 {hasUnreadComments && (
                   <Badge variant="destructive" className="text-xs ml-1">
-                    {goal.collaboration_stats.unread_comments} new
+                    {goal.collaboration_stats?.unread_comments || 0} new
                   </Badge>
                 )}
               </div>

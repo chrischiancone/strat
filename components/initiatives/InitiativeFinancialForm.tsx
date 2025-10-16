@@ -58,6 +58,8 @@ export function InitiativeFinancialForm({
   }, [loadFundingSources])
 
   const handleSaveBudget = async (budget: BudgetBreakdown) => {
+    console.log('handleSaveBudget: Saving budget for initiativeId:', initiativeId)
+    console.log('handleSaveBudget: Budget data:', budget)
     await updateInitiativeBudget(initiativeId, budget)
     setCurrentBudget(budget)
   }
@@ -72,6 +74,7 @@ export function InitiativeFinancialForm({
       amount: source.amount,
       funding_status: source.funding_status,
     }
+    console.log('handleAddFundingSource: adding source for initiativeId:', initiativeId, 'input:', input)
     const result = await addFundingSource(input)
     await loadFundingSources()
     return result

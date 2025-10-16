@@ -1,5 +1,4 @@
 import speakeasy from 'speakeasy'
-import QRCode from 'qrcode'
 import { randomBytes, pbkdf2Sync } from 'crypto'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { logger } from '@/lib/logger'
@@ -18,6 +17,8 @@ export function generateTwoFactorSecret(accountName?: string) {
 // Generate QR code data URL for 2FA setup
 export async function generateQRCode(secret: string): Promise<string> {
   try {
+    // Dynamic import to avoid loading QRCode module during login
+    const QRCode = (await import('qrcode')).default
     return await QRCode.toDataURL(secret)
   } catch (error) {
     logger.error('Failed to generate QR code', { error })

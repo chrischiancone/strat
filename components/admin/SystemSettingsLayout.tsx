@@ -31,9 +31,9 @@ import { SecuritySettings } from './settings/SecuritySettings'
 import { NotificationSettings } from './settings/NotificationSettings'
 import { AppearanceSettings } from './settings/AppearanceSettings'
 import { IntegrationSettings } from './settings/IntegrationSettings'
-import { SystemMaintenanceSettings } from './settings/SystemMaintenanceSettings'
 import { PerformanceSettings } from './settings/PerformanceSettings'
 import { BackupSettings } from './settings/BackupSettings'
+import { MaintenanceSettings } from './settings/MaintenanceSettings'
 
 interface Municipality {
   id: string
@@ -103,21 +103,21 @@ export function SystemSettingsLayout({ municipality }: SystemSettingsLayoutProps
       id: 'performance',
       label: 'Performance',
       icon: BarChart3,
-      description: 'System optimization, caching, and performance monitoring',
+      description: 'Caching, optimization, and system performance',
       color: 'text-indigo-600',
     },
     {
       id: 'backup',
-      label: 'Backup & Recovery',
+      label: 'Backup',
       icon: HardDrive,
-      description: 'Data backup, recovery procedures, and disaster planning',
-      color: 'text-emerald-600',
+      description: 'Backup schedules, retention, and data recovery',
+      color: 'text-cyan-600',
     },
     {
       id: 'maintenance',
       label: 'Maintenance',
-      icon: Server,
-      description: 'System maintenance, updates, and scheduled tasks',
+      icon: Settings,
+      description: 'Maintenance mode, health checks, and system operations',
       color: 'text-orange-600',
     },
   ]
@@ -150,10 +150,33 @@ export function SystemSettingsLayout({ municipality }: SystemSettingsLayoutProps
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-1">
-          {/* Sidebar Navigation */}
-          <div className="w-80 border-r border-gray-200 bg-gray-50">
+          {/* Mobile Top Navigation */}
+          <div className="md:hidden sticky top-0 z-10 bg-white border-b border-gray-200">
+            <div className="px-4 py-2 overflow-x-auto">
+              <TabsList className="flex w-max gap-2 bg-transparent">
+                {settingsSections.map((section) => {
+                  const IconComponent = section.icon
+                  return (
+                    <TabsTrigger
+                      key={section.id}
+                      value={section.id}
+                      className="whitespace-nowrap h-9 px-3 py-2 border border-gray-200 rounded-full data-[state=active]:bg-blue-50 data-[state=active]:border-blue-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <IconComponent className={`h-4 w-4 ${section.color}`} />
+                        <span className="text-sm">{section.label}</span>
+                      </div>
+                    </TabsTrigger>
+                  )
+                })}
+              </TabsList>
+            </div>
+          </div>
+
+          {/* Sidebar Navigation (md+) */}
+          <div className="hidden md:block md:w-80 md:border-r md:border-gray-200 md:bg-gray-50">
             <div className="p-4">
               <TabsList className="grid w-full grid-cols-1 h-auto bg-transparent space-y-1">
                 {settingsSections.map((section) => {
@@ -180,7 +203,7 @@ export function SystemSettingsLayout({ municipality }: SystemSettingsLayoutProps
 
           {/* Content Area */}
           <div className="flex-1 overflow-auto">
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               <TabsContent value="general" className="mt-0 space-y-6">
                 <GeneralSettings municipality={municipality} />
               </TabsContent>
@@ -210,7 +233,7 @@ export function SystemSettingsLayout({ municipality }: SystemSettingsLayoutProps
               </TabsContent>
 
               <TabsContent value="maintenance" className="mt-0 space-y-6">
-                <SystemMaintenanceSettings municipality={municipality} />
+                <MaintenanceSettings municipality={municipality} />
               </TabsContent>
             </div>
           </div>

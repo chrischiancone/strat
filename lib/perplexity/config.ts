@@ -12,19 +12,21 @@ function resolveModel(): string {
   const raw = (process.env.PPLX_MODEL || '').trim().toLowerCase()
   // Map common aliases to official model names
   const aliases: Record<string, string> = {
-    sonar: 'sonar-small-online',
-    'sonar-small': 'sonar-small-online',
-    'sonar-large': 'sonar-large-online',
-    'sonar-huge': 'sonar-huge-online',
+    'sonar-small': 'sonar',
+    'sonar-large': 'sonar-pro',
+    'sonar-huge': 'sonar-pro',
     // Legacy names map to current
-    'llama-3.1-sonar-small': 'sonar-small-online',
-    'llama-3.1-sonar-large': 'sonar-large-online',
-    'llama-3.1-sonar-huge': 'sonar-huge-online',
-    'llama-3.1-sonar-small-128k-online': 'sonar-small-online',
-    'llama-3.1-sonar-large-128k-online': 'sonar-large-online',
-    'llama-3.1-sonar-huge-128k-online': 'sonar-huge-online',
+    'sonar-small-online': 'sonar',
+    'sonar-large-online': 'sonar-pro',
+    'sonar-huge-online': 'sonar-pro',
+    'llama-3.1-sonar-small': 'sonar',
+    'llama-3.1-sonar-large': 'sonar-pro',
+    'llama-3.1-sonar-huge': 'sonar-pro',
+    'llama-3.1-sonar-small-128k-online': 'sonar',
+    'llama-3.1-sonar-large-128k-online': 'sonar-pro',
+    'llama-3.1-sonar-huge-128k-online': 'sonar-pro',
   }
-  return aliases[raw] || (raw || 'sonar-small-online')
+  return aliases[raw] || (raw || 'sonar')
 }
 
 interface ApiError {

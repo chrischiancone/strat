@@ -77,7 +77,7 @@ export function BudgetByFundingSourceChart({ data }: BudgetByFundingSourceChartP
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={renderCustomLabel}
+                  label={renderCustomLabel as any}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"

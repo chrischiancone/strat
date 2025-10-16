@@ -30,15 +30,19 @@ export function CommentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('CommentForm: handleSubmit called', { content, entityType, entityId })
 
     if (!content.trim()) {
+      console.log('CommentForm: Content is empty')
       toast.error('Comment cannot be empty')
       return
     }
 
+    console.log('CommentForm: Starting transition')
     startTransition(async () => {
       try {
         if (editCommentId) {
+          console.log('CommentForm: Updating existing comment', editCommentId)
           // Update existing comment
           await updateComment({
             id: editCommentId,
@@ -46,19 +50,22 @@ export function CommentForm({
           })
           toast.success('Comment updated successfully')
         } else {
+          console.log('CommentForm: Creating new comment')
           // Create new comment
-          await createComment({
+          const result = await createComment({
             entity_type: entityType,
             entity_id: entityId,
             parent_comment_id: parentCommentId,
             content: content.trim(),
           })
+          console.log('CommentForm: Comment created successfully', result)
           toast.success('Comment added successfully')
         }
 
         setContent('')
         onSuccess?.()
       } catch (error) {
+        console.error('CommentForm: Error saving comment', error)
         toast.error(error instanceof Error ? error.message : 'Failed to save comment')
       }
     })

@@ -84,28 +84,14 @@ export function LoginForm() {
   }
 
   // Clear validation errors when user starts typing
-  useEffect(() => {
-    const inputs = document.querySelectorAll('input')
-    const handleInputChange = (e: Event) => {
-      const target = e.target as HTMLInputElement
-      if (validationErrors[target.name as keyof typeof validationErrors]) {
-        setValidationErrors(prev => ({
-          ...prev,
-          [target.name]: undefined
-        }))
-      }
+  const handleInputChange = (fieldName: string) => {
+    if (validationErrors[fieldName as keyof typeof validationErrors]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [fieldName]: undefined
+      }))
     }
-
-    inputs.forEach(input => {
-      input.addEventListener('input', handleInputChange)
-    })
-
-    return () => {
-      inputs.forEach(input => {
-        input.removeEventListener('input', handleInputChange)
-      })
-    }
-  }, [validationErrors])
+  }
 
   return (
     <form action={handleSubmit} className="mt-6 space-y-6">
@@ -125,6 +111,7 @@ export function LoginForm() {
           type="email"
           autoComplete="email"
           required
+          onChange={() => handleInputChange('email')}
           aria-invalid={validationErrors.email ? 'true' : 'false'}
           aria-describedby={validationErrors.email ? 'email-error' : undefined}
           className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 ${
@@ -150,6 +137,7 @@ export function LoginForm() {
           type="password"
           autoComplete="current-password"
           required
+          onChange={() => handleInputChange('password')}
           aria-invalid={validationErrors.password ? 'true' : 'false'}
           aria-describedby={validationErrors.password ? 'password-error' : undefined}
           className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 ${

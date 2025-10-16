@@ -30,7 +30,9 @@ import {
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
-import { type Comment, type CommentReaction } from '@/lib/collaboration/collaboration-engine'
+import { type Comment as CollabComment, type CommentReaction } from '@/lib/collaboration/collaboration-engine'
+import { createComment, getComments, type CommentEntityType, type Comment as ActionComment } from '@/app/actions/comments'
+import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 
 interface CommentsPanelProps {
   resourceId: string
@@ -39,6 +41,51 @@ interface CommentsPanelProps {
   currentUserName: string
   currentUserAvatar?: string
   onMention?: (userId: string) => void
+}
+
+// Map collaboration resourceType to comment entity type
+function mapResourceTypeToEntityType(resourceType: string): CommentEntityType {
+  switch (resourceType) {
+    case 'plan':
+      return 'strategic_plan'
+    case 'goal':
+      return 'goal'
+    case 'initiative':
+      return 'initiative'
+    case 'dashboard':
+      return 'milestone' // or create a new type if needed
+    default:
+      return 'strategic_plan'
+  }
+}
+
+// Extend CollabComment to include replies
+interface ExtendedComment extends CollabComment {
+  replies?: ExtendedComment[]
+}
+
+// Convert ActionComment to ExtendedComment format (recursive for replies)
+function adaptActionCommentToCollabComment(comment: ActionComment, resourceType: string = 'plan'): ExtendedComment {
+  return {
+    id: comment.id,
+    resourceId: comment.entity_id,
+    resourceType: resourceType as any,
+    parentId: comment.parent_comment_id || undefined,
+    authorId: comment.author_id,
+    authorName: comment.author_name,
+    authorAvatar: undefined,
+    content: comment.content,
+    mentions: [],
+    attachments: [],
+    reactions: [],
+    resolved: comment.is_resolved,
+    resolvedBy: undefined,
+    resolvedAt: undefined,
+    position: undefined,
+    createdAt: new Date(comment.created_at),
+    updatedAt: new Date(comment.updated_at),
+    replies: comment.replies ? comment.replies.map(reply => adaptActionCommentToCollabComment(reply, resourceType)) : []
+  }
 }
 
 const REACTION_EMOJIS = [
@@ -58,7 +105,7 @@ export function CommentsPanel({
   currentUserAvatar,
   onMention,
 }: CommentsPanelProps) {
-  const [comments, setComments] = useState<Comment[]>([])
+  const [comments, setComments] = useState<ExtendedComment[]>([])
   const [newComment, setNewComment] = useState('')
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [editingComment, setEditingComment] = useState<string | null>(null)
@@ -76,14 +123,15 @@ export function CommentsPanel({
   const loadComments = async () => {
     setLoading(true)
     try {
-      const response = await fetch(
-        `/api/collaboration/comments?resourceId=${resourceId}&resourceType=${resourceType}`
+      const entityType = mapResourceTypeToEntityType(resourceType)
+      const commentsData = await getComments(entityType, resourceId)
+      
+      // Convert ActionComment format to CollabComment format
+      const adaptedComments = commentsData.map(comment => 
+        adaptActionCommentToCollabComment(comment, resourceType)
       )
       
-      if (response.ok) {
-        const data = await response.json()
-        setComments(data.comments)
-      }
+      setComments(adaptedComments)
     } catch (error) {
       console.error('Failed to load comments:', error)
       toast({
@@ -101,28 +149,57 @@ export function CommentsPanel({
 
     setSubmitting(true)
     try {
+      const entityType = mapResourceTypeToEntityType(resourceType)
+      
+      // Verify authentication client-side first
+      const supabase = createBrowserSupabaseClient()
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      
+      if (!user) {
+        console.error('CommentsPanel: No authenticated user found')
+        toast({
+          title: 'Authentication required',
+          description: 'Please log in to post comments.',
+          variant: 'destructive',
+        })
+        return
+      }
+      
+      console.log('CommentsPanel: Submitting comment with data:', {
+        entity_type: entityType,
+        entity_id: resourceId,
+        parent_comment_id: replyingTo,
+        content: newComment,
+        user_id: user.id,
+      })
+      
+      // Use direct API call with cookie-based authentication
       const response = await fetch('/api/collaboration/comments', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
           resourceId,
-          resourceType,
+          resourceType: entityType,
           parentId: replyingTo,
           content: newComment,
-          mentions: extractMentions(newComment),
         }),
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        setComments(prev => [...prev, data.comment])
-        setNewComment('')
-        setReplyingTo(null)
-        toast({
-          title: 'Comment posted',
-          description: 'Your comment has been added successfully.',
-        })
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${await response.text()}`)
       }
+      
+      // Reload comments after successful creation
+      await loadComments()
+      
+      setNewComment('')
+      setReplyingTo(null)
+      toast({
+        title: 'Comment posted',
+        description: 'Your comment has been added successfully.',
+      })
     } catch (error) {
       console.error('Failed to submit comment:', error)
       toast({
@@ -283,10 +360,10 @@ export function CommentsPanel({
     }
   }
 
-  const renderComment = (comment: Comment, isReply = false) => {
+  const renderComment = (comment: ExtendedComment, isReply = false) => {
     const isAuthor = comment.authorId === currentUserId
     const isEditing = editingComment === comment.id
-    const replies = comments.filter(c => c.parentId === comment.id)
+    const replies = comment.replies || []
     
     return (
       <div

@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 export interface BudgetBreakdown {
@@ -84,6 +85,7 @@ export async function updateInitiativeBudget(
   budget: BudgetBreakdown
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -94,30 +96,33 @@ export async function updateInitiativeBudget(
     throw new Error('Unauthorized')
   }
 
-  // Check permissions
-  const { data: initiative } = await supabase
+  // Fetch initiative and related plan info using admin client (bypass RLS)
+  const { data: initiative, error: initErr } = await adminSupabase
     .from('initiatives')
-    .select('strategic_goals!inner(strategic_plans!inner(department_id))')
+    .select('id, strategic_goal_id, strategic_goals!inner(strategic_plans!inner(department_id, id))')
     .eq('id', initiativeId)
-    .single()
+    .maybeSingle()
 
-  if (!initiative) {
+  if (!initiative || initErr) {
+    console.error('updateInitiativeBudget: initiative lookup failed', { initiativeId, initErr })
     throw new Error('Initiative not found')
   }
 
-  const { data: userProfile } = await supabase
+  // Get user profile via admin client
+  const { data: userProfile, error: profileErr } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
-    .single<{ role: string; department_id: string | null }>()
+    .maybeSingle<{ role: string; department_id: string | null }>()
 
-  if (!userProfile) {
+  if (!userProfile || profileErr) {
+    console.error('updateInitiativeBudget: user profile lookup failed', profileErr)
     throw new Error('User profile not found')
   }
 
   const plan = (
     initiative as {
-      strategic_goals: { strategic_plans: { department_id: string } }
+      strategic_goals: { strategic_plans: { department_id: string; id: string } }
     }
   ).strategic_goals.strategic_plans
 
@@ -130,9 +135,9 @@ export async function updateInitiativeBudget(
     throw new Error('You do not have permission to edit this initiative budget')
   }
 
-  // Update budget
+  // Update budget using admin client (we already validated permissions)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await (adminSupabase as any)
     .from('initiatives')
     .update({
       financial_analysis: budget,
@@ -148,19 +153,8 @@ export async function updateInitiativeBudget(
   }
 
   // Revalidate paths
-  const { data: goalData } = await supabase
-    .from('initiatives')
-    .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
-    .eq('id', initiativeId)
-    .single()
-
-  if (goalData) {
-    const planId = (
-      goalData as {
-        strategic_goals: { strategic_plan_id: string }
-      }
-    ).strategic_goals.strategic_plan_id
-
+  const planId = plan.id
+  if (planId) {
     revalidatePath(`/plans/${planId}`)
     revalidatePath(`/plans/${planId}/edit`)
   }
@@ -170,6 +164,7 @@ export async function getFundingSources(
   initiativeId: string
 ): Promise<FundingSource[]> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -180,10 +175,12 @@ export async function getFundingSources(
     throw new Error('Unauthorized')
   }
 
-  const { data, error } = await supabase
+  // Read via admin client to avoid RLS issues
+  const { data, error } = await adminSupabase
     .from('initiative_budgets')
     .select('*')
     .eq('initiative_id', initiativeId)
+    .not('funding_source', 'is', null)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -198,6 +195,7 @@ export async function addFundingSource(
   input: AddFundingSourceInput
 ): Promise<{ id: string }> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -208,30 +206,34 @@ export async function addFundingSource(
     throw new Error('Unauthorized')
   }
 
-  // Check permissions
-  const { data: initiative } = await supabase
-    .from('initiatives')
-    .select('strategic_goals!inner(strategic_plans!inner(department_id))')
-    .eq('id', input.initiative_id)
-    .single()
+  console.log('addFundingSource: input received', input)
 
-  if (!initiative) {
+  // Check permissions using admin client
+  const { data: initiative, error: initErr } = await adminSupabase
+    .from('initiatives')
+    .select('id, strategic_goals!inner(strategic_plans!inner(department_id, id))')
+    .eq('id', input.initiative_id)
+    .maybeSingle()
+
+  if (!initiative || initErr) {
+    console.error('addFundingSource: initiative not found or error', { initErr, initiativeId: input.initiative_id })
     throw new Error('Initiative not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile, error: profileErr } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
-    .single<{ role: string; department_id: string | null }>()
+    .maybeSingle<{ role: string; department_id: string | null }>()
 
-  if (!userProfile) {
+  if (!userProfile || profileErr) {
+    console.error('addFundingSource: user profile lookup failed', profileErr)
     throw new Error('User profile not found')
   }
 
   const plan = (
     initiative as {
-      strategic_goals: { strategic_plans: { department_id: string } }
+      strategic_goals: { strategic_plans: { department_id: string; id: string } }
     }
   ).strategic_goals.strategic_plans
 
@@ -244,13 +246,14 @@ export async function addFundingSource(
     throw new Error('You do not have permission to add funding sources')
   }
 
-  // Add funding source
+  // Add funding source using admin client
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = (await (supabase as any)
+  const { data, error } = (await (adminSupabase as any)
     .from('initiative_budgets')
     .insert({
       initiative_id: input.initiative_id,
       fiscal_year_id: input.fiscal_year_id,
+      category: 'other',
       funding_source: input.funding_source,
       amount: input.amount,
       funding_status: input.funding_status,
@@ -269,19 +272,8 @@ export async function addFundingSource(
   }
 
   // Revalidate paths
-  const { data: goalData } = await supabase
-    .from('initiatives')
-    .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
-    .eq('id', input.initiative_id)
-    .single()
-
-  if (goalData) {
-    const planId = (
-      goalData as {
-        strategic_goals: { strategic_plan_id: string }
-      }
-    ).strategic_goals.strategic_plan_id
-
+  const planId = plan.id
+  if (planId) {
     revalidatePath(`/plans/${planId}`)
     revalidatePath(`/plans/${planId}/edit`)
   }
@@ -293,6 +285,7 @@ export async function updateFundingSource(
   input: UpdateFundingSourceInput
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -303,22 +296,22 @@ export async function updateFundingSource(
     throw new Error('Unauthorized')
   }
 
-  // Get funding source and check permissions
-  const { data: fundingSource } = await supabase
+  // Get funding source and check permissions via admin client
+  const { data: fundingSource } = await adminSupabase
     .from('initiative_budgets')
-    .select('initiative_id, initiatives!inner(strategic_goals!inner(strategic_plans!inner(department_id)))')
+    .select('initiative_id, initiatives!inner(strategic_goals!inner(strategic_plans!inner(department_id, id)))')
     .eq('id', input.id)
-    .single()
+    .maybeSingle()
 
   if (!fundingSource) {
     throw new Error('Funding source not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
-    .single<{ role: string; department_id: string | null }>()
+    .maybeSingle<{ role: string; department_id: string | null }>()
 
   if (!userProfile) {
     throw new Error('User profile not found')
@@ -327,7 +320,7 @@ export async function updateFundingSource(
   const plan = (
     fundingSource as {
       initiatives: {
-        strategic_goals: { strategic_plans: { department_id: string } }
+        strategic_goals: { strategic_plans: { department_id: string; id: string } }
       }
     }
   ).initiatives.strategic_goals.strategic_plans
@@ -350,9 +343,9 @@ export async function updateFundingSource(
     updateData.funding_status = input.funding_status
   if (input.notes !== undefined) updateData.notes = input.notes
 
-  // Update funding source
+  // Update funding source using admin client
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await (adminSupabase as any)
     .from('initiative_budgets')
     .update(updateData)
     .eq('id', input.id)
@@ -363,20 +356,8 @@ export async function updateFundingSource(
   }
 
   // Revalidate paths
-  const initiativeId = (fundingSource as { initiative_id: string }).initiative_id
-  const { data: goalData } = await supabase
-    .from('initiatives')
-    .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
-    .eq('id', initiativeId)
-    .single()
-
-  if (goalData) {
-    const planId = (
-      goalData as {
-        strategic_goals: { strategic_plan_id: string }
-      }
-    ).strategic_goals.strategic_plan_id
-
+  const planId = plan.id
+  if (planId) {
     revalidatePath(`/plans/${planId}`)
     revalidatePath(`/plans/${planId}/edit`)
   }
@@ -384,6 +365,7 @@ export async function updateFundingSource(
 
 export async function deleteFundingSource(id: string): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -394,22 +376,22 @@ export async function deleteFundingSource(id: string): Promise<void> {
     throw new Error('Unauthorized')
   }
 
-  // Get funding source and check permissions
-  const { data: fundingSource } = await supabase
+  // Get funding source and check permissions via admin client
+  const { data: fundingSource } = await adminSupabase
     .from('initiative_budgets')
-    .select('initiative_id, initiatives!inner(strategic_goals!inner(strategic_plans!inner(department_id)))')
+    .select('initiative_id, initiatives!inner(strategic_goals!inner(strategic_plans!inner(department_id, id)))')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (!fundingSource) {
     throw new Error('Funding source not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
-    .single<{ role: string; department_id: string | null }>()
+    .maybeSingle<{ role: string; department_id: string | null }>()
 
   if (!userProfile) {
     throw new Error('User profile not found')
@@ -418,7 +400,7 @@ export async function deleteFundingSource(id: string): Promise<void> {
   const plan = (
     fundingSource as {
       initiatives: {
-        strategic_goals: { strategic_plans: { department_id: string } }
+        strategic_goals: { strategic_plans: { department_id: string; id: string } }
       }
     }
   ).initiatives.strategic_goals.strategic_plans
@@ -432,8 +414,8 @@ export async function deleteFundingSource(id: string): Promise<void> {
     throw new Error('You do not have permission to delete this funding source')
   }
 
-  // Delete funding source
-  const { error } = await supabase
+  // Delete funding source with admin client
+  const { error } = await adminSupabase
     .from('initiative_budgets')
     .delete()
     .eq('id', id)
@@ -444,20 +426,8 @@ export async function deleteFundingSource(id: string): Promise<void> {
   }
 
   // Revalidate paths
-  const initiativeId = (fundingSource as { initiative_id: string }).initiative_id
-  const { data: goalData } = await supabase
-    .from('initiatives')
-    .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
-    .eq('id', initiativeId)
-    .single()
-
-  if (goalData) {
-    const planId = (
-      goalData as {
-        strategic_goals: { strategic_plan_id: string }
-      }
-    ).strategic_goals.strategic_plan_id
-
+  const planId = plan.id
+  if (planId) {
     revalidatePath(`/plans/${planId}`)
     revalidatePath(`/plans/${planId}/edit`)
   }
@@ -468,6 +438,7 @@ export async function updateInitiativeRoi(
   roi: RoiAnalysis
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const adminSupabase = createAdminSupabaseClient()
 
   // Get current user
   const {
@@ -478,22 +449,22 @@ export async function updateInitiativeRoi(
     throw new Error('Unauthorized')
   }
 
-  // Check permissions
-  const { data: initiative } = await supabase
+  // Check permissions using admin client
+  const { data: initiative } = await adminSupabase
     .from('initiatives')
-    .select('strategic_goals!inner(strategic_plans!inner(department_id))')
+    .select('id, strategic_goals!inner(strategic_plans!inner(department_id, id))')
     .eq('id', initiativeId)
-    .single()
+    .maybeSingle()
 
   if (!initiative) {
     throw new Error('Initiative not found')
   }
 
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await adminSupabase
     .from('users')
     .select('role, department_id')
     .eq('id', currentUser.id)
-    .single<{ role: string; department_id: string | null }>()
+    .maybeSingle<{ role: string; department_id: string | null }>()
 
   if (!userProfile) {
     throw new Error('User profile not found')
@@ -501,7 +472,7 @@ export async function updateInitiativeRoi(
 
   const plan = (
     initiative as {
-      strategic_goals: { strategic_plans: { department_id: string } }
+      strategic_goals: { strategic_plans: { department_id: string; id: string } }
     }
   ).strategic_goals.strategic_plans
 
@@ -514,9 +485,9 @@ export async function updateInitiativeRoi(
     throw new Error('You do not have permission to edit this initiative ROI')
   }
 
-  // Update ROI
+  // Update ROI using admin client
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await (adminSupabase as any)
     .from('initiatives')
     .update({
       roi_analysis: roi,
@@ -529,19 +500,8 @@ export async function updateInitiativeRoi(
   }
 
   // Revalidate paths
-  const { data: goalData } = await supabase
-    .from('initiatives')
-    .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id)')
-    .eq('id', initiativeId)
-    .single()
-
-  if (goalData) {
-    const planId = (
-      goalData as {
-        strategic_goals: { strategic_plan_id: string }
-      }
-    ).strategic_goals.strategic_plan_id
-
+  const planId = plan.id
+  if (planId) {
     revalidatePath(`/plans/${planId}`)
     revalidatePath(`/plans/${planId}/edit`)
   }

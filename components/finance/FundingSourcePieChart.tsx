@@ -84,7 +84,7 @@ export function FundingSourcePieChart({ fundingSources }: FundingSourcePieChartP
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={renderCustomLabel}
+              label={renderCustomLabel as any}
               outerRadius={120}
               fill="#8884d8"
               dataKey="value"
@@ -104,10 +104,10 @@ export function FundingSourcePieChart({ fundingSources }: FundingSourcePieChartP
             <Legend
               verticalAlign="bottom"
               height={36}
-              formatter={(value, entry: { payload?: { value: number } }) => {
-                const amount = entry.payload?.value || 0
+              formatter={((value: any, entry: any) => {
+                const amount = entry?.payload?.value || 0
                 return `${value}: ${formatCurrency(amount)}`
-              }}
+              }) as any}
             />
           </PieChart>
         </ResponsiveContainer>

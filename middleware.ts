@@ -224,14 +224,14 @@ export async function middleware(request: NextRequest) {
       })
     }
 
-    // Handle collaboration API authentication
-    const collaborationAuthResponse = await handleCollaborationAPIAuth(request)
-    if (collaborationAuthResponse) {
-      // If auth failed, return error response with security headers
-      return collaborationAuthResponse.status >= 400 
-        ? addSecurityHeaders(collaborationAuthResponse)
-        : collaborationAuthResponse
-    }
+    // Handle collaboration API authentication (temporarily disabled)
+    // const collaborationAuthResponse = await handleCollaborationAPIAuth(request)
+    // if (collaborationAuthResponse) {
+    //   // If auth failed, return error response with security headers
+    //   return collaborationAuthResponse.status >= 400 
+    //     ? addSecurityHeaders(collaborationAuthResponse)
+    //     : collaborationAuthResponse
+    // }
 
     // Apply rate limiting to sensitive endpoints (respect settings)
     const sensitiveEndpoints = ['/api/auth', '/login', '/signup', '/api/collaboration']

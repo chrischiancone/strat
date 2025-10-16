@@ -81,10 +81,15 @@ export function AppearanceSettings({ municipality }: AppearanceSettingsProps) {
     setError(null)
     
     try {
-      // TODO: Implement save to database
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
+      const { updateAppearanceSettings } = await import('@/app/actions/settings')
+      const result = await updateAppearanceSettings(municipality.id, settings)
+      
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess(true)
+        setTimeout(() => setSuccess(false), 3000)
+      }
     } catch (err) {
       setError('Failed to save appearance settings')
     } finally {

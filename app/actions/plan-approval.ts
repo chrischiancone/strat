@@ -39,13 +39,14 @@ export async function updatePlanStatus(
   }
 
   // Get user profile and role using admin client
-  const { data: profile } = await adminSupabase
+  const { data: profile, error: profileError } = await adminSupabase
     .from('users')
-    .select('role, first_name, last_name')
+    .select('role, full_name')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
-  if (!profile) {
+  if (!profile || profileError) {
+    console.error('updatePlanStatus: user profile lookup failed', profileError)
     return { success: false, error: 'User profile not found' }
   }
 
@@ -100,7 +101,9 @@ export async function updatePlanStatus(
     updateData.published_at = new Date().toISOString()
   }
 
-  const { error: updateError } = await supabase
+  console.log('updatePlanStatus: Updating plan status', { planId, previousStatus, newStatus, updateData })
+  
+  const { error: updateError } = await adminSupabase
     .from('strategic_plans')
     .update(updateData)
     .eq('id', planId)
@@ -109,6 +112,8 @@ export async function updatePlanStatus(
     console.error('Error updating plan status:', updateError)
     return { success: false, error: 'Failed to update plan status' }
   }
+  
+  console.log('updatePlanStatus: Plan status updated successfully', { planId, newStatus })
 
   // Log to audit_logs using admin client
   await adminSupabase.from('audit_logs').insert({
@@ -123,15 +128,17 @@ export async function updatePlanStatus(
       status: newStatus,
       notes: notes || null,
       plan_title: currentPlan.title,
-      changed_by_name: `${profile.first_name} ${profile.last_name}`,
+      changed_by_name: profile.full_name || user.email || 'User',
       changed_by_role: profile.role,
     }
   })
 
   // Revalidate relevant paths
   revalidatePath(`/plans/${planId}`)
+  revalidatePath(`/plans/${planId}/edit`)
   revalidatePath('/plans')
   revalidatePath('/city-manager')
+  revalidatePath('/')
 
   return { success: true }
 }

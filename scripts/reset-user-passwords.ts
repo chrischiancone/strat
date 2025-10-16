@@ -23,15 +23,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 })
 
 const users = [
-  { email: 'admin@carrollton.gov', password: 'password' },
-  { email: 'john.smith@carrollton.gov', password: 'password' },
-  { email: 'sarah.johnson@carrollton.gov', password: 'password' },
-  { email: 'mike.davis@carrollton.gov', password: 'password' },
-  { email: 'emily.wilson@carrollton.gov', password: 'password' },
-  { email: 'robert.garcia@carrollton.gov', password: 'password' },
-  { email: 'linda.martinez@carrollton.gov', password: 'password' },
-  { email: 'david.lee@carrollton.gov', password: 'password' },
-  { email: 'former@carrollton.gov', password: 'password' },
+  { email: 'admin@carrollton.gov', password: 'password' }
+
 ]
 
 async function resetPasswords() {
