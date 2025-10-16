@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -194,10 +195,15 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
     setError(null)
     
     try {
-      // TODO: Implement save to database
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      setSuccess('Integration settings updated successfully!')
-      setTimeout(() => setSuccess(null), 3000)
+      const { updateIntegrationSettings } = await import('@/app/actions/settings')
+      const result = await updateIntegrationSettings(municipality.id, integrations)
+      
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSuccess('Integration settings updated successfully!')
+        setTimeout(() => setSuccess(null), 3000)
+      }
     } catch (err) {
       setError('Failed to save integration settings')
     } finally {
@@ -423,10 +429,12 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
                     {getStatusIcon(connectionStatus.microsoft_teams)}
                     Test Connection
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Setup Guide
-                  </Button>
+                  <Link href="/admin/settings/integrations/teams-setup">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Setup Guide
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}
@@ -602,10 +610,12 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
                     {getStatusIcon(connectionStatus.active_directory_sync)}
                     Sync Now
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Setup Guide
-                  </Button>
+                  <Link href="/admin/settings/integrations/active-directory-setup">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Setup Guide
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}
@@ -729,10 +739,12 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
                     {getStatusIcon(connectionStatus.office365)}
                     Test Connection
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Setup Guide
-                  </Button>
+                  <Link href="/admin/settings/integrations/office365-setup">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Setup Guide
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}
@@ -835,10 +847,12 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
                     {getStatusIcon(connectionStatus.sharepoint)}
                     Test Connection
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Setup Guide
-                  </Button>
+                  <Link href="/admin/settings/integrations/sharepoint-setup">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Setup Guide
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}
@@ -1050,10 +1064,12 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
                     {getStatusIcon(connectionStatus.slack)}
                     Test Connection
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Setup Guide
-                  </Button>
+                  <Link href="/admin/settings/integrations/slack-setup">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Setup Guide
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}
@@ -1173,10 +1189,12 @@ export function IntegrationSettings({ municipality }: IntegrationSettingsProps) 
                     {getStatusIcon(connectionStatus.zoom)}
                     Test Connection
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Setup Guide
-                  </Button>
+                  <Link href="/admin/settings/integrations/zoom-setup">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Setup Guide
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}
