@@ -28,7 +28,23 @@ import {
   ArcElement,
 } from 'chart.js'
 import { Line, Bar, Doughnut } from 'react-chartjs-2'
-import AuditLogService, { type UserActivitySummary, type SecurityEvent } from '@/lib/services/audit-logs'
+import { getAuditDashboardStats, getUserActivitySummary, detectSecurityEvents } from '@/app/actions/audit-dashboard'
+
+type UserActivitySummary = {
+  user_id: string
+  user_name: string | null
+  action_count: number
+  last_activity: string
+}
+
+type SecurityEvent = {
+  type: string
+  severity: string
+  description: string
+  timestamp: string
+  user_id: string | null
+  user_name: string | null
+}
 
 ChartJS.register(
   CategoryScale,
@@ -64,8 +80,6 @@ export function AuditLogsDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const auditService = new AuditLogService()
-
   useEffect(() => {
     loadDashboardData()
   }, [])
@@ -74,9 +88,9 @@ export function AuditLogsDashboard() {
     try {
       setLoading(true)
       const [dashboardStats, userActivityData, securityEventsData] = await Promise.all([
-        auditService.getDashboardStats(),
-        auditService.getUserActivitySummary(10),
-        auditService.detectSecurityEvents(24)
+        getAuditDashboardStats(),
+        getUserActivitySummary(10),
+        detectSecurityEvents(24)
       ])
 
       setStats(dashboardStats)

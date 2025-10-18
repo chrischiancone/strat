@@ -1,11 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    // Disable ESLint during builds on Netlify to allow deployment
+    // TEMPORARY: Suppress ESLint errors during migration to strict mode
+    // TODO: Fix all ESLint errors and set to false
+    // Tracking: See docs/TYPESCRIPT_MIGRATION.md for progress
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Disable TypeScript errors during builds to allow deployment
+    // TEMPORARY: Suppress TypeScript errors during migration to strict mode
+    // TODO: Fix all TypeScript errors and set to false
+    // Tracking: See docs/TYPESCRIPT_MIGRATION.md for progress
     ignoreBuildErrors: true,
   },
   experimental: {

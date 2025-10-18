@@ -5,6 +5,10 @@
 
 # Testing
 /coverage
+/test-results
+/playwright-report
+/.vitest
+vitest.config.ts.timestamp-*
 
 # Next.js
 /.next/

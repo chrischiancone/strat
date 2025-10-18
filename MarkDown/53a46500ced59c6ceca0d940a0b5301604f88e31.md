@@ -1,0 +1,138 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]:
+          - generic [ref=e8]: SP
+          - generic [ref=e9]:
+            - heading "Strategic Planning" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Municipal Management System
+        - button "SA System Administrator admin@carrollton.gov" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: SA
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: System Administrator
+            - paragraph [ref=e18]: admin@carrollton.gov
+          - img [ref=e19]
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Main" [level=3] [ref=e25]
+            - generic [ref=e26]:
+              - link "Dashboard" [ref=e27] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: Dashboard
+              - link "Strategic Plans" [ref=e34] [cursor=pointer]:
+                - /url: /plans
+                - img [ref=e35]
+                - generic [ref=e39]: Strategic Plans
+              - link "Add Initiative" [ref=e40] [cursor=pointer]:
+                - /url: /initiatives/new
+                - img [ref=e41]
+                - generic [ref=e44]: Add Initiative
+              - link "Settings" [ref=e45] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e46]
+                - generic [ref=e49]: Settings
+          - generic [ref=e50]:
+            - heading "Finance" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - link "Initiative Budgets" [ref=e53] [cursor=pointer]:
+                - /url: /finance
+                - img [ref=e54]
+                - generic [ref=e57]: Initiative Budgets
+              - link "Funding Sources" [ref=e58] [cursor=pointer]:
+                - /url: /finance/funding-sources
+                - img [ref=e59]
+                - generic [ref=e62]: Funding Sources
+              - link "Budget Categories" [ref=e63] [cursor=pointer]:
+                - /url: /finance/categories
+                - img [ref=e64]
+                - generic [ref=e69]: Budget Categories
+              - link "Grant Tracking" [ref=e70] [cursor=pointer]:
+                - /url: /finance/grants
+                - img [ref=e71]
+                - generic [ref=e76]: Grant Tracking
+          - generic [ref=e77]:
+            - heading "Administration" [level=3] [ref=e78]
+            - generic [ref=e79]:
+              - link "Users" [ref=e80] [cursor=pointer]:
+                - /url: /admin/users
+                - img [ref=e81]
+                - generic [ref=e86]: Users
+              - link "Departments" [ref=e87] [cursor=pointer]:
+                - /url: /admin/departments
+                - img [ref=e88]
+                - generic [ref=e96]: Departments
+              - link "Council Goals" [ref=e97] [cursor=pointer]:
+                - /url: /admin/council-goals
+                - img [ref=e98]
+                - generic [ref=e101]: Council Goals
+              - link "Fiscal Years" [ref=e102] [cursor=pointer]:
+                - /url: /admin/fiscal-years
+                - img [ref=e103]
+                - generic [ref=e108]: Fiscal Years
+              - link "System Settings" [ref=e109] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e110]
+                - generic [ref=e113]: System Settings
+              - link "Audit Logs" [ref=e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+                - img [ref=e115]
+                - generic [ref=e121]: Audit Logs
+      - main [ref=e122]:
+        - navigation [ref=e124]:
+          - link "Home" [ref=e125] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e126]
+            - generic [ref=e129]: Home
+          - img [ref=e130]
+          - link "Administration" [ref=e132] [cursor=pointer]:
+            - /url: /admin
+            - generic [ref=e133]: Administration
+          - img [ref=e134]
+          - generic [ref=e136]: Audit Logs
+        - generic [ref=e138]:
+          - generic [ref=e139]:
+            - navigation "Breadcrumb" [ref=e140]:
+              - list [ref=e141]:
+                - listitem [ref=e142]:
+                  - link "Home" [ref=e143] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e144]
+                - listitem [ref=e147]:
+                  - img [ref=e148]
+                  - link "Admin" [ref=e150] [cursor=pointer]:
+                    - /url: /admin
+                - listitem [ref=e151]:
+                  - img [ref=e152]
+                  - generic [ref=e154]: Audit Logs
+            - generic [ref=e156]:
+              - heading "Audit Logs" [level=1] [ref=e157]
+              - paragraph [ref=e158]: View system activity and track changes
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - heading "Debug Information" [level=3] [ref=e162]
+              - generic [ref=e163]:
+                - generic [ref=e164]: User authenticated:✓ Yes
+                - generic [ref=e165]: User role:admin
+                - generic [ref=e166]: Has permissions:✓ Yes
+                - generic [ref=e167]: Audit logs table:✓ Accessible
+                - generic [ref=e168]:
+                  - text: "Sample count:"
+                  - generic [ref=e169]: 0 records
+            - generic [ref=e171]:
+              - img [ref=e173]
+              - generic [ref=e179]:
+                - heading "No Audit Logs found" [level=3] [ref=e180]
+                - paragraph [ref=e181]: You haven't created any Audit Logs yet. Get started by creating your first one.
+              - paragraph [ref=e183]: System activity will appear here as users interact with the application.
+    - region "Notifications (F8)":
+      - list
+  - region "Notifications alt+T"
+  - alert [ref=e184]
+```

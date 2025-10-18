@@ -3,6 +3,7 @@
  */
 
 import { logger, LogContext } from './logger'
+import * as Sentry from '@sentry/nextjs'
 
 export type ErrorType = 
   | 'DATABASE_ERROR'
@@ -154,6 +155,23 @@ export const handleError = {
       statusCode: appError.statusCode,
     }, appError)
 
+    // Send to Sentry in production
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureException(appError, {
+        level: appError.statusCode && appError.statusCode < 500 ? 'warning' : 'error',
+        tags: {
+          errorType: appError.type,
+          statusCode: appError.statusCode,
+        },
+        contexts: {
+          custom: {
+            ...context,
+            ...appError.context,
+          },
+        },
+      })
+    }
+
     return {
       success: false,
       error: appError.userMessage || 'An unexpected error occurred',
@@ -170,6 +188,23 @@ export const handleError = {
       errorType: appError.type,
       location: 'client',
     }, appError)
+
+    // Send to Sentry in production
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureException(appError, {
+        level: appError.statusCode && appError.statusCode < 500 ? 'warning' : 'error',
+        tags: {
+          errorType: appError.type,
+          location: 'client',
+        },
+        contexts: {
+          custom: {
+            ...context,
+            ...appError.context,
+          },
+        },
+      })
+    }
 
     return appError.userMessage || 'An unexpected error occurred'
   },

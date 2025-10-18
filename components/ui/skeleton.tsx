@@ -14,17 +14,21 @@ function Skeleton({
 
 // Specialized skeleton components for common patterns
 
-function TableSkeleton({ rows = 5 }: { rows?: number }) {
+function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex gap-4">
-        <Skeleton className="h-10 w-full" />
+      <div className="flex gap-4 border-b border-gray-200 pb-3">
+        {Array.from({ length: columns }).map((_, i) => (
+          <Skeleton key={i} className="h-4 flex-1" />
+        ))}
       </div>
       {/* Rows */}
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4">
-          <Skeleton className="h-12 w-full" />
+      {Array.from({ length: rows }).map((_, rowIndex) => (
+        <div key={rowIndex} className="flex gap-4">
+          {Array.from({ length: columns }).map((_, colIndex) => (
+            <Skeleton key={colIndex} className="h-4 flex-1" />
+          ))}
         </div>
       ))}
     </div>
@@ -82,4 +86,60 @@ function DashboardSkeleton() {
   )
 }
 
-export { Skeleton, TableSkeleton, CardSkeleton, ListSkeleton, DashboardSkeleton }
+function StatCardSkeleton() {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-8 rounded-full" />
+      </div>
+      <Skeleton className="mt-4 h-8 w-32" />
+      <Skeleton className="mt-2 h-3 w-20" />
+    </div>
+  )
+}
+
+function ChartSkeleton({ height = "300px" }: { height?: string }) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <Skeleton className="mb-6 h-6 w-48" />
+      <div style={{ height }} className="flex items-end justify-around gap-2">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            className="w-full"
+            style={{ height: `${Math.random() * 70 + 30}%` }}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function FormSkeleton() {
+  return (
+    <div className="space-y-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="space-y-2">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ))}
+      <div className="flex gap-3">
+        <Skeleton className="h-10 w-24" />
+        <Skeleton className="h-10 w-24" />
+      </div>
+    </div>
+  )
+}
+
+export {
+  Skeleton,
+  TableSkeleton,
+  CardSkeleton,
+  StatCardSkeleton,
+  ChartSkeleton,
+  FormSkeleton,
+  ListSkeleton,
+  DashboardSkeleton,
+}

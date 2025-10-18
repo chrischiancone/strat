@@ -107,8 +107,13 @@ export async function GET() {
     }
   }
 
+  // Mark as degraded if memory is high
+  if (response.checks.memory.status !== 'healthy' && response.status === 'healthy') {
+    response.status = 'degraded'
+  }
+
   // Return appropriate HTTP status code
-  const statusCode = response.status === 'healthy' ? 200 : 503
+  const statusCode = response.status === 'healthy' ? 200 : response.status === 'degraded' ? 200 : 503
 
   return NextResponse.json(response, { 
     status: statusCode,
@@ -116,6 +121,7 @@ export async function GET() {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
       'Expires': '0',
+      'X-Request-ID': requestId,
     }
   })
 }

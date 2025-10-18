@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Validate commit message format
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+
+# Define conventional commit types
+conventional_types="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,}"
+
+if ! echo "$commit_msg" | grep -qE "$conventional_types"; then
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "Commit messages must follow the Conventional Commits specification:"
+  echo "  <type>[optional scope]: <description>"
+  echo ""
+  echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+  echo ""
+  echo "Examples:"
+  echo "  feat(auth): add 2FA support"
+  echo "  fix(api): resolve database connection timeout"
+  echo "  docs: update README with setup instructions"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Commit message format is valid"

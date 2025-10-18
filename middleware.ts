@@ -181,6 +181,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 
 export async function middleware(request: NextRequest) {
   const startTime = Date.now()
+  const requestId = request.headers.get('x-request-id') || crypto.randomUUID()
   const clientIP = getClientIP(request)
   const path = request.nextUrl.pathname
   const userAgent = request.headers.get('user-agent') || 'unknown'
@@ -259,15 +260,31 @@ export async function middleware(request: NextRequest) {
     // Update session with Supabase middleware
     const response = await updateSession(request)
     const secureResponse = addSecurityHeaders(response)
+    
+    // Add request ID for tracing
+    secureResponse.headers.set('X-Request-ID', requestId)
 
     // Log request metrics
     const duration = Date.now() - startTime
     if (duration > 1000) { // Log slow requests
       logger.warn('Slow request detected', {
+        requestId,
         path,
         duration,
         clientIP,
         userAgent,
+      })
+    }
+    
+    // Log all requests in production for monitoring
+    if (process.env.NODE_ENV === 'production') {
+      logger.info('Request processed', {
+        requestId,
+        method: request.method,
+        path,
+        duration,
+        statusCode: response.status,
+        clientIP,
       })
     }
 
