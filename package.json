@@ -102,8 +102,8 @@
     "@axe-core/playwright": "^4.10.2",
     "@hello-pangea/dnd": "^18.0.1",
     "@jest/globals": "^30.2.0",
-    "@netlify/plugin-nextjs": "^5.13.5",
-    "@playwright/test": "^1.40.1",
+    "@netlify/plugin-nextjs": "^5.14.3",
+    "@playwright/test": "^1.56.1",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
@@ -123,9 +123,9 @@
     "lint-staged": "^15.2.0",
     "postcss": "^8.4.33",
     "prettier": "^3.1.1",
-    "prettier-plugin-tailwindcss": "^0.5.10",
+    "prettier-plugin-tailwindcss": "^0.7.1",
     "react-grid-layout": "^1.5.2",
-    "shadcn": "^3.4.0",
+    "shadcn": "^3.4.2",
     "vitest": "^1.1.1"
   }
 }
