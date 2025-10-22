@@ -3,7 +3,16 @@
  */
 
 import { logger, LogContext } from './logger'
-import * as Sentry from '@sentry/nextjs'
+
+// Conditional Sentry import (not available in Edge Runtime)
+let Sentry: typeof import('@sentry/nextjs') | null = null
+if (typeof EdgeRuntime === 'undefined') {
+  try {
+    Sentry = require('@sentry/nextjs')
+  } catch {
+    // Sentry not available
+  }
+}
 
 export type ErrorType = 
   | 'DATABASE_ERROR'
@@ -156,7 +165,7 @@ export const handleError = {
     }, appError)
 
     // Send to Sentry in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && Sentry) {
       Sentry.captureException(appError, {
         level: appError.statusCode && appError.statusCode < 500 ? 'warning' : 'error',
         tags: {
@@ -190,7 +199,7 @@ export const handleError = {
     }, appError)
 
     // Send to Sentry in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && Sentry) {
       Sentry.captureException(appError, {
         level: appError.statusCode && appError.statusCode < 500 ? 'warning' : 'error',
         tags: {
