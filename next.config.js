@@ -42,6 +42,14 @@ const nextConfig = {
         },
       }
     }
+
+    // Suppress Sentry OpenTelemetry warnings
+    config.ignoreWarnings = [
+      { module: /node_modules\/@opentelemetry\/instrumentation/ },
+      { module: /node_modules\/require-in-the-middle/ },
+      { module: /node_modules\/@prisma\/instrumentation/ },
+    ]
+
     return config
   },
   images: {
