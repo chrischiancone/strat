@@ -117,27 +117,27 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
   const [isMonitoring, setIsMonitoring] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   
-  // Mock system metrics (in real app, these would come from monitoring service)
+  // System metrics fetched from API
   const [systemMetrics, setSystemMetrics] = useState<SystemMetrics>({
-    cpu_usage: 45,
-    memory_usage: 62,
-    disk_usage: 38,
-    network_io: { in: 1.2, out: 0.8 },
-    database_connections: 23,
-    active_users: 142,
-    response_time: 285,
-    error_rate: 0.3,
-    uptime: 99.8
+    cpu_usage: 0,
+    memory_usage: 0,
+    disk_usage: 0,
+    network_io: { in: 0, out: 0 },
+    database_connections: 0,
+    active_users: 0,
+    response_time: 0,
+    error_rate: 0,
+    uptime: 0
   })
 
   const [performanceStats, setPerformanceStats] = useState<PerformanceStats>({
-    page_load_time: 1.8,
-    api_response_time: 120,
-    database_query_time: 45,
-    cache_hit_rate: 87,
-    total_requests: 15420,
-    successful_requests: 15374,
-    failed_requests: 46
+    page_load_time: 0,
+    api_response_time: 0,
+    database_query_time: 0,
+    cache_hit_rate: 0,
+    total_requests: 0,
+    successful_requests: 0,
+    failed_requests: 0
   })
   
   // Current performance settings
@@ -204,17 +204,23 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
   const refreshMetrics = async () => {
     setRefreshing(true)
     try {
-      // TODO: Implement actual metrics fetching
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/metrics')
+      if (!response.ok) {
+        throw new Error('Failed to fetch metrics')
+      }
       
-      // Simulate random metric updates
-      setSystemMetrics(prev => ({
-        ...prev,
-        cpu_usage: Math.max(10, Math.min(90, prev.cpu_usage + (Math.random() - 0.5) * 10)),
-        memory_usage: Math.max(20, Math.min(85, prev.memory_usage + (Math.random() - 0.5) * 8)),
-        response_time: Math.max(100, Math.min(500, prev.response_time + (Math.random() - 0.5) * 50)),
-        active_users: Math.max(50, prev.active_users + Math.floor((Math.random() - 0.5) * 20))
-      }))
+      const data = await response.json()
+      
+      if (data.systemMetrics) {
+        setSystemMetrics(data.systemMetrics)
+      }
+      
+      if (data.performanceStats) {
+        setPerformanceStats(data.performanceStats)
+      }
+    } catch (err) {
+      console.error('Error fetching metrics:', err)
+      // Keep existing metrics on error
     } finally {
       setRefreshing(false)
     }
@@ -222,25 +228,78 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
 
   const clearCache = async () => {
     try {
-      // TODO: Implement cache clearing
-      await new Promise(resolve => setTimeout(resolve, 500))
+      const response = await fetch('/api/cache', {
+        method: 'DELETE',
+      })
+      
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to clear cache')
+      }
+      
       setSuccess('Cache cleared successfully!')
       setTimeout(() => setSuccess(null), 3000)
+      
+      // Refresh metrics to show updated cache stats
+      await refreshMetrics()
     } catch (err) {
-      setError('Failed to clear cache')
+      setError(err instanceof Error ? err.message : 'Failed to clear cache')
+      setTimeout(() => setError(null), 3000)
     }
   }
 
   const optimizeDatabase = async () => {
     try {
-      // TODO: Implement database optimization
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      setSuccess('Database optimization completed!')
+      const response = await fetch('/api/database', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation: 'optimize' })
+      })
+      
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to optimize database')
+      }
+      
+      const result = await response.json()
+      setSuccess(`Database optimization completed! ${result.stats?.tables_optimized || 0} tables optimized.`)
       setTimeout(() => setSuccess(null), 3000)
+      
+      // Refresh metrics to show updated database stats
+      await refreshMetrics()
     } catch (err) {
-      setError('Database optimization failed')
+      setError(err instanceof Error ? err.message : 'Database optimization failed')
+      setTimeout(() => setError(null), 3000)
     }
   }
+
+  const archiveOldData = async () => {
+    try {
+      const response = await fetch('/api/database', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation: 'archive', olderThanDays: 365 })
+      })
+      
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to archive data')
+      }
+      
+      const result = await response.json()
+      const totalArchived = (result.archived?.audit_logs || 0) + (result.archived?.notifications || 0)
+      setSuccess(`Data archival completed! ${totalArchived} records archived.`)
+      setTimeout(() => setSuccess(null), 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Data archival failed')
+      setTimeout(() => setError(null), 3000)
+    }
+  }
+
+  // Fetch initial metrics on component mount
+  useEffect(() => {
+    refreshMetrics()
+  }, [])
 
   // Auto-refresh metrics when monitoring is enabled
   useEffect(() => {
@@ -308,7 +367,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">System Uptime</p>
-                <p className="text-2xl font-bold text-green-600">{systemMetrics.uptime}%</p>
+                <p className="text-2xl font-bold text-green-600">{systemMetrics.uptime.toFixed(3)}%</p>
               </div>
               <Activity className="h-8 w-8 text-green-600" />
             </div>
@@ -333,7 +392,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
               <div>
                 <p className="text-sm text-gray-600">Response Time</p>
                 <p className={`text-2xl font-bold ${getStatusColor(systemMetrics.response_time, { good: 200, warning: 400 })}`}>
-                  {systemMetrics.response_time}ms
+                  {systemMetrics.response_time.toFixed(3)}ms
                 </p>
               </div>
               <Timer className="h-8 w-8 text-indigo-600" />
@@ -347,7 +406,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
               <div>
                 <p className="text-sm text-gray-600">Error Rate</p>
                 <p className={`text-2xl font-bold ${getStatusColor(systemMetrics.error_rate, { good: 1, warning: 3 })}`}>
-                  {systemMetrics.error_rate}%
+                  {systemMetrics.error_rate.toFixed(3)}%
                 </p>
               </div>
               {getStatusIcon(systemMetrics.error_rate, { good: 1, warning: 3 })}
@@ -409,7 +468,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                         CPU Usage
                       </Label>
                       <span className={`font-semibold ${getStatusColor(systemMetrics.cpu_usage, { good: 50, warning: 80 })}`}>
-                        {systemMetrics.cpu_usage}%
+                        {systemMetrics.cpu_usage.toFixed(3)}%
                       </span>
                     </div>
                     <Progress value={systemMetrics.cpu_usage} className="h-2" />
@@ -422,7 +481,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                         Memory Usage
                       </Label>
                       <span className={`font-semibold ${getStatusColor(systemMetrics.memory_usage, { good: 60, warning: 80 })}`}>
-                        {systemMetrics.memory_usage}%
+                        {systemMetrics.memory_usage.toFixed(3)}%
                       </span>
                     </div>
                     <Progress value={systemMetrics.memory_usage} className="h-2" />
@@ -435,7 +494,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                         Disk Usage
                       </Label>
                       <span className={`font-semibold ${getStatusColor(systemMetrics.disk_usage, { good: 50, warning: 80 })}`}>
-                        {systemMetrics.disk_usage}%
+                        {systemMetrics.disk_usage.toFixed(3)}%
                       </span>
                     </div>
                     <Progress value={systemMetrics.disk_usage} className="h-2" />
@@ -451,11 +510,11 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                     <div className="grid grid-cols-2 gap-2">
                       <div className="p-2 bg-green-50 rounded border">
                         <p className="text-xs text-gray-600">Inbound</p>
-                        <p className="font-semibold text-green-700">{systemMetrics.network_io.in} MB/s</p>
+                        <p className="font-semibold text-green-700">{systemMetrics.network_io.in.toFixed(3)} MB/s</p>
                       </div>
                       <div className="p-2 bg-blue-50 rounded border">
                         <p className="text-xs text-gray-600">Outbound</p>
-                        <p className="font-semibold text-blue-700">{systemMetrics.network_io.out} MB/s</p>
+                        <p className="font-semibold text-blue-700">{systemMetrics.network_io.out.toFixed(3)} MB/s</p>
                       </div>
                     </div>
                   </div>
@@ -487,7 +546,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 bg-blue-50 rounded-lg border">
                   <p className="text-sm text-gray-600">Page Load Time</p>
-                  <p className="text-xl font-bold text-blue-700">{performanceStats.page_load_time}s</p>
+                  <p className="text-xl font-bold text-blue-700">{performanceStats.page_load_time.toFixed(3)}s</p>
                   <Badge variant={performanceStats.page_load_time < 2 ? "default" : "destructive"} className="mt-1">
                     {performanceStats.page_load_time < 2 ? 'Good' : 'Needs Attention'}
                   </Badge>
@@ -495,7 +554,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                 
                 <div className="p-4 bg-green-50 rounded-lg border">
                   <p className="text-sm text-gray-600">Cache Hit Rate</p>
-                  <p className="text-xl font-bold text-green-700">{performanceStats.cache_hit_rate}%</p>
+                  <p className="text-xl font-bold text-green-700">{performanceStats.cache_hit_rate.toFixed(3)}%</p>
                   <Badge variant={performanceStats.cache_hit_rate > 80 ? "default" : "secondary"} className="mt-1">
                     {performanceStats.cache_hit_rate > 80 ? 'Excellent' : 'Fair'}
                   </Badge>
@@ -503,7 +562,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                 
                 <div className="p-4 bg-purple-50 rounded-lg border">
                   <p className="text-sm text-gray-600">API Response</p>
-                  <p className="text-xl font-bold text-purple-700">{performanceStats.api_response_time}ms</p>
+                  <p className="text-xl font-bold text-purple-700">{performanceStats.api_response_time.toFixed(3)}ms</p>
                   <Badge variant={performanceStats.api_response_time < 200 ? "default" : "secondary"} className="mt-1">
                     {performanceStats.api_response_time < 200 ? 'Fast' : 'Average'}
                   </Badge>
@@ -511,7 +570,7 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                 
                 <div className="p-4 bg-orange-50 rounded-lg border">
                   <p className="text-sm text-gray-600">DB Query Time</p>
-                  <p className="text-xl font-bold text-orange-700">{performanceStats.database_query_time}ms</p>
+                  <p className="text-xl font-bold text-orange-700">{performanceStats.database_query_time.toFixed(3)}ms</p>
                   <Badge variant={performanceStats.database_query_time < 50 ? "default" : "secondary"} className="mt-1">
                     {performanceStats.database_query_time < 50 ? 'Optimal' : 'Good'}
                   </Badge>
@@ -769,7 +828,11 @@ export function PerformanceSettings({ municipality }: PerformanceSettingsProps) 
                   <Settings className="h-4 w-4" />
                   Optimize Database
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={archiveOldData}
+                  className="flex items-center gap-2"
+                >
                   <Archive className="h-4 w-4" />
                   Archive Old Data
                 </Button>

@@ -384,16 +384,31 @@ export class BackupService {
         throw new Error('Backup not found')
       }
 
-      // Download from storage
-      const { data, error } = await this.supabase.storage
-        .from(this.bucketName)
-        .download(backup.file_path)
+      // Download from storage via server API (bypasses client-side RLS)
+      const downloadRes = await fetch('/api/backups/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bucket: this.bucketName,
+          path: backup.file_path
+        }),
+      })
 
-      if (error) {
-        throw new Error(`Failed to download backup: ${error.message}`)
+      if (!downloadRes.ok) {
+        const { error: serverError } = await downloadRes.json().catch(() => ({ error: 'Download failed' }))
+        throw new Error(`Failed to download backup: ${serverError}`)
       }
 
-      return data
+      const { data: base64Data, contentType } = await downloadRes.json()
+      
+      // Convert base64 back to Blob
+      const binaryString = atob(base64Data)
+      const bytes = new Uint8Array(binaryString.length)
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i)
+      }
+      
+      return new Blob([bytes], { type: contentType || 'application/json' })
     } catch (error) {
       console.error('Download failed:', error)
       return null
@@ -456,16 +471,31 @@ export class BackupService {
         return false
       }
 
-      // Download and verify checksum
-      const { data, error } = await this.supabase.storage
-        .from(this.bucketName)
-        .download(backup.file_path)
+      // Download via server API and verify checksum
+      const downloadRes = await fetch('/api/backups/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bucket: this.bucketName,
+          path: backup.file_path
+        }),
+      })
 
-      if (error || !data) {
+      if (!downloadRes.ok) {
         return false
       }
 
-      const content = await data.text()
+      const { data: base64Data } = await downloadRes.json()
+      
+      // Convert base64 back to text
+      const binaryString = atob(base64Data)
+      const bytes = new Uint8Array(binaryString.length)
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i)
+      }
+      const blob = new Blob([bytes])
+      const content = await blob.text()
+      
       const calculatedChecksum = await this.calculateChecksum(content)
 
       return calculatedChecksum === backup.checksum

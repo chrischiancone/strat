@@ -16,15 +16,18 @@ export function createServerSupabaseClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value, ...options })
-          } catch {
-            // Handle cookie set error in Server Components
+          } catch (error) {
+            // Log cookie errors for debugging
+            // This can happen in Server Components or when headers are already sent
+            console.warn('Failed to set cookie in server component:', name, error)
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options })
-          } catch {
-            // Handle cookie remove error in Server Components
+          } catch (error) {
+            // Log cookie errors for debugging
+            console.warn('Failed to remove cookie in server component:', name, error)
           }
         },
       },

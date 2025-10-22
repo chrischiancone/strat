@@ -1,0 +1,339 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]:
+          - generic [ref=e8]: SP
+          - generic [ref=e9]:
+            - heading "Strategic Planning" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Municipal Management System
+        - button "SA System Administrator admin@carrollton.gov" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: SA
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: System Administrator
+            - paragraph [ref=e18]: admin@carrollton.gov
+          - img [ref=e19]
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Main" [level=3] [ref=e25]
+            - generic [ref=e26]:
+              - link "Dashboard" [ref=e27] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: Dashboard
+              - link "Strategic Plans" [ref=e34] [cursor=pointer]:
+                - /url: /plans
+                - img [ref=e35]
+                - generic [ref=e39]: Strategic Plans
+              - link "Add Initiative" [ref=e40] [cursor=pointer]:
+                - /url: /initiatives/new
+                - img [ref=e41]
+                - generic [ref=e44]: Add Initiative
+              - link "Settings" [ref=e45] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e46]
+                - generic [ref=e49]: Settings
+          - generic [ref=e50]:
+            - heading "Finance" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - link "Initiative Budgets" [ref=e53] [cursor=pointer]:
+                - /url: /finance
+                - img [ref=e54]
+                - generic [ref=e57]: Initiative Budgets
+              - link "Funding Sources" [ref=e58] [cursor=pointer]:
+                - /url: /finance/funding-sources
+                - img [ref=e59]
+                - generic [ref=e62]: Funding Sources
+              - link "Budget Categories" [ref=e63] [cursor=pointer]:
+                - /url: /finance/categories
+                - img [ref=e64]
+                - generic [ref=e69]: Budget Categories
+              - link "Grant Tracking" [active] [ref=e70] [cursor=pointer]:
+                - /url: /finance/grants
+                - img [ref=e71]
+                - generic [ref=e76]: Grant Tracking
+          - generic [ref=e77]:
+            - heading "Administration" [level=3] [ref=e78]
+            - generic [ref=e79]:
+              - link "Users" [ref=e80] [cursor=pointer]:
+                - /url: /admin/users
+                - img [ref=e81]
+                - generic [ref=e86]: Users
+              - link "Departments" [ref=e87] [cursor=pointer]:
+                - /url: /admin/departments
+                - img [ref=e88]
+                - generic [ref=e96]: Departments
+              - link "Council Goals" [ref=e97] [cursor=pointer]:
+                - /url: /admin/council-goals
+                - img [ref=e98]
+                - generic [ref=e101]: Council Goals
+              - link "Fiscal Years" [ref=e102] [cursor=pointer]:
+                - /url: /admin/fiscal-years
+                - img [ref=e103]
+                - generic [ref=e108]: Fiscal Years
+              - link "System Settings" [ref=e109] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e110]
+                - generic [ref=e113]: System Settings
+              - link "Audit Logs" [ref=e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+                - img [ref=e115]
+                - generic [ref=e121]: Audit Logs
+      - main [ref=e122]:
+        - generic [ref=e125]:
+          - generic [ref=e126]:
+            - navigation "Breadcrumb" [ref=e127]:
+              - list [ref=e128]:
+                - listitem [ref=e129]:
+                  - link "Home" [ref=e130] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e131]
+                - listitem [ref=e134]:
+                  - img [ref=e135]
+                  - generic [ref=e137]: Dashboard
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - heading "Good evening, System Administrator" [level=1] [ref=e140]
+                - paragraph [ref=e141]: Administrator • Information Technology • FY 2027
+              - generic [ref=e144]:
+                - link "View all strategic plans" [ref=e145] [cursor=pointer]:
+                  - /url: /plans
+                  - button "View Plans" [ref=e146]:
+                    - img
+                    - text: View Plans
+                - link "Create a new strategic plan" [ref=e147] [cursor=pointer]:
+                  - /url: /plans
+                  - button "New Plan" [ref=e148]:
+                    - img
+                    - text: New Plan
+          - generic [ref=e150]:
+            - generic [ref=e152]:
+              - generic [ref=e153]:
+                - generic [ref=e154]:
+                  - img [ref=e155]
+                  - heading "AI Insights Dashboard" [level=2] [ref=e158]
+                  - img [ref=e159]
+                - generic [ref=e165]:
+                  - button "Run Analysis" [disabled]:
+                    - img
+                    - generic: Run Analysis
+              - generic [ref=e166]:
+                - tablist [ref=e167]:
+                  - tab "Overview" [selected] [ref=e168] [cursor=pointer]
+                  - tab "Insights" [ref=e169] [cursor=pointer]
+                  - tab "Trends" [ref=e170] [cursor=pointer]
+                  - tab "Recommendations" [ref=e171] [cursor=pointer]
+                - tabpanel "Overview" [ref=e172]:
+                  - generic [ref=e174]:
+                    - img [ref=e175]
+                    - heading "No Analysis Available" [level=3] [ref=e178]
+                    - paragraph [ref=e179]: Run an AI analysis to get intelligent insights about your strategic plan.
+                    - button "Start Analysis" [disabled]:
+                      - img
+                      - generic: Start Analysis
+            - generic [ref=e180]:
+              - generic [ref=e181]:
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - paragraph [ref=e185]: Total Users
+                    - generic [ref=e186]:
+                      - paragraph [ref=e187]: "0"
+                      - generic [ref=e188]:
+                        - img [ref=e189]
+                        - generic [ref=e192]: 12%
+                    - paragraph [ref=e193]: 0 active, 0 inactive
+                  - img [ref=e195]
+                - generic [ref=e201]:
+                  - generic [ref=e202]:
+                    - paragraph [ref=e203]: Departments
+                    - generic [ref=e204]:
+                      - paragraph [ref=e205]: "1"
+                      - generic [ref=e206]:
+                        - img [ref=e207]
+                        - generic [ref=e209]: 0%
+                  - img [ref=e211]
+                - generic [ref=e220]:
+                  - generic [ref=e221]:
+                    - paragraph [ref=e222]: Current Fiscal Year
+                    - paragraph [ref=e224]: "2027"
+                  - img [ref=e226]
+                - generic [ref=e232]:
+                  - generic [ref=e233]:
+                    - paragraph [ref=e234]: Strategic Plans
+                    - generic [ref=e235]:
+                      - paragraph [ref=e236]: "0"
+                      - generic [ref=e237]:
+                        - img [ref=e238]
+                        - generic [ref=e241]: 8%
+                    - paragraph [ref=e242]: 0 approved, 0 draft
+                  - img [ref=e244]
+                - generic [ref=e251]:
+                  - generic [ref=e252]:
+                    - paragraph [ref=e253]: Recent Activity
+                    - generic [ref=e254]:
+                      - paragraph [ref=e255]: "24"
+                      - generic [ref=e256]:
+                        - img [ref=e257]
+                        - generic [ref=e260]: 15%
+                    - paragraph [ref=e261]: Last 24 hours
+                  - img [ref=e263]
+              - generic [ref=e265]:
+                - generic [ref=e266]:
+                  - generic [ref=e267]:
+                    - heading "Plans Overview" [level=3] [ref=e268]
+                    - paragraph [ref=e269]: Distribution of plan statuses
+                  - generic [ref=e270]:
+                    - generic [ref=e271]:
+                      - generic [ref=e272]: Approved
+                      - generic [ref=e273]: "0"
+                    - generic [ref=e275]:
+                      - generic [ref=e276]: Submitted
+                      - generic [ref=e277]: "0"
+                    - generic [ref=e279]:
+                      - generic [ref=e280]: Draft
+                      - generic [ref=e281]: "0"
+                - generic [ref=e283]:
+                  - generic [ref=e284]:
+                    - heading "Activity Trends" [level=3] [ref=e285]
+                    - paragraph [ref=e286]: Recent system activity
+                  - generic [ref=e287]:
+                    - generic [ref=e288]:
+                      - generic [ref=e289]:
+                        - img [ref=e291]
+                        - generic [ref=e294]:
+                          - paragraph [ref=e295]: Plans Created
+                          - paragraph [ref=e296]: +8% this month
+                      - generic [ref=e297]: ↗️
+                    - generic [ref=e298]:
+                      - generic [ref=e299]:
+                        - img [ref=e301]
+                        - generic [ref=e306]:
+                          - paragraph [ref=e307]: User Activity
+                          - paragraph [ref=e308]: +12% this week
+                      - generic [ref=e309]: 📈
+                    - generic [ref=e310]:
+                      - generic [ref=e311]:
+                        - img [ref=e313]
+                        - generic [ref=e315]:
+                          - paragraph [ref=e316]: System Activity
+                          - paragraph [ref=e317]: 24 events today
+                      - generic [ref=e318]: ⚡
+                - generic [ref=e319]:
+                  - generic [ref=e320]:
+                    - heading "Quick Stats" [level=3] [ref=e321]
+                    - paragraph [ref=e322]: Key performance indicators
+                  - generic [ref=e323]:
+                    - generic [ref=e324]:
+                      - generic [ref=e325]: "0"
+                      - generic [ref=e326]: Total Plans
+                    - generic [ref=e327]:
+                      - generic [ref=e328]: "0"
+                      - generic [ref=e329]: Active Users
+                    - generic [ref=e330]:
+                      - generic [ref=e331]: "2027"
+                      - generic [ref=e332]: Current Year
+            - generic [ref=e333]:
+              - generic [ref=e335]:
+                - generic [ref=e336]:
+                  - paragraph [ref=e337]: Strategic Plans
+                  - generic [ref=e338]:
+                    - paragraph [ref=e339]: "0"
+                    - generic [ref=e340]:
+                      - img [ref=e341]
+                      - generic [ref=e344]: +8%
+                  - paragraph [ref=e345]: 0 active • this month
+                - img [ref=e348]
+              - generic [ref=e355]:
+                - generic [ref=e356]:
+                  - paragraph [ref=e357]: Initiatives
+                  - generic [ref=e358]:
+                    - paragraph [ref=e359]: "0"
+                    - generic [ref=e360]:
+                      - img [ref=e361]
+                      - generic [ref=e364]: +12%
+                  - paragraph [ref=e365]: 0 in progress • this month
+                - img [ref=e368]
+              - generic [ref=e373]:
+                - generic [ref=e374]:
+                  - paragraph [ref=e375]: Total Budget
+                  - generic [ref=e376]:
+                    - paragraph [ref=e377]: $0
+                    - generic [ref=e378]:
+                      - img [ref=e379]
+                      - generic [ref=e382]: +5%
+                  - paragraph [ref=e383]: 3-year projection • vs last year
+                - img [ref=e386]
+              - generic [ref=e390]:
+                - generic [ref=e391]:
+                  - paragraph [ref=e392]: Completion Rate
+                  - generic [ref=e393]:
+                    - paragraph [ref=e394]: 0%
+                    - generic [ref=e395]:
+                      - img [ref=e396]
+                      - generic [ref=e399]: +3%
+                  - paragraph [ref=e400]: Overall progress • this quarter
+                - img [ref=e403]
+            - generic [ref=e406]:
+              - heading "Recent Plans" [level=3] [ref=e409]
+              - heading "Recent Initiatives" [level=3] [ref=e412]
+            - generic [ref=e413]:
+              - heading "Quick Actions" [level=2] [ref=e414]
+              - generic [ref=e415]:
+                - link "Strategic Plans View and manage strategic plans" [ref=e416] [cursor=pointer]:
+                  - /url: /plans
+                  - generic [ref=e417]:
+                    - img [ref=e418]
+                    - heading "Strategic Plans" [level=3] [ref=e424]
+                    - paragraph [ref=e425]: View and manage strategic plans
+                - link "Budget Dashboard Review initiative budgets and financial data" [ref=e426] [cursor=pointer]:
+                  - /url: /finance
+                  - generic [ref=e427]:
+                    - img [ref=e428]
+                    - heading "Budget Dashboard" [level=3] [ref=e431]
+                    - paragraph [ref=e432]: Review initiative budgets and financial data
+                - link "Department Activity Monitor departmental progress and activities" [ref=e433] [cursor=pointer]:
+                  - /url: /plans
+                  - generic [ref=e434]:
+                    - img [ref=e435]
+                    - heading "Department Activity" [level=3] [ref=e437]
+                    - paragraph [ref=e438]: Monitor departmental progress and activities
+                - link "Reports & Analytics Generate reports and view analytics" [ref=e439] [cursor=pointer]:
+                  - /url: /plans
+                  - generic [ref=e440]:
+                    - img [ref=e441]
+                    - heading "Reports & Analytics" [level=3] [ref=e444]
+                    - paragraph [ref=e445]: Generate reports and view analytics
+                - link "User Management Manage users and roles" [ref=e446] [cursor=pointer]:
+                  - /url: /admin/users
+                  - generic [ref=e447]:
+                    - img [ref=e448]
+                    - heading "User Management" [level=3] [ref=e453]
+                    - paragraph [ref=e454]: Manage users and roles
+                - link "Departments Manage departments and structures" [ref=e455] [cursor=pointer]:
+                  - /url: /admin/departments
+                  - generic [ref=e456]:
+                    - img [ref=e457]
+                    - heading "Departments" [level=3] [ref=e465]
+                    - paragraph [ref=e466]: Manage departments and structures
+                - link "System Settings Configure system preferences" [ref=e467] [cursor=pointer]:
+                  - /url: /admin/settings
+                  - generic [ref=e468]:
+                    - img [ref=e469]
+                    - heading "System Settings" [level=3] [ref=e474]
+                    - paragraph [ref=e475]: Configure system preferences
+                - link "Audit Logs View system activity and changes" [ref=e476] [cursor=pointer]:
+                  - /url: /admin/audit-logs
+                  - generic [ref=e477]:
+                    - img [ref=e478]
+                    - heading "Audit Logs" [level=3] [ref=e480]
+                    - paragraph [ref=e481]: View system activity and changes
+    - region "Notifications (F8)":
+      - list
+  - region "Notifications alt+T"
+  - alert [ref=e482]
+```

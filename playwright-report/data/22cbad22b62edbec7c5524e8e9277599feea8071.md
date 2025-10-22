@@ -1,0 +1,271 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]:
+          - generic [ref=e8]: SP
+          - generic [ref=e9]:
+            - heading "Strategic Planning" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Municipal Management System
+        - button "SA System Administrator admin@carrollton.gov" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: SA
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: System Administrator
+            - paragraph [ref=e18]: admin@carrollton.gov
+          - img [ref=e19]
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Main" [level=3] [ref=e25]
+            - generic [ref=e26]:
+              - link "Dashboard" [ref=e27] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: Dashboard
+              - link "Strategic Plans" [ref=e34] [cursor=pointer]:
+                - /url: /plans
+                - img [ref=e35]
+                - generic [ref=e39]: Strategic Plans
+              - link "Add Initiative" [ref=e40] [cursor=pointer]:
+                - /url: /initiatives/new
+                - img [ref=e41]
+                - generic [ref=e44]: Add Initiative
+              - link "Settings" [ref=e45] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e46]
+                - generic [ref=e49]: Settings
+          - generic [ref=e50]:
+            - heading "Finance" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - link "Initiative Budgets" [ref=e53] [cursor=pointer]:
+                - /url: /finance
+                - img [ref=e54]
+                - generic [ref=e57]: Initiative Budgets
+              - link "Funding Sources" [ref=e58] [cursor=pointer]:
+                - /url: /finance/funding-sources
+                - img [ref=e59]
+                - generic [ref=e62]: Funding Sources
+              - link "Budget Categories" [ref=e63] [cursor=pointer]:
+                - /url: /finance/categories
+                - img [ref=e64]
+                - generic [ref=e69]: Budget Categories
+              - link "Grant Tracking" [ref=e70] [cursor=pointer]:
+                - /url: /finance/grants
+                - img [ref=e71]
+                - generic [ref=e76]: Grant Tracking
+          - generic [ref=e77]:
+            - heading "Administration" [level=3] [ref=e78]
+            - generic [ref=e79]:
+              - link "Users" [ref=e80] [cursor=pointer]:
+                - /url: /admin/users
+                - img [ref=e81]
+                - generic [ref=e86]: Users
+              - link "Departments" [ref=e87] [cursor=pointer]:
+                - /url: /admin/departments
+                - img [ref=e88]
+                - generic [ref=e96]: Departments
+              - link "Council Goals" [ref=e97] [cursor=pointer]:
+                - /url: /admin/council-goals
+                - img [ref=e98]
+                - generic [ref=e101]: Council Goals
+              - link "Fiscal Years" [ref=e102] [cursor=pointer]:
+                - /url: /admin/fiscal-years
+                - img [ref=e103]
+                - generic [ref=e108]: Fiscal Years
+              - link "System Settings" [ref=e109] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e110]
+                - generic [ref=e113]: System Settings
+              - link "Audit Logs" [ref=e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+                - img [ref=e115]
+                - generic [ref=e121]: Audit Logs
+      - main [ref=e122]:
+        - navigation [ref=e124]:
+          - link "Home" [ref=e125] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e126]
+            - generic [ref=e129]: Home
+          - img [ref=e130]
+          - link "Administration" [ref=e132] [cursor=pointer]:
+            - /url: /admin
+            - generic [ref=e133]: Administration
+          - img [ref=e134]
+          - generic [ref=e136]: Settings
+        - generic [ref=e138]:
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - img [ref=e144]
+                - generic [ref=e147]:
+                  - heading "System Settings" [level=1] [ref=e148]
+                  - paragraph [ref=e149]: City of Carrollton • Administrative Configuration
+              - paragraph [ref=e150]: Comprehensive system administration and configuration for your strategic planning platform. Manage security, integrations, appearance, and operational settings.
+            - generic [ref=e151]:
+              - img [ref=e152]
+              - text: Admin Only
+          - generic [ref=e156]:
+            - tablist [ref=e159]:
+              - tab "General Municipality information and basic settings" [selected] [ref=e160] [cursor=pointer]:
+                - generic [ref=e161]:
+                  - img [ref=e162]
+                  - generic [ref=e170]:
+                    - generic [ref=e171]: General
+                    - generic [ref=e172]: Municipality information and basic settings
+              - tab "Security Authentication, permissions, and security policies" [ref=e173] [cursor=pointer]:
+                - generic [ref=e174]:
+                  - img [ref=e175]
+                  - generic [ref=e177]:
+                    - generic [ref=e178]: Security
+                    - generic [ref=e179]: Authentication, permissions, and security policies
+              - tab "Notifications Email notifications, alerts, and communication settings" [ref=e180] [cursor=pointer]:
+                - generic [ref=e181]:
+                  - img [ref=e182]
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: Notifications
+                    - generic [ref=e187]: Email notifications, alerts, and communication settings
+              - tab "Appearance Branding, themes, and user interface customization" [ref=e188] [cursor=pointer]:
+                - generic [ref=e189]:
+                  - img [ref=e190]
+                  - generic [ref=e196]:
+                    - generic [ref=e197]: Appearance
+                    - generic [ref=e198]: Branding, themes, and user interface customization
+              - tab "Integrations Third-party services, APIs, and external connections" [ref=e199] [cursor=pointer]:
+                - generic [ref=e200]:
+                  - img [ref=e201]
+                  - generic [ref=e203]:
+                    - generic [ref=e204]: Integrations
+                    - generic [ref=e205]: Third-party services, APIs, and external connections
+              - tab "Performance Caching, optimization, and system performance" [ref=e206] [cursor=pointer]:
+                - generic [ref=e207]:
+                  - img [ref=e208]
+                  - generic [ref=e213]:
+                    - generic [ref=e214]: Performance
+                    - generic [ref=e215]: Caching, optimization, and system performance
+              - tab "Backup Backup schedules, retention, and data recovery" [ref=e216] [cursor=pointer]:
+                - generic [ref=e217]:
+                  - img [ref=e218]
+                  - generic [ref=e223]:
+                    - generic [ref=e224]: Backup
+                    - generic [ref=e225]: Backup schedules, retention, and data recovery
+              - tab "Maintenance Maintenance mode, health checks, and system operations" [ref=e226] [cursor=pointer]:
+                - generic [ref=e227]:
+                  - img [ref=e228]
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: Maintenance
+                    - generic [ref=e233]: Maintenance mode, health checks, and system operations
+            - tabpanel "General" [ref=e236]:
+              - generic [ref=e237]:
+                - generic [ref=e238]:
+                  - heading "General Settings" [level=2] [ref=e239]:
+                    - img [ref=e240]
+                    - text: General Settings
+                  - paragraph [ref=e248]: Configure basic municipality information, contact details, and system preferences.
+                - generic [ref=e249]:
+                  - generic [ref=e250]:
+                    - generic [ref=e251]:
+                      - generic [ref=e252]:
+                        - img [ref=e253]
+                        - text: Basic Information
+                      - generic [ref=e261]: Essential municipality details and public information.
+                    - generic [ref=e262]:
+                      - generic [ref=e263]:
+                        - generic [ref=e264]:
+                          - generic [ref=e265]: Municipality Name *
+                          - textbox "Municipality Name *" [ref=e266]:
+                            - /placeholder: City of Example
+                            - text: City of Carrollton
+                        - generic [ref=e267]:
+                          - text: State/Province
+                          - textbox "State/Province" [ref=e268]:
+                            - /placeholder: Texas
+                            - text: TX
+                      - generic [ref=e269]:
+                        - generic [ref=e270]:
+                          - text: Contact Person
+                          - textbox "Contact Person" [ref=e272]:
+                            - /placeholder: John Doe
+                            - text: Chris Chiancone
+                        - generic [ref=e273]:
+                          - text: Contact Email
+                          - generic [ref=e274]:
+                            - img [ref=e275]
+                            - textbox "Contact Email" [ref=e278]:
+                              - /placeholder: admin@example.gov
+                              - text: chrischiancone@gmail.com
+                      - generic [ref=e279]:
+                        - generic [ref=e280]:
+                          - text: Contact Phone
+                          - generic [ref=e281]:
+                            - img [ref=e282]
+                            - textbox "Contact Phone" [ref=e284]:
+                              - /placeholder: (555) 123-4567
+                              - text: "9728327095"
+                        - generic [ref=e285]:
+                          - text: Website URL
+                          - generic [ref=e286]:
+                            - img [ref=e287]
+                            - textbox "Website URL" [ref=e291]:
+                              - /placeholder: https://example.gov
+                              - text: https://www.cityofcarrollton.com/
+                  - generic [ref=e292]:
+                    - generic [ref=e293]:
+                      - generic [ref=e294]:
+                        - img [ref=e295]
+                        - text: System Configuration
+                      - generic [ref=e298]: Configure timezone, fiscal year settings, and regional preferences.
+                    - generic [ref=e300]:
+                      - generic [ref=e301]:
+                        - text: Timezone
+                        - combobox [ref=e302] [cursor=pointer]:
+                          - generic: Central Time (CT)
+                          - img [ref=e303]
+                        - combobox [ref=e305]
+                      - generic [ref=e306]:
+                        - text: Currency
+                        - combobox [ref=e307] [cursor=pointer]:
+                          - generic: US Dollar ($)
+                          - img [ref=e308]
+                        - combobox [ref=e310]
+                      - generic [ref=e311]:
+                        - text: Fiscal Year Start
+                        - combobox [ref=e312] [cursor=pointer]:
+                          - generic: October
+                          - img [ref=e313]
+                        - combobox [ref=e315]
+                  - generic [ref=e316]:
+                    - generic [ref=e317]:
+                      - generic [ref=e318]: Platform Features
+                      - generic [ref=e320]: Enable or disable specific features for your organization.
+                    - generic [ref=e322]:
+                      - generic [ref=e323]:
+                        - generic [ref=e324]:
+                          - text: AI Assistance
+                          - paragraph [ref=e325]: Enable AI-powered insights and analysis features
+                        - switch [checked] [ref=e326] [cursor=pointer]
+                        - checkbox [checked]
+                      - generic [ref=e327]:
+                        - generic [ref=e328]:
+                          - text: Public Dashboard
+                          - paragraph [ref=e329]: Allow public access to read-only dashboard views
+                        - switch [checked] [ref=e330] [cursor=pointer]
+                        - checkbox [checked]
+                      - generic [ref=e331]:
+                        - generic [ref=e332]:
+                          - text: Multi-Department Collaboration
+                          - paragraph [ref=e333]: Enable cross-department initiative collaboration
+                        - switch [checked] [ref=e334] [cursor=pointer]
+                        - checkbox [checked]
+                  - generic [ref=e335]:
+                    - button "Save Changes" [disabled]:
+                      - img
+                      - text: Save Changes
+    - region "Notifications (F8)":
+      - list
+  - region "Notifications alt+T"
+  - alert [ref=e336]
+```

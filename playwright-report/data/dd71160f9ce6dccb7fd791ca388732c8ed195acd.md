@@ -1,0 +1,210 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]:
+          - generic [ref=e8]: SP
+          - generic [ref=e9]:
+            - heading "Strategic Planning" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Municipal Management System
+        - button "SA System Administrator admin@carrollton.gov" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: SA
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: System Administrator
+            - paragraph [ref=e18]: admin@carrollton.gov
+          - img [ref=e19]
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Main" [level=3] [ref=e25]
+            - generic [ref=e26]:
+              - link "Dashboard" [ref=e27]:
+                - /url: /dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: Dashboard
+              - link "Strategic Plans" [ref=e34]:
+                - /url: /plans
+                - img [ref=e35]
+                - generic [ref=e39]: Strategic Plans
+              - link "Add Initiative" [ref=e40]:
+                - /url: /initiatives/new
+                - img [ref=e41]
+                - generic [ref=e42]: Add Initiative
+              - link "Settings" [ref=e43]:
+                - /url: /settings
+                - img [ref=e44]
+                - generic [ref=e47]: Settings
+          - generic [ref=e48]:
+            - heading "Finance" [level=3] [ref=e49]
+            - generic [ref=e50]:
+              - link "Initiative Budgets" [ref=e51]:
+                - /url: /finance
+                - img [ref=e52]
+                - generic [ref=e54]: Initiative Budgets
+              - link "Funding Sources" [ref=e55]:
+                - /url: /finance/funding-sources
+                - img [ref=e56]
+                - generic [ref=e59]: Funding Sources
+              - link "Budget Categories" [ref=e60]:
+                - /url: /finance/categories
+                - img [ref=e61]
+                - generic [ref=e63]: Budget Categories
+              - link "Grant Tracking" [ref=e64]:
+                - /url: /finance/grants
+                - img [ref=e65]
+                - generic [ref=e69]: Grant Tracking
+          - generic [ref=e70]:
+            - heading "Administration" [level=3] [ref=e71]
+            - generic [ref=e72]:
+              - link "Users" [ref=e73]:
+                - /url: /admin/users
+                - img [ref=e74]
+                - generic [ref=e79]: Users
+              - link "Departments" [ref=e80]:
+                - /url: /admin/departments
+                - img [ref=e81]
+                - generic [ref=e85]: Departments
+              - link "Council Goals" [ref=e86]:
+                - /url: /admin/council-goals
+                - img [ref=e87]
+                - generic [ref=e89]: Council Goals
+              - link "Fiscal Years" [ref=e90]:
+                - /url: /admin/fiscal-years
+                - img [ref=e91]
+                - generic [ref=e93]: Fiscal Years
+              - link "System Settings" [ref=e94]:
+                - /url: /admin/settings
+                - img [ref=e95]
+                - generic [ref=e98]: System Settings
+              - link "Audit Logs" [ref=e99]:
+                - /url: /admin/audit-logs
+                - img [ref=e100]
+                - generic [ref=e103]: Audit Logs
+      - main [ref=e104]:
+        - navigation [ref=e106]:
+          - link "Home" [ref=e107]:
+            - /url: /dashboard
+            - img [ref=e108]
+            - generic [ref=e111]: Home
+          - img [ref=e112]
+          - link "Administration" [ref=e114]:
+            - /url: /admin
+            - generic [ref=e115]: Administration
+          - img [ref=e116]
+          - generic [ref=e118]: Users
+        - generic [ref=e120]:
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - heading "Users" [level=1] [ref=e123]
+              - paragraph [ref=e124]: Manage user accounts and permissions
+            - link "Create User" [ref=e126]:
+              - /url: /admin/users/new
+              - button "Create User" [ref=e127] [cursor=pointer]
+          - generic [ref=e130]:
+            - generic [ref=e132]:
+              - searchbox "Search by name or email..." [ref=e134]
+              - combobox [ref=e135]:
+                - option "All Roles" [selected]
+                - option "Admin"
+                - option "Department Director"
+                - option "Staff"
+                - option "City Manager"
+                - option "Finance"
+                - option "Council"
+                - option "Public"
+              - combobox [ref=e136]:
+                - option "All Departments" [selected]
+                - option "City Managers Office"
+                - option "Information Technology"
+                - option "Workforce Services"
+              - combobox [ref=e137]:
+                - option "All Status" [selected]
+                - option "Active"
+                - option "Inactive"
+              - button "Search" [ref=e138] [cursor=pointer]
+            - generic [ref=e140]:
+              - table [ref=e143]:
+                - rowgroup [ref=e144]:
+                  - row "Name ↑ Email ↕ Role ↕ Department Reports To Status ↕ Last Activity Actions" [ref=e145]:
+                    - cell "Name ↑" [ref=e146]:
+                      - button "Name ↑" [ref=e147] [cursor=pointer]
+                    - cell "Email ↕" [ref=e148]:
+                      - button "Email ↕" [ref=e149] [cursor=pointer]
+                    - cell "Role ↕" [ref=e150]:
+                      - button "Role ↕" [ref=e151] [cursor=pointer]
+                    - cell "Department" [ref=e152]
+                    - cell "Reports To" [ref=e153]
+                    - cell "Status ↕" [ref=e154]:
+                      - button "Status ↕" [ref=e155] [cursor=pointer]
+                    - cell "Last Activity" [ref=e156]
+                    - cell "Actions" [ref=e157]
+                - rowgroup [ref=e158]:
+                  - row "Chrystal Davis Assistant City Manager chrystal.davis@cityofcarrollton.com City Manager City Managers Office — Active 1 day ago Edit Deactivate" [ref=e159]:
+                    - cell "Chrystal Davis Assistant City Manager" [ref=e160]:
+                      - text: Chrystal Davis
+                      - generic [ref=e161]: Assistant City Manager
+                    - cell "chrystal.davis@cityofcarrollton.com" [ref=e162]
+                    - cell "City Manager" [ref=e163]:
+                      - generic [ref=e164]: City Manager
+                    - cell "City Managers Office" [ref=e165]
+                    - cell "—" [ref=e166]
+                    - cell "Active" [ref=e167]:
+                      - generic [ref=e168]: Active
+                    - cell "1 day ago" [ref=e169]
+                    - cell "Edit Deactivate" [ref=e170]:
+                      - generic [ref=e171]:
+                        - link "Edit" [ref=e172]:
+                          - /url: /admin/users/c7ac021a-a45a-4ce6-9682-1afb7164a872
+                          - button "Edit" [ref=e173] [cursor=pointer]
+                        - button "Deactivate" [ref=e174] [cursor=pointer]
+                  - row "Samantha Dean Director of Workforce Services samantha.dean@cityofcarrollton.com Department Director Workforce Services Chrystal Davis Active 1 day ago Edit Deactivate" [ref=e175]:
+                    - cell "Samantha Dean Director of Workforce Services" [ref=e176]:
+                      - text: Samantha Dean
+                      - generic [ref=e177]: Director of Workforce Services
+                    - cell "samantha.dean@cityofcarrollton.com" [ref=e178]
+                    - cell "Department Director" [ref=e179]:
+                      - generic [ref=e180]: Department Director
+                    - cell "Workforce Services" [ref=e181]
+                    - cell "Chrystal Davis" [ref=e182]
+                    - cell "Active" [ref=e183]:
+                      - generic [ref=e184]: Active
+                    - cell "1 day ago" [ref=e185]
+                    - cell "Edit Deactivate" [ref=e186]:
+                      - generic [ref=e187]:
+                        - link "Edit" [ref=e188]:
+                          - /url: /admin/users/56fc7071-1040-43a7-aeb5-79ad81012b00
+                          - button "Edit" [ref=e189] [cursor=pointer]
+                        - button "Deactivate" [ref=e190] [cursor=pointer]
+                  - row "System Administrator IT Director admin@carrollton.gov Admin Information Technology — Active 1 day ago Edit Deactivate" [ref=e191]:
+                    - cell "System Administrator IT Director" [ref=e192]:
+                      - text: System Administrator
+                      - generic [ref=e193]: IT Director
+                    - cell "admin@carrollton.gov" [ref=e194]
+                    - cell "Admin" [ref=e195]:
+                      - generic [ref=e196]: Admin
+                    - cell "Information Technology" [ref=e197]
+                    - cell "—" [ref=e198]
+                    - cell "Active" [ref=e199]:
+                      - generic [ref=e200]: Active
+                    - cell "1 day ago" [ref=e201]
+                    - cell "Edit Deactivate" [ref=e202]:
+                      - generic [ref=e203]:
+                        - link "Edit" [ref=e204]:
+                          - /url: /admin/users/00000000-0000-0000-0000-000000000001
+                          - button "Edit" [ref=e205] [cursor=pointer]
+                        - button "Deactivate" [ref=e206] [cursor=pointer]
+              - generic [ref=e207]:
+                - generic [ref=e208]: Showing 1 to 3 of 3 users
+                - generic [ref=e209]:
+                  - button "Previous" [disabled]
+                  - generic [ref=e210]: Page 1 of 1
+                  - button "Next" [disabled]
+    - region "Notifications (F8)":
+      - list
+  - region "Notifications alt+T"
+  - alert [ref=e211]
+```

@@ -73,7 +73,7 @@ SELECT
         'Provide opportunities for a healthy lifestyle'
     ] as key_points,
     1 as sort_order
-FROM municipalities m WHERE m.name = 'Carrollton';
+FROM municipalities m WHERE m.name = 'City of Carrollton';
 
 INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
 SELECT 
@@ -88,7 +88,7 @@ SELECT
         'Adapt business practices to respond to changing conditions'
     ] as key_points,
     2 as sort_order
-FROM municipalities m WHERE m.name = 'Carrollton';
+FROM municipalities m WHERE m.name = 'City of Carrollton';
 
 INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
 SELECT 
@@ -103,7 +103,7 @@ SELECT
         'Invest in the professional development of our employees'
     ] as key_points,
     3 as sort_order
-FROM municipalities m WHERE m.name = 'Carrollton';
+FROM municipalities m WHERE m.name = 'City of Carrollton';
 
 INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
 SELECT 
@@ -119,4 +119,4 @@ SELECT
         'Ensure City services are an optimal value'
     ] as key_points,
     4 as sort_order
-FROM municipalities m WHERE m.name = 'Carrollton';
+FROM municipalities m WHERE m.name = 'City of Carrollton';

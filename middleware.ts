@@ -4,10 +4,10 @@ import { SecurityAudit, securityHeaders } from '@/lib/security'
 import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import { securitySettingsSchema } from '@/lib/validations/security'
+import { getPerformanceSettings } from '@/lib/performance/settings'
 
 // Security constants
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
-const MAX_REQUESTS_PER_WINDOW = 100
 
 // In-memory rate limiting (in production, use Redis or database)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
@@ -21,7 +21,7 @@ function getClientIP(request: NextRequest): string {
   )
 }
 
-function isRateLimited(clientIP: string, path: string): boolean {
+function isRateLimited(clientIP: string, path: string, maxRequests: number): boolean {
   const key = `${clientIP}:${path}`
   const now = Date.now()
   const existing = rateLimitStore.get(key)
@@ -35,12 +35,12 @@ function isRateLimited(clientIP: string, path: string): boolean {
     return false
   }
 
-  if (existing.count >= MAX_REQUESTS_PER_WINDOW) {
+  if (existing.count >= maxRequests) {
     SecurityAudit.logSecurityEvent('RATE_LIMIT_EXCEEDED', {
       clientIP,
       path,
       count: existing.count,
-      maxRequests: MAX_REQUESTS_PER_WINDOW,
+      maxRequests,
     }, 'high')
     return true
   }
@@ -163,7 +163,7 @@ async function handleCollaborationAPIAuth(request: NextRequest): Promise<NextRes
   }
 }
 
-function addSecurityHeaders(response: NextResponse): NextResponse {
+function addSecurityHeaders(response: NextResponse, enableCompression: boolean = false): NextResponse {
   // Add CSP header
   response.headers.set('Content-Security-Policy', securityHeaders.csp)
 
@@ -176,12 +176,18 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
   response.headers.set('X-DNS-Prefetch-Control', 'off')
 
+  // Indicate compression support if enabled
+  if (enableCompression) {
+    // Note: Next.js automatically handles gzip/brotli compression
+    // This header informs clients that compression is preferred
+    response.headers.set('X-Compression-Enabled', 'true')
+  }
+
   return response
 }
 
 export async function middleware(request: NextRequest) {
   const startTime = Date.now()
-  const requestId = request.headers.get('x-request-id') || crypto.randomUUID()
   const clientIP = getClientIP(request)
   const path = request.nextUrl.pathname
   const userAgent = request.headers.get('user-agent') || 'unknown'
@@ -197,8 +203,9 @@ export async function middleware(request: NextRequest) {
       return addSecurityHeaders(response)
     }
 
-    // Load security settings (once per request)
+    // Load security and performance settings (once per request)
     const sec = await getSecuritySettingsEdge()
+    const perfSettings = await getPerformanceSettings()
 
     // IP whitelist enforcement (simple exact match list)
     if (sec.access.ipWhitelistEnabled) {
@@ -237,12 +244,14 @@ export async function middleware(request: NextRequest) {
     // Apply rate limiting to sensitive endpoints (respect settings)
     const sensitiveEndpoints = ['/api/auth', '/login', '/signup', '/api/collaboration']
     const isSensitiveEndpoint = sensitiveEndpoints.some(endpoint => path.startsWith(endpoint))
+    const maxRequests = perfSettings.optimization.max_concurrent_requests
     
-    if (isSensitiveEndpoint && isRateLimited(clientIP, path)) {
+    if (isSensitiveEndpoint && isRateLimited(clientIP, path, maxRequests)) {
       logger.warn('Rate limit exceeded', {
         clientIP,
         path,
         userAgent,
+        maxRequests,
       })
       
       return new NextResponse(
@@ -259,32 +268,16 @@ export async function middleware(request: NextRequest) {
 
     // Update session with Supabase middleware
     const response = await updateSession(request)
-    const secureResponse = addSecurityHeaders(response)
-    
-    // Add request ID for tracing
-    secureResponse.headers.set('X-Request-ID', requestId)
+    const secureResponse = addSecurityHeaders(response, perfSettings.optimization.enable_compression)
 
     // Log request metrics
     const duration = Date.now() - startTime
     if (duration > 1000) { // Log slow requests
       logger.warn('Slow request detected', {
-        requestId,
         path,
         duration,
         clientIP,
         userAgent,
-      })
-    }
-    
-    // Log all requests in production for monitoring
-    if (process.env.NODE_ENV === 'production') {
-      logger.info('Request processed', {
-        requestId,
-        method: request.method,
-        path,
-        duration,
-        statusCode: response.status,
-        clientIP,
       })
     }
 

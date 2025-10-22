@@ -1,5 +1,6 @@
 /**
  * Centralized logging system for the Strategic Planning application
+ * Log levels can be dynamically configured via performance settings
  */
 
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug'
@@ -25,12 +26,43 @@ export interface LogEntry {
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development'
   private minLevel: LogLevel = this.isDevelopment ? 'debug' : 'info'
+  private errorTrackingEnabled: boolean = true
 
   private levelPriority: Record<LogLevel, number> = {
     debug: 0,
     info: 1,
     warn: 2,
     error: 3,
+  }
+
+  /**
+   * Set the minimum log level dynamically
+   * Call this to update the logger based on performance settings
+   */
+  setLogLevel(level: LogLevel): void {
+    this.minLevel = level
+  }
+
+  /**
+   * Enable or disable error tracking
+   * When disabled, errors are still logged but may not be sent to external tracking services
+   */
+  setErrorTracking(enabled: boolean): void {
+    this.errorTrackingEnabled = enabled
+  }
+
+  /**
+   * Get the current log level
+   */
+  getLogLevel(): LogLevel {
+    return this.minLevel
+  }
+
+  /**
+   * Check if error tracking is enabled
+   */
+  isErrorTrackingEnabled(): boolean {
+    return this.errorTrackingEnabled
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -127,6 +159,13 @@ class Logger {
       error,
       timestamp: new Date(),
     })
+
+    // If error tracking is enabled, this is where you'd send to external service
+    // (e.g., Sentry, DataDog, etc.)
+    if (this.errorTrackingEnabled && error) {
+      // TODO: Integrate with error tracking service when configured
+      // Example: Sentry.captureException(error, { contexts: { custom: context } })
+    }
   }
 
   // Convenience method for database operations

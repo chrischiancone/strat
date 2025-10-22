@@ -63,19 +63,32 @@ export function LoginForm() {
           setError(result.error)
         }
         setLoading(false)
-      } else if (result?.success) {
+        return
+      }
+      
+      if (result?.success) {
         // Clear any existing errors on success
         setError(null)
         setValidationErrors({})
         
-        // Check if 2FA setup is required
+        // Handle redirect - prioritize 2FA setup if required
         if (result.requiresTwoFactorSetup && result.redirectTo) {
-          router.push(result.redirectTo)
+          // Use replace to prevent back button issues
+          router.replace(result.redirectTo)
         } else {
-          router.push('/dashboard')
+          // Standard redirect to dashboard
+          router.replace('/dashboard')
         }
+        
+        // Refresh router to update server components
         router.refresh()
+        return
       }
+      
+      // If we get here, something unexpected happened
+      console.warn('Login succeeded but no success flag or error', result)
+      setError('An unexpected error occurred. Please try again.')
+      setLoading(false)
     } catch (err) {
       console.error('Login error:', err)
       setError('An unexpected error occurred. Please try again.')

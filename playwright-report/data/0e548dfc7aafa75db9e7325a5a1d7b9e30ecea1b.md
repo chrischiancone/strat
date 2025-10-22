@@ -1,0 +1,177 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]:
+          - generic [ref=e8]: SP
+          - generic [ref=e9]:
+            - heading "Strategic Planning" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Municipal Management System
+        - button "SA System Administrator admin@carrollton.gov" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: SA
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: System Administrator
+            - paragraph [ref=e18]: admin@carrollton.gov
+          - img [ref=e19]
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Main" [level=3] [ref=e25]
+            - generic [ref=e26]:
+              - link "Dashboard" [ref=e27] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: Dashboard
+              - link "Strategic Plans" [ref=e34] [cursor=pointer]:
+                - /url: /plans
+                - img [ref=e35]
+                - generic [ref=e39]: Strategic Plans
+              - link "Add Initiative" [ref=e40] [cursor=pointer]:
+                - /url: /initiatives/new
+                - img [ref=e41]
+                - generic [ref=e44]: Add Initiative
+              - link "Settings" [ref=e45] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e46]
+                - generic [ref=e49]: Settings
+          - generic [ref=e50]:
+            - heading "Finance" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - link "Initiative Budgets" [ref=e53] [cursor=pointer]:
+                - /url: /finance
+                - img [ref=e54]
+                - generic [ref=e57]: Initiative Budgets
+              - link "Funding Sources" [ref=e58] [cursor=pointer]:
+                - /url: /finance/funding-sources
+                - img [ref=e59]
+                - generic [ref=e62]: Funding Sources
+              - link "Budget Categories" [ref=e63] [cursor=pointer]:
+                - /url: /finance/categories
+                - img [ref=e64]
+                - generic [ref=e69]: Budget Categories
+              - link "Grant Tracking" [ref=e70] [cursor=pointer]:
+                - /url: /finance/grants
+                - img [ref=e71]
+                - generic [ref=e76]: Grant Tracking
+          - generic [ref=e77]:
+            - heading "Administration" [level=3] [ref=e78]
+            - generic [ref=e79]:
+              - link "Users" [ref=e80] [cursor=pointer]:
+                - /url: /admin/users
+                - img [ref=e81]
+                - generic [ref=e86]: Users
+              - link "Departments" [ref=e87] [cursor=pointer]:
+                - /url: /admin/departments
+                - img [ref=e88]
+                - generic [ref=e96]: Departments
+              - link "Council Goals" [ref=e97] [cursor=pointer]:
+                - /url: /admin/council-goals
+                - img [ref=e98]
+                - generic [ref=e101]: Council Goals
+              - link "Fiscal Years" [ref=e102] [cursor=pointer]:
+                - /url: /admin/fiscal-years
+                - img [ref=e103]
+                - generic [ref=e108]: Fiscal Years
+              - link "System Settings" [ref=e109] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e110]
+                - generic [ref=e113]: System Settings
+              - link "Audit Logs" [ref=e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+                - img [ref=e115]
+                - generic [ref=e121]: Audit Logs
+      - main [ref=e122]:
+        - navigation [ref=e124]:
+          - link "Home" [ref=e125] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e126]
+            - generic [ref=e129]: Home
+          - img [ref=e130]
+          - link "Administration" [ref=e132] [cursor=pointer]:
+            - /url: /admin
+            - generic [ref=e133]: Administration
+          - img [ref=e134]
+          - generic [ref=e136]: Departments
+        - generic [ref=e138]:
+          - generic [ref=e139]:
+            - generic [ref=e140]:
+              - heading "Departments" [level=1] [ref=e141]
+              - paragraph [ref=e142]: Manage department information and configuration
+            - link "Create Department" [ref=e143] [cursor=pointer]:
+              - /url: /admin/departments/new
+              - button "Create Department" [ref=e144]
+          - generic [ref=e147]:
+            - generic [ref=e149]:
+              - searchbox "Search by department name..." [ref=e151]
+              - combobox [ref=e152]:
+                - option "All Status" [selected]
+                - option "Active"
+                - option "Inactive"
+              - button "Search" [ref=e153] [cursor=pointer]
+            - generic [ref=e154]:
+              - table [ref=e156]:
+                - rowgroup [ref=e157]:
+                  - row "Name ↑ Director ↕ Email Staff ↕ Plans ↕ Status ↕ Actions" [ref=e158]:
+                    - cell "Name ↑" [ref=e159]:
+                      - button "Name ↑" [ref=e160] [cursor=pointer]
+                    - cell "Director ↕" [ref=e161]:
+                      - button "Director ↕" [ref=e162] [cursor=pointer]
+                    - cell "Email" [ref=e163]
+                    - cell "Staff ↕" [ref=e164]:
+                      - button "Staff ↕" [ref=e165] [cursor=pointer]
+                    - cell "Plans ↕" [ref=e166]:
+                      - button "Plans ↕" [ref=e167] [cursor=pointer]
+                    - cell "Status ↕" [ref=e168]:
+                      - button "Status ↕" [ref=e169] [cursor=pointer]
+                    - cell "Actions" [ref=e170]
+                - rowgroup [ref=e171]:
+                  - row "City Managers Office Erin Rinehart erin.rinehart@cityofcarrollton.com 1 0 Active Edit" [ref=e172]:
+                    - cell "City Managers Office" [ref=e173]
+                    - cell "Erin Rinehart" [ref=e174]
+                    - cell "erin.rinehart@cityofcarrollton.com" [ref=e175]
+                    - cell "1" [ref=e176]
+                    - cell "0" [ref=e177]
+                    - cell "Active" [ref=e178]:
+                      - generic [ref=e179]: Active
+                    - cell "Edit" [ref=e180]:
+                      - link "Edit" [ref=e181] [cursor=pointer]:
+                        - /url: /admin/departments/e3df9af0-6b3f-4396-bce3-48d7bb5a6a98
+                        - button "Edit" [ref=e182]
+                  - row "Information Technology To deliver innovative technology solutions that enable efficient city operations and excellent citizen services. Michael Chen mchen@cityofcarrollton.com 1 0 Active Edit" [ref=e183]:
+                    - cell "Information Technology To deliver innovative technology solutions that enable efficient city operations and excellent citizen services." [ref=e184]:
+                      - text: Information Technology
+                      - generic [ref=e185]: To deliver innovative technology solutions that enable efficient city operations and excellent citizen services.
+                    - cell "Michael Chen" [ref=e186]
+                    - cell "mchen@cityofcarrollton.com" [ref=e187]
+                    - cell "1" [ref=e188]
+                    - cell "0" [ref=e189]
+                    - cell "Active" [ref=e190]:
+                      - generic [ref=e191]: Active
+                    - cell "Edit" [ref=e192]:
+                      - link "Edit" [ref=e193] [cursor=pointer]:
+                        - /url: /admin/departments/00000000-0000-0000-0000-000000000103
+                        - button "Edit" [ref=e194]
+                  - row "Workforce Services To develop and maintain a skilled workforce that supports city operations and serves the community effectively. Samantha Dean samantha.dean@cityofcarrollton.com 1 0 Active Edit" [ref=e195]:
+                    - cell "Workforce Services To develop and maintain a skilled workforce that supports city operations and serves the community effectively." [ref=e196]:
+                      - text: Workforce Services
+                      - generic [ref=e197]: To develop and maintain a skilled workforce that supports city operations and serves the community effectively.
+                    - cell "Samantha Dean" [ref=e198]
+                    - cell "samantha.dean@cityofcarrollton.com" [ref=e199]
+                    - cell "1" [ref=e200]
+                    - cell "0" [ref=e201]
+                    - cell "Active" [ref=e202]:
+                      - generic [ref=e203]: Active
+                    - cell "Edit" [ref=e204]:
+                      - link "Edit" [ref=e205] [cursor=pointer]:
+                        - /url: /admin/departments/46bcb764-df30-479c-b8c4-02cd44ed8bb8
+                        - button "Edit" [ref=e206]
+              - generic [ref=e208]: Showing 3 departments
+    - region "Notifications (F8)":
+      - list
+  - region "Notifications alt+T"
+  - alert [ref=e209]
+```

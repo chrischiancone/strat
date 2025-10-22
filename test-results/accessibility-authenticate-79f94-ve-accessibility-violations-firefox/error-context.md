@@ -1,0 +1,168 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]:
+          - generic [ref=e8]: SP
+          - generic [ref=e9]:
+            - heading "Strategic Planning" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Municipal Management System
+        - button "SA System Administrator admin@carrollton.gov" [ref=e14] [cursor=pointer]:
+          - generic [ref=e15]: SA
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: System Administrator
+            - paragraph [ref=e18]: admin@carrollton.gov
+          - img [ref=e19]
+    - generic [ref=e21]:
+      - complementary [ref=e22]:
+        - navigation [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Main" [level=3] [ref=e25]
+            - generic [ref=e26]:
+              - link "Dashboard" [ref=e27] [cursor=pointer]:
+                - /url: /dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: Dashboard
+              - link "Strategic Plans" [ref=e34] [cursor=pointer]:
+                - /url: /plans
+                - img [ref=e35]
+                - generic [ref=e39]: Strategic Plans
+              - link "Add Initiative" [ref=e40] [cursor=pointer]:
+                - /url: /initiatives/new
+                - img [ref=e41]
+                - generic [ref=e44]: Add Initiative
+              - link "Settings" [ref=e45] [cursor=pointer]:
+                - /url: /settings
+                - img [ref=e46]
+                - generic [ref=e49]: Settings
+          - generic [ref=e50]:
+            - heading "Finance" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - link "Initiative Budgets" [ref=e53] [cursor=pointer]:
+                - /url: /finance
+                - img [ref=e54]
+                - generic [ref=e57]: Initiative Budgets
+              - link "Funding Sources" [ref=e58] [cursor=pointer]:
+                - /url: /finance/funding-sources
+                - img [ref=e59]
+                - generic [ref=e62]: Funding Sources
+              - link "Budget Categories" [ref=e63] [cursor=pointer]:
+                - /url: /finance/categories
+                - img [ref=e64]
+                - generic [ref=e69]: Budget Categories
+              - link "Grant Tracking" [ref=e70] [cursor=pointer]:
+                - /url: /finance/grants
+                - img [ref=e71]
+                - generic [ref=e76]: Grant Tracking
+          - generic [ref=e77]:
+            - heading "Administration" [level=3] [ref=e78]
+            - generic [ref=e79]:
+              - link "Users" [ref=e80] [cursor=pointer]:
+                - /url: /admin/users
+                - img [ref=e81]
+                - generic [ref=e86]: Users
+              - link "Departments" [ref=e87] [cursor=pointer]:
+                - /url: /admin/departments
+                - img [ref=e88]
+                - generic [ref=e96]: Departments
+              - link "Council Goals" [ref=e97] [cursor=pointer]:
+                - /url: /admin/council-goals
+                - img [ref=e98]
+                - generic [ref=e101]: Council Goals
+              - link "Fiscal Years" [ref=e102] [cursor=pointer]:
+                - /url: /admin/fiscal-years
+                - img [ref=e103]
+                - generic [ref=e108]: Fiscal Years
+              - link "System Settings" [ref=e109] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e110]
+                - generic [ref=e113]: System Settings
+              - link "Audit Logs" [ref=e114] [cursor=pointer]:
+                - /url: /admin/audit-logs
+                - img [ref=e115]
+                - generic [ref=e121]: Audit Logs
+      - main [ref=e122]:
+        - navigation [ref=e124]:
+          - link "Home" [ref=e125] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e126]
+            - generic [ref=e129]: Home
+          - img [ref=e130]
+          - generic [ref=e132]: Administration
+        - generic [ref=e134]:
+          - generic [ref=e136]:
+            - heading "Admin Dashboard" [level=1] [ref=e137]
+            - paragraph [ref=e138]: Monitor system activity and access admin functions
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - heading "System Statistics" [level=2] [ref=e142]
+              - generic [ref=e143]:
+                - generic [ref=e145]:
+                  - generic [ref=e146]:
+                    - paragraph [ref=e147]: Users
+                    - paragraph [ref=e148]: "0"
+                    - paragraph [ref=e149]: 0 active / 0 inactive
+                  - img [ref=e150]
+                - generic [ref=e156]:
+                  - generic [ref=e157]:
+                    - paragraph [ref=e158]: Departments
+                    - paragraph [ref=e159]: "0"
+                  - img [ref=e160]
+                - generic [ref=e169]:
+                  - generic [ref=e170]:
+                    - paragraph [ref=e171]: Current Fiscal Year
+                    - paragraph [ref=e172]: None
+                  - img [ref=e173]
+                - generic [ref=e179]:
+                  - generic [ref=e180]:
+                    - paragraph [ref=e181]: Strategic Plans
+                    - paragraph [ref=e182]: "0"
+                    - paragraph [ref=e183]: 0 draft / 0 submitted / 0 approved
+                  - img [ref=e184]
+                - generic [ref=e191]:
+                  - generic [ref=e192]:
+                    - paragraph [ref=e193]: Recent Activity
+                    - paragraph [ref=e194]: "0"
+                    - paragraph [ref=e195]: Audit logs (last 24h)
+                  - img [ref=e196]
+            - generic [ref=e198]:
+              - heading "Quick Actions" [level=2] [ref=e199]
+              - generic [ref=e200]:
+                - link "Create User Add a new user to the system" [ref=e201] [cursor=pointer]:
+                  - /url: /admin/users/new
+                  - generic [ref=e203]:
+                    - img [ref=e205]
+                    - heading "Create User" [level=3] [ref=e210]
+                    - paragraph [ref=e211]: Add a new user to the system
+                - link "Manage Departments View and edit departments" [ref=e212] [cursor=pointer]:
+                  - /url: /admin/departments
+                  - generic [ref=e214]:
+                    - img [ref=e216]
+                    - heading "Manage Departments" [level=3] [ref=e224]
+                    - paragraph [ref=e225]: View and edit departments
+                - link "View Audit Logs Review system activity" [ref=e226] [cursor=pointer]:
+                  - /url: /admin/audit-logs
+                  - generic [ref=e228]:
+                    - img [ref=e230]
+                    - heading "View Audit Logs" [level=3] [ref=e234]
+                    - paragraph [ref=e235]: Review system activity
+                - link "Manage Users View and edit all users" [ref=e236] [cursor=pointer]:
+                  - /url: /admin/users
+                  - generic [ref=e238]:
+                    - img [ref=e240]
+                    - heading "Manage Users" [level=3] [ref=e245]
+                    - paragraph [ref=e246]: View and edit all users
+                - link "Fiscal Years Manage fiscal years" [ref=e247] [cursor=pointer]:
+                  - /url: /admin/fiscal-years
+                  - generic [ref=e249]:
+                    - img [ref=e251]
+                    - heading "Fiscal Years" [level=3] [ref=e256]
+                    - paragraph [ref=e257]: Manage fiscal years
+    - region "Notifications (F8)":
+      - list
+  - region "Notifications alt+T"
+  - alert [ref=e258]
+```

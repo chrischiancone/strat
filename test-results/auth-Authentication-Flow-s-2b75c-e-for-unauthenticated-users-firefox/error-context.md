@@ -1,0 +1,140 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e16]:
+            - heading "Strat Plan" [level=1] [ref=e17]
+            - paragraph [ref=e18]: Strategic Planning System
+        - generic [ref=e19]:
+          - link "Sign In" [ref=e20] [cursor=pointer]:
+            - /url: /login
+            - button "Sign In" [ref=e21]
+          - link "Get Started" [ref=e22] [cursor=pointer]:
+            - /url: /signup
+            - button "Get Started" [ref=e23]
+    - generic [ref=e25]:
+      - generic [ref=e26]: 🏛️ Trusted by Municipal Governments
+      - heading "Strategic Planning Made Simple" [level=1] [ref=e27]:
+        - text: Strategic Planning Made
+        - generic [ref=e28]: Simple
+      - paragraph [ref=e29]: Streamline your municipal strategic planning process with our comprehensive digital platform. Reduce planning time by 50% while improving collaboration and data quality.
+      - generic [ref=e30]:
+        - link "Start Planning Today" [ref=e31] [cursor=pointer]:
+          - /url: /signup
+          - button "Start Planning Today" [ref=e32]:
+            - text: Start Planning Today
+            - img
+        - link "Sign In" [ref=e33] [cursor=pointer]:
+          - /url: /login
+          - button "Sign In" [ref=e34]
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e39]: 50%
+        - generic [ref=e40]: Reduction in Planning Time
+      - generic [ref=e41]:
+        - generic [ref=e42]: 3-Year
+        - generic [ref=e43]: Strategic Planning Cycles
+      - generic [ref=e44]:
+        - generic [ref=e45]: 100%
+        - generic [ref=e46]: Digital Collaboration
+      - generic [ref=e47]:
+        - generic [ref=e48]: Real-time
+        - generic [ref=e49]: Budget Validation
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - heading "Everything you need for strategic planning" [level=2] [ref=e53]
+        - paragraph [ref=e54]: From SWOT analysis to budget validation, our platform handles every aspect of your planning process.
+      - generic [ref=e55]:
+        - generic [ref=e57]:
+          - img [ref=e58]
+          - generic [ref=e62]: Strategic Goals & Initiatives
+          - generic [ref=e63]: Create and manage strategic goals with detailed initiatives, priorities, and measurable outcomes.
+        - generic [ref=e65]:
+          - img [ref=e66]
+          - generic [ref=e69]: Budget Planning & Validation
+          - generic [ref=e70]: Multi-year budget planning with real-time validation from Finance and automatic calculations.
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - generic [ref=e78]: Collaborative Workflow
+          - generic [ref=e79]: Real-time collaboration between departments, with comments, reviews, and approval workflows.
+        - generic [ref=e81]:
+          - img [ref=e82]
+          - generic [ref=e87]: Performance Tracking
+          - generic [ref=e88]: Define KPIs, set targets, and track progress with automated reporting and dashboards.
+        - generic [ref=e90]:
+          - img [ref=e91]
+          - generic [ref=e97]: SWOT & Environmental Analysis
+          - generic [ref=e98]: Structured forms for SWOT analysis, environmental scanning, and benchmarking data.
+        - generic [ref=e100]:
+          - img [ref=e101]
+          - generic [ref=e103]: Audit Trail & Security
+          - generic [ref=e104]: Complete audit trail of all changes with role-based access controls and data security.
+    - generic [ref=e106]:
+      - heading "Built for every role in your organization" [level=2] [ref=e108]
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e112]:
+            - img [ref=e113]
+            - text: Department Directors
+          - list [ref=e122]:
+            - listitem [ref=e123]:
+              - img [ref=e124]
+              - text: Create comprehensive strategic plans
+            - listitem [ref=e127]:
+              - img [ref=e128]
+              - text: Manage team collaboration
+            - listitem [ref=e131]:
+              - img [ref=e132]
+              - text: Track department performance
+        - generic [ref=e135]:
+          - generic [ref=e137]:
+            - img [ref=e138]
+            - text: City Manager
+          - list [ref=e144]:
+            - listitem [ref=e145]:
+              - img [ref=e146]
+              - text: Review and approve all plans
+            - listitem [ref=e149]:
+              - img [ref=e150]
+              - text: City-wide budget overview
+            - listitem [ref=e153]:
+              - img [ref=e154]
+              - text: Performance dashboards
+        - generic [ref=e157]:
+          - generic [ref=e159]:
+            - img [ref=e160]
+            - text: Finance Team
+          - list [ref=e164]:
+            - listitem [ref=e165]:
+              - img [ref=e166]
+              - text: Validate department budgets
+            - listitem [ref=e169]:
+              - img [ref=e170]
+              - text: Real-time budget analysis
+            - listitem [ref=e173]:
+              - img [ref=e174]
+              - text: Multi-year financial planning
+    - generic [ref=e178]:
+      - heading "Ready to transform your strategic planning process?" [level=2] [ref=e179]
+      - paragraph [ref=e180]: Join municipalities nationwide who have modernized their strategic planning with our platform.
+      - generic [ref=e181]:
+        - link "Get Started Free" [ref=e182] [cursor=pointer]:
+          - /url: /signup
+          - button "Get Started Free" [ref=e183]:
+            - text: Get Started Free
+            - img
+        - link "Sign In" [ref=e184] [cursor=pointer]:
+          - /url: /login
+          - button "Sign In" [ref=e185]
+    - contentinfo [ref=e186]:
+      - generic [ref=e188]:
+        - img [ref=e190]
+        - paragraph [ref=e198]: © 2024 Strategic Planning System. Built for Municipal Government Excellence.
+  - region "Notifications alt+T"
+  - alert [ref=e199]
+```

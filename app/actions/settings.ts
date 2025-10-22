@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { securitySettingsSchema, type SecuritySettings } from '@/lib/validations/security'
+import { invalidatePerformanceSettingsCache } from '@/lib/performance/settings'
+import { applyMonitoringSettings } from '@/lib/performance/apply-settings'
 
 export type JSONObject = { [key: string]: any }
 
@@ -158,6 +160,15 @@ export async function updatePerformanceSettings(municipalityId: string, input: J
   
   try {
     const result = await updateMunicipalitySettings(municipalityId, { performance: input })
+    
+    // Invalidate performance settings cache so middleware picks up changes
+    if (result.success) {
+      invalidatePerformanceSettingsCache()
+      
+      // Apply monitoring settings immediately
+      await applyMonitoringSettings()
+    }
+    
     return result
   } catch (error) {
     console.error('Error in updatePerformanceSettings:', error)

@@ -55,7 +55,24 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  // Refresh session and get user
+  // This will automatically refresh expired tokens
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    // Log session issues for debugging
+    if (error) {
+      console.error('Session refresh error:', error)
+    }
+    
+    // If user exists, verify the session is still valid
+    if (user) {
+      // Session is valid, user is authenticated
+      return response
+    }
+  } catch (err) {
+    console.error('Unexpected error refreshing session:', err)
+  }
 
   return response
 }

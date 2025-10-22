@@ -1,16 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable production optimizations
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
+  compress: true,
+  
+  // Output standalone for Docker
+  output: 'standalone',
+  
   eslint: {
-    // TEMPORARY: Suppress ESLint errors during migration to strict mode
-    // TODO: Fix all ESLint errors and set to false
-    // Tracking: See docs/TYPESCRIPT_MIGRATION.md for progress
-    ignoreDuringBuilds: true,
+    // Enable ESLint in production builds for quality
+    ignoreDuringBuilds: process.env.SKIP_LINT === 'true',
   },
   typescript: {
-    // TEMPORARY: Suppress TypeScript errors during migration to strict mode
-    // TODO: Fix all TypeScript errors and set to false
-    // Tracking: See docs/TYPESCRIPT_MIGRATION.md for progress
-    ignoreBuildErrors: true,
+    // Enable TypeScript checks in production builds for quality
+    ignoreBuildErrors: process.env.SKIP_TYPECHECK === 'true',
   },
   experimental: {
     optimizeCss: false, // Disable to prevent CSS loss
