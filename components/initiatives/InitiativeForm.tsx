@@ -15,6 +15,10 @@ import {
 import { PRIORITY_LEVELS } from '@/lib/constants/strategic-planning'
 import { useToast } from '@/hooks/use-toast'
 import { X, Plus } from 'lucide-react'
+import {
+  CouncilInitiativeLinkDialog,
+  type CouncilLinkData,
+} from './CouncilInitiativeLinkDialog'
 
 interface InitiativeFormProps {
   goalId: string
@@ -58,6 +62,9 @@ export function InitiativeForm({
     initiative?.responsible_party || ''
   )
   const [isSaving, setIsSaving] = useState(false)
+  const [showCouncilDialog, setShowCouncilDialog] = useState(false)
+  const [pendingPriorityLevel, setPendingPriorityLevel] = useState<PriorityLevel | null>(null)
+  const [councilLinkData, setCouncilLinkData] = useState<CouncilLinkData | undefined>()
   const { toast } = useToast()
 
   const handleAddOutcome = () => {
@@ -236,7 +243,11 @@ export function InitiativeForm({
         <Label>Priority Level *</Label>
         <RadioGroup
           value={priorityLevel}
-          onValueChange={(value) => setPriorityLevel(value as PriorityLevel)}
+          onValueChange={(value) => {
+            const newPriority = value as PriorityLevel
+            setPendingPriorityLevel(newPriority)
+            setShowCouncilDialog(true)
+          }}
           disabled={isSaving}
           className="mt-2 space-y-3"
         >
@@ -255,6 +266,16 @@ export function InitiativeForm({
             </div>
           ))}
         </RadioGroup>
+        {councilLinkData && councilLinkData.councilPriorities.length > 0 && (
+          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm font-medium text-blue-900 mb-1">
+              Linked to Council Priorities:
+            </p>
+            <p className="text-sm text-blue-800">
+              {councilLinkData.councilPriorities.join(', ')}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Rank */}
@@ -385,6 +406,26 @@ export function InitiativeForm({
               : 'Create Initiative'}
         </Button>
       </div>
+
+      {/* Council Initiative Link Dialog */}
+      <CouncilInitiativeLinkDialog
+        open={showCouncilDialog}
+        onOpenChange={(open) => {
+          setShowCouncilDialog(open)
+          if (!open) {
+            setPendingPriorityLevel(null)
+          }
+        }}
+        priorityLevel={pendingPriorityLevel || priorityLevel}
+        onConfirm={(data) => {
+          setCouncilLinkData(data)
+          if (pendingPriorityLevel) {
+            setPriorityLevel(pendingPriorityLevel)
+            setPendingPriorityLevel(null)
+          }
+        }}
+        initialData={councilLinkData}
+      />
     </form>
   )
 }

@@ -143,7 +143,6 @@ export function PlanMetadataForm({
             </Button>
           </div>
           <MarkdownEditor
-            key={`executive-summary-${executiveSummary.length}`}
             value={executiveSummary}
             onChange={setExecutiveSummary}
             onBlur={() => handleSave('executive_summary', executiveSummary)}

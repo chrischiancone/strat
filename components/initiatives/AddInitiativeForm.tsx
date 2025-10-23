@@ -13,6 +13,10 @@ import { Badge } from '@/components/ui/badge'
 import { createInitiative, type PriorityLevel } from '@/app/actions/initiatives'
 import { useToast } from '@/hooks/use-toast'
 import { X, Plus, DollarSign, FileText, Target } from 'lucide-react'
+import {
+  CouncilInitiativeLinkDialog,
+  type CouncilLinkData,
+} from './CouncilInitiativeLinkDialog'
 
 interface StrategicGoal {
   id: string
@@ -76,6 +80,9 @@ export function AddInitiativeForm({
   const [risksAndChallenges, setRisksAndChallenges] = useState('')
   
   const [isSaving, setIsSaving] = useState(false)
+  const [showCouncilDialog, setShowCouncilDialog] = useState(false)
+  const [pendingPriorityLevel, setPendingPriorityLevel] = useState<PriorityLevel | null>(null)
+  const [councilLinkData, setCouncilLinkData] = useState<CouncilLinkData | undefined>()
 
   // Auto-generate initiative number based on selected goal
   useEffect(() => {
@@ -383,7 +390,10 @@ export function AddInitiativeForm({
             <Label>Priority Level <span className="text-red-500">*</span></Label>
             <RadioGroup
               value={priorityLevel}
-              onValueChange={(value: PriorityLevel) => setPriorityLevel(value)}
+              onValueChange={(value: PriorityLevel) => {
+                setPendingPriorityLevel(value)
+                setShowCouncilDialog(true)
+              }}
               className="mt-2"
             >
               <div className="flex items-center space-x-2">
@@ -408,6 +418,16 @@ export function AddInitiativeForm({
                 </Label>
               </div>
             </RadioGroup>
+            {councilLinkData && councilLinkData.councilPriorities.length > 0 && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm font-medium text-blue-900 mb-1">
+                  Linked to Council Priorities:
+                </p>
+                <p className="text-sm text-blue-800">
+                  {councilLinkData.councilPriorities.join(', ')}
+                </p>
+              </div>
+            )}
           </div>
 
           <div>
@@ -624,6 +644,26 @@ export function AddInitiativeForm({
           </Button>
         </div>
       </div>
+
+      {/* Council Initiative Link Dialog */}
+      <CouncilInitiativeLinkDialog
+        open={showCouncilDialog}
+        onOpenChange={(open) => {
+          setShowCouncilDialog(open)
+          if (!open) {
+            setPendingPriorityLevel(null)
+          }
+        }}
+        priorityLevel={pendingPriorityLevel || priorityLevel}
+        onConfirm={(data) => {
+          setCouncilLinkData(data)
+          if (pendingPriorityLevel) {
+            setPriorityLevel(pendingPriorityLevel)
+            setPendingPriorityLevel(null)
+          }
+        }}
+        initialData={councilLinkData}
+      />
     </form>
   )
 }

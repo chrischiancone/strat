@@ -601,6 +601,53 @@ static getInstance(): CollaborationEngine {
   }
 
   // Notification System
+  async getUserNotifications(userId: string, limit = 50): Promise<Notification[]> {
+    try {
+      const supabase = createClientSupabaseClient()
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+      if (error) throw error
+      return (data || []).map((n: any) => ({
+        id: n.id,
+        userId: n.user_id,
+        type: n.type,
+        title: n.title,
+        message: n.message,
+        resourceId: n.resource_id,
+        resourceType: n.resource_type,
+        actionUrl: n.action_url,
+        actionText: n.action_text,
+        priority: n.priority || 'medium',
+        read: n.read,
+        readAt: n.read_at ? new Date(n.read_at) : undefined,
+        data: n.data || {},
+        createdAt: new Date(n.created_at),
+        expiresAt: n.expires_at ? new Date(n.expires_at) : undefined,
+      }))
+    } catch (error) {
+      logger.error('Failed to get user notifications', { error, userId })
+      return []
+    }
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    try {
+      const supabase = createClientSupabaseClient()
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true, read_at: new Date().toISOString() })
+        .eq('id', notificationId)
+      if (error) throw error
+    } catch (error) {
+      logger.error('Failed to mark notification as read', { error, notificationId })
+      throw createError.server('Failed to update notification')
+    }
+  }
+
   async createNotification(notificationData: Omit<Notification, 'id' | 'createdAt'>): Promise<Notification> {
     try {
       const supabase = createClientSupabaseClient()

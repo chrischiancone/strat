@@ -30,6 +30,25 @@ export async function checkResourceAccess(
   resourceId: string
 ): Promise<boolean> {
   const supabase = createServerClient()
+
+  // Normalize resource type to supported values
+  const normalize = (rt: string) => {
+    switch (rt) {
+      case 'strategic_plan':
+        return 'plan'
+      case 'milestone':
+        // Milestones belong to initiatives; fall back to initiative-level access
+        return 'initiative'
+      case 'plan':
+      case 'goal':
+      case 'initiative':
+      case 'dashboard':
+        return rt
+      default:
+        return rt
+    }
+  }
+  const normalizedType = normalize(resourceType)
   
   // Get user's department
   const user = await getUserById(userId)
@@ -37,7 +56,7 @@ export async function checkResourceAccess(
   
   // Check if resource belongs to user's department or is public
   let query
-  switch (resourceType) {
+  switch (normalizedType) {
     case 'plan':
       query = supabase
         .from('strategic_plans')
@@ -56,6 +75,9 @@ export async function checkResourceAccess(
         .select('strategic_goals!inner(strategic_plans!inner(department_id))')
         .eq('id', resourceId)
       break
+    case 'dashboard':
+      // Allow dashboards for same municipality (fallback to allow by role)
+      return ['admin', 'super_admin', 'city_manager'].includes(user.role)
     default:
       return false
   }
@@ -65,18 +87,18 @@ export async function checkResourceAccess(
   
   // Extract department_id from nested structure
   let resourceDepartmentId
-  if (resourceType === 'plan') {
-    resourceDepartmentId = data.department_id
-  } else if (resourceType === 'goal') {
+  if (normalizedType === 'plan') {
+    resourceDepartmentId = (data as any).department_id
+  } else if (normalizedType === 'goal') {
     resourceDepartmentId = (data as any).strategic_plans?.department_id
   } else {
     resourceDepartmentId = (data as any).strategic_goals?.strategic_plans?.department_id
   }
   
-  // Allow access if same department or user is admin/super_admin
+  // Allow access if same department or elevated role
   return (
     resourceDepartmentId === user.department_id ||
-    ['admin', 'super_admin'].includes(user.role)
+    ['admin', 'super_admin', 'city_manager'].includes(user.role)
   )
 }
 

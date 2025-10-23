@@ -1,6 +1,8 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
+import { createNotification } from '@/lib/collaboration/db-helpers'
 import { revalidatePath } from 'next/cache'
 
 export type CommentEntityType = 'strategic_plan' | 'initiative' | 'goal' | 'milestone'
@@ -40,6 +42,7 @@ export async function getComments(
   entityId: string
 ): Promise<Comment[]> {
   const supabase = createServerSupabaseClient()
+  const admin = createAdminSupabaseClient()
 
   // Get current user
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -49,7 +52,7 @@ export async function getComments(
   }
 
   // Fetch all comments for this entity
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('comments')
     .select(`
       id,
@@ -137,6 +140,7 @@ export async function createComment(
 ): Promise<{ id: string }> {
   console.log('createComment: Function called with input:', input)
   const supabase = createServerSupabaseClient()
+  const admin = createAdminSupabaseClient()
 
   // Debug cookies
   const { cookies } = await import('next/headers')
@@ -171,7 +175,7 @@ export async function createComment(
   }
   console.log('createComment: Insert data:', insertData)
   
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from('comments')
     .insert(insertData)
     .select('id')
@@ -188,6 +192,85 @@ export async function createComment(
     throw new Error('No data returned after creating comment')
   }
 
+  // Create notifications for relevant users (plan owner, parent author)
+  try {
+    const recipients = new Set<string>()
+
+    // Parent comment author
+    if (input.parent_comment_id) {
+      const { data: parent } = await admin
+        .from('comments')
+        .select('author_id')
+        .eq('id', input.parent_comment_id)
+        .single<{ author_id: string }>()
+      if (parent && parent.author_id !== currentUser.id) {
+        recipients.add(parent.author_id)
+      }
+    }
+
+    // Determine plan owner based on entity type
+    const normalized = (t: string) => (t === 'strategic_plan' ? 'plan' : t)
+    const entityType = normalized(input.entity_type)
+
+    if (entityType === 'plan') {
+      const { data: plan } = await admin
+        .from('strategic_plans')
+        .select('created_by')
+        .eq('id', input.entity_id)
+        .single<{ created_by: string }>()
+      if (plan && plan.created_by !== currentUser.id) {
+        recipients.add(plan.created_by)
+      }
+    } else if (entityType === 'goal') {
+      const { data: goal } = await admin
+        .from('strategic_goals')
+        .select('strategic_plan_id, strategic_plans!inner(created_by)')
+        .eq('id', input.entity_id)
+        .single<any>()
+      const ownerId = goal?.strategic_plans?.created_by
+      if (ownerId && ownerId !== currentUser.id) recipients.add(ownerId)
+    } else if (entityType === 'initiative') {
+      const { data: initiative } = await admin
+        .from('initiatives')
+        .select('strategic_goal_id, strategic_goals!inner(strategic_plan_id, strategic_plans!inner(created_by))')
+        .eq('id', input.entity_id)
+        .single<any>()
+      const ownerId = initiative?.strategic_goals?.strategic_plans?.created_by
+      if (ownerId && ownerId !== currentUser.id) recipients.add(ownerId)
+    }
+
+    // Get author profile for actor info
+    const { data: authorProfile } = await admin
+      .from('users')
+      .select('full_name, avatar_url')
+      .eq('id', currentUser.id)
+      .single<{ full_name: string; avatar_url: string | null }>()
+
+    // Create notifications
+    await Promise.all(
+      Array.from(recipients).map((userId) =>
+        createNotification({
+          userId,
+          type: 'comment',
+          title: `New comment on ${entityType.replace('_', ' ')}`,
+          message: input.content.slice(0, 160),
+          resourceType: entityType === 'plan' ? 'plan' : entityType,
+          resourceId: input.entity_id,
+          priority: 'medium',
+          actors: [
+            {
+              id: currentUser.id,
+              name: authorProfile?.full_name || 'User',
+              avatar: authorProfile?.avatar_url || undefined,
+            },
+          ],
+        })
+      )
+    )
+  } catch (notifyErr) {
+    console.warn('createComment: Notification creation failed (non-fatal):', notifyErr)
+  }
+
   // Revalidate the page
   revalidatePath(`/plans/${input.entity_id}`)
 
@@ -201,6 +284,7 @@ export async function updateComment(
   input: UpdateCommentInput
 ): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const admin = createAdminSupabaseClient()
 
   // Get current user
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -220,7 +304,7 @@ export async function updateComment(
     entity_id: string
   }
 
-  const { data: comment } = await supabase
+  const { data: comment } = await admin
     .from('comments')
     .select('author_id, entity_id')
     .eq('id', input.id)
@@ -237,7 +321,7 @@ export async function updateComment(
   }
 
   // Update comment
-  const { error } = await supabase
+  const { error } = await admin
     .from('comments')
     .update({
       content: input.content.trim(),
@@ -259,6 +343,7 @@ export async function updateComment(
  */
 export async function deleteComment(commentId: string): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const admin = createAdminSupabaseClient()
 
   // Get current user
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -273,7 +358,7 @@ export async function deleteComment(commentId: string): Promise<void> {
     entity_id: string
   }
 
-  const { data: comment } = await supabase
+  const { data: comment } = await admin
     .from('comments')
     .select('author_id, entity_id')
     .eq('id', commentId)
@@ -290,7 +375,7 @@ export async function deleteComment(commentId: string): Promise<void> {
   }
 
   // Delete comment (CASCADE will delete replies)
-  const { error } = await supabase
+  const { error } = await admin
     .from('comments')
     .delete()
     .eq('id', commentId)
@@ -309,6 +394,7 @@ export async function deleteComment(commentId: string): Promise<void> {
  */
 export async function resolveComment(commentId: string): Promise<void> {
   const supabase = createServerSupabaseClient()
+  const admin = createAdminSupabaseClient()
 
   // Get current user
   const { data: { user: currentUser } } = await supabase.auth.getUser()
@@ -324,7 +410,7 @@ export async function resolveComment(commentId: string): Promise<void> {
     entity_type: string
   }
 
-  const { data: comment } = await supabase
+  const { data: comment } = await admin
     .from('comments')
     .select('author_id, entity_id, entity_type')
     .eq('id', commentId)
@@ -425,7 +511,7 @@ export async function resolveComment(commentId: string): Promise<void> {
   }
 
   // Mark as resolved
-  const { error } = await supabase
+  const { error } = await admin
     .from('comments')
     .update({ is_resolved: true })
     .eq('id', commentId)
@@ -447,8 +533,9 @@ export async function getUnresolvedCount(
   entityId: string
 ): Promise<number> {
   const supabase = createServerSupabaseClient()
+  const admin = createAdminSupabaseClient()
 
-  const { count, error } = await supabase
+  const { count, error } = await admin
     .from('comments')
     .select('*', { count: 'exact', head: true })
     .eq('entity_type', entityType)

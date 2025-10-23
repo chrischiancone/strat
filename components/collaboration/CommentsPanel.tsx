@@ -31,7 +31,7 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
 import { type Comment as CollabComment, type CommentReaction } from '@/lib/collaboration/collaboration-engine'
-import { createComment, getComments, type CommentEntityType, type Comment as ActionComment } from '@/app/actions/comments'
+import { createComment as saCreateComment, getComments as saGetComments, type CommentEntityType, type Comment as ActionComment } from '@/app/actions/comments'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 
 interface CommentsPanelProps {
@@ -124,7 +124,7 @@ export function CommentsPanel({
     setLoading(true)
     try {
       const entityType = mapResourceTypeToEntityType(resourceType)
-      const commentsData = await getComments(entityType, resourceId)
+      const commentsData = await saGetComments(entityType, resourceId)
       
       // Convert ActionComment format to CollabComment format
       const adaptedComments = commentsData.map(comment => 
@@ -173,23 +173,13 @@ export function CommentsPanel({
         user_id: user.id,
       })
       
-      // Use direct API call with cookie-based authentication
-      const response = await fetch('/api/collaboration/comments', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          resourceId,
-          resourceType: entityType,
-          parentId: replyingTo,
-          content: newComment,
-        }),
+      // Create via server action to keep schema consistent
+      await saCreateComment({
+        entity_type: entityType,
+        entity_id: resourceId,
+        parent_comment_id: replyingTo || undefined,
+        content: newComment,
       })
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${await response.text()}`)
-      }
       
       // Reload comments after successful creation
       await loadComments()
