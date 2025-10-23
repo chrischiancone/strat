@@ -1,6 +1,6 @@
 'use server'
 
-// import { createServerSupabaseClient } from '@/lib/supabase/server' // Temporarily unused
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export interface FinanceBudgetFilters {
   department_ids?: string[]
@@ -61,22 +61,6 @@ export async function getFinanceInitiativeBudgets(
   sortBy: string = 'total_cost',
   sortOrder: 'asc' | 'desc' = 'desc'
 ): Promise<FinanceBudgetsData> {
-  // TODO: Fix Supabase type inference issues
-  console.log('Would fetch finance budgets:', { filters, page, pageSize, sortBy, sortOrder })
-  return {
-    summary: {
-      total_budget: 0,
-      total_initiatives: 0,
-      total_departments: 0,
-      budgets_validated: 0,
-      budgets_pending_validation: 0,
-      budget_by_fiscal_year: [],
-      budget_by_department: [],
-    },
-    initiatives: [],
-    total_count: 0,
-  }
-  /*
   const supabase = createServerSupabaseClient()
 
   // Get current user
@@ -91,35 +75,60 @@ export async function getFinanceInitiativeBudgets(
   // Get user profile
   const { data: profile, error: profileError } = await supabase
     .from('users')
-    .select('role, municipality_id')
+    .select('role, municipality_id, department_id')
     .eq('id', user.id)
-    .single<{ role: string; municipality_id: string }>()
+    .single<{ role: string; municipality_id: string; department_id: string | null }>()
 
   if (profileError || !profile) {
     console.error('Profile error:', profileError)
     throw new Error('User profile not found')
   }
 
-  // Only Finance Director and Admin can access
-  if (profile.role !== 'finance' && profile.role !== 'admin') {
-    throw new Error('Access denied: Finance role required')
+  // Check role-based access: finance, admin, city_manager, department_director
+  const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
+  if (!allowedRoles.includes(profile.role)) {
+    throw new Error('Access denied: Insufficient permissions')
   }
 
   console.log('Fetching initiatives for municipality:', profile.municipality_id)
 
-  // First, get all strategic plans for this municipality
+  // First, get departments for this municipality
+  const { data: depts, error: deptsError } = await supabase
+    .from('departments')
+    .select('id, name')
+    .eq('municipality_id', profile.municipality_id)
+
+  if (deptsError) {
+    console.error('Error fetching departments:', deptsError)
+    throw new Error(`Failed to fetch departments: ${deptsError.message}`)
+  }
+
+  if (!depts || depts.length === 0) {
+    console.log('No departments found for municipality:', profile.municipality_id)
+    return {
+      summary: {
+        total_budget: 0,
+        total_initiatives: 0,
+        total_departments: 0,
+        budgets_validated: 0,
+        budgets_pending_validation: 0,
+        budget_by_fiscal_year: [],
+        budget_by_department: [],
+      },
+      initiatives: [],
+      total_count: 0,
+    }
+  }
+
+  const deptIds = depts.map(d => d.id)
+  console.log('Found departments:', depts.length, 'IDs:', deptIds)
+
+  // Now get strategic plans for these departments
   const { data: plans, error: plansError } = await supabase
     .from('strategic_plans')
-    .select(`
-      id,
-      department_id,
-      departments (
-        id,
-        name
-      )
-    `)
-    .eq('departments.municipality_id', profile.municipality_id)
-    .returns<{ id: string; department_id: string; departments: { id: string; name: string } }[]>()
+    .select('id, department_id')
+    .in('department_id', deptIds)
+    .returns<{ id: string; department_id: string }[]>()
 
   if (plansError) {
     console.error('Error fetching plans:', plansError)
@@ -127,6 +136,7 @@ export async function getFinanceInitiativeBudgets(
   }
 
   if (!plans || plans.length === 0) {
+    console.log('No strategic plans found for departments')
     return {
       summary: {
         total_budget: 0,
@@ -143,12 +153,23 @@ export async function getFinanceInitiativeBudgets(
   }
 
   const planIds = plans.map(p => p.id)
+  console.log('Found strategic plans:', plans.length, 'IDs:', planIds)
+
+  // Create department lookup map
+  const deptMap = new Map(depts.map(d => [d.id, d]))
   
   // Get all goals for these plans
+  type Goal = {
+    id: string
+    title: string
+    strategic_plan_id: string
+  }
+
   const { data: goals, error: goalsError } = await supabase
     .from('strategic_goals')
     .select('id, title, strategic_plan_id')
     .in('strategic_plan_id', planIds)
+    .returns<Goal[]>()
 
   if (goalsError) {
     console.error('Error fetching goals:', goalsError)
@@ -156,6 +177,7 @@ export async function getFinanceInitiativeBudgets(
   }
 
   if (!goals || goals.length === 0) {
+    console.log('No strategic goals found for plans')
     return {
       summary: {
         total_budget: 0,
@@ -172,8 +194,23 @@ export async function getFinanceInitiativeBudgets(
   }
 
   const goalIds = goals.map(g => g.id)
+  console.log('Found strategic goals:', goals.length)
 
   // Now get initiatives for these goals
+  type Initiative = {
+    id: string
+    name: string
+    priority_level: string
+    status: string
+    total_year_1_cost: number | null
+    total_year_2_cost: number | null
+    total_year_3_cost: number | null
+    budget_validated_by: string | null
+    budget_validated_at: string | null
+    strategic_goal_id: string
+    fiscal_year_id: string
+  }
+
   let query = supabase
     .from('initiatives')
     .select(`
@@ -190,6 +227,7 @@ export async function getFinanceInitiativeBudgets(
       fiscal_year_id
     `)
     .in('strategic_goal_id', goalIds)
+    .returns<Initiative[]>()
 
   // Apply filters
   if (filters.priority_levels && filters.priority_levels.length > 0) {
@@ -207,7 +245,10 @@ export async function getFinanceInitiativeBudgets(
     throw new Error(`Failed to fetch initiatives: ${initiativesError.message}`)
   }
 
+  console.log('Found initiatives:', initiatives?.length || 0)
+
   if (!initiatives || initiatives.length === 0) {
+    console.log('No initiatives found for goals')
     return {
       summary: {
         total_budget: 0,
@@ -228,10 +269,16 @@ export async function getFinanceInitiativeBudgets(
   const fiscalYearMap = new Map<string, number>()
   
   if (fiscalYearIds.length > 0) {
+    type FiscalYear = {
+      id: string
+      year: number
+    }
+
     const { data: fiscalYears } = await supabase
       .from('fiscal_years')
       .select('id, year')
       .in('id', fiscalYearIds)
+      .returns<FiscalYear[]>()
     
     if (fiscalYears) {
       fiscalYears.forEach(fy => {
@@ -248,7 +295,7 @@ export async function getFinanceInitiativeBudgets(
   let transformedInitiatives = initiatives.map(init => {
     const goal = goalMap.get(init.strategic_goal_id)
     const plan = goal ? planMap.get(goal.strategic_plan_id) : null
-    const department = plan?.departments
+    const department = plan ? deptMap.get(plan.department_id) : null
 
     return {
       initiative_id: init.id,
@@ -269,6 +316,14 @@ export async function getFinanceInitiativeBudgets(
       budget_validated_at: init.budget_validated_at,
     }
   }).filter(init => init.department_id) // Filter out any without departments
+
+  // Apply department filtering based on role
+  if (profile.role === 'department_director' && profile.department_id) {
+    // Department directors only see their own department
+    transformedInitiatives = transformedInitiatives.filter((init) =>
+      init.department_id === profile.department_id
+    )
+  }
 
   // Apply client-side filters
   if (filters.department_ids && filters.department_ids.length > 0) {
@@ -365,16 +420,14 @@ export async function getFinanceInitiativeBudgets(
     initiatives: paginatedInitiatives,
     total_count: transformedInitiatives.length,
   }
-  */
 }
 
-// Export function stub - we'll implement this later if needed
+// Export function - returns all data without pagination
 export async function getFinanceBudgetExportData(
-  _filters: FinanceBudgetFilters = {}
+  filters: FinanceBudgetFilters = {}
 ): Promise<{
   initiatives: InitiativeBudgetRow[]
   budget_by_department: Array<{
-    department_id: string
     department_name: string
     total: number
     initiative_count: number
@@ -387,23 +440,23 @@ export async function getFinanceBudgetExportData(
     initiative_count: number
   }>
 }> {
-  // Simplified version - just return the main data
-  // TODO: Fix when main function is fixed
-  // const data = await getFinanceInitiativeBudgets(filters, 1, 10000, 'total_cost', 'desc')
-  const data = {
-    initiatives: [],
-    summary: {
-      budget_by_department: [],
-      budget_by_fiscal_year: []
-    }
-  }
+  // Use a very large page size to get all data
+  const data = await getFinanceInitiativeBudgets(filters, 1, 10000, 'total_cost', 'desc')
   
   return {
     initiatives: data.initiatives,
-    budget_by_department: data.summary.budget_by_department,
+    budget_by_department: data.summary.budget_by_department.map(dept => ({
+      department_name: dept.department_name,
+      total: dept.total,
+      initiative_count: dept.initiative_count
+    })),
     budget_by_funding_source: [],
     budget_by_category: [],
-    budget_by_fiscal_year: []
+      budget_by_fiscal_year: data.summary.budget_by_fiscal_year.map(year => ({
+        fiscal_year: year.fiscal_year,
+        total: year.total,
+        initiative_count: 0
+      }))
   }
 }
 
@@ -411,10 +464,6 @@ export async function toggleBudgetValidation(
   initiativeId: string,
   validate: boolean
 ): Promise<{ success: boolean; error?: string }> {
-  // TODO: Fix Supabase type inference issues
-  console.log('Would toggle budget validation:', { initiativeId, validate })
-  return { success: true }
-  /*
   const supabase = createServerSupabaseClient()
 
   const {
@@ -425,14 +474,25 @@ export async function toggleBudgetValidation(
     return { success: false, error: 'Unauthorized' }
   }
 
+  type ProfileType = {
+    role: string
+  }
+
   const { data: profile } = await supabase
     .from('users')
     .select('role')
     .eq('id', user.id)
-    .single<{ role: string }>()
+    .single()
+    .returns<ProfileType>()
 
-  if (!profile || (profile.role !== 'finance' && profile.role !== 'admin')) {
-    return { success: false, error: 'Access denied: Finance role required' }
+  if (!profile) {
+    return { success: false, error: 'User profile not found' }
+  }
+
+  // Only finance, admin, and city_manager can validate budgets
+  const allowedRoles = ['finance', 'admin', 'city_manager']
+  if (!allowedRoles.includes(profile.role)) {
+    return { success: false, error: 'Access denied: Insufficient permissions' }
   }
 
   const updateData = validate
@@ -447,7 +507,7 @@ export async function toggleBudgetValidation(
 
   const { error } = await supabase
     .from('initiatives')
-    .update(updateData)
+    .update(updateData as Record<string, unknown>)
     .eq('id', initiativeId)
 
   if (error) {
@@ -456,5 +516,4 @@ export async function toggleBudgetValidation(
   }
 
   return { success: true }
-  */
 }

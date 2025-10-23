@@ -108,17 +108,53 @@ export interface BenchmarkingData {
 export interface StrategicGoal {
   id: UUID
   strategic_plan_id: UUID
+  goal_number: number
   title: string
   description: string | null
-  goal_order: number
+  city_priority_alignment: string | null
+  objectives: string[] | null // Legacy field, kept for backward compatibility
+  success_measures: string[] | null // Legacy field, kept for backward compatibility
+  display_order: number
   created_at: DatabaseDate
   updated_at: DatabaseDate | null
+  created_by: UUID
 }
+
+// Strategic Objective
+export interface StrategicObjective {
+  id: UUID
+  strategic_goal_id: UUID
+  objective_number: string
+  title: string
+  description: string | null
+  display_order: number
+  created_at: DatabaseDate
+  updated_at: DatabaseDate | null
+  created_by: UUID
+}
+
+// Strategic Deliverable
+export interface StrategicDeliverable {
+  id: UUID
+  strategic_objective_id: UUID
+  deliverable_number: string
+  title: string
+  description: string | null
+  target_date: DatabaseDate | null
+  status: DeliverableStatus
+  display_order: number
+  created_at: DatabaseDate
+  updated_at: DatabaseDate | null
+  created_by: UUID
+}
+
+export type DeliverableStatus = 'not_started' | 'in_progress' | 'completed' | 'deferred'
 
 // Initiative
 export interface Initiative {
   id: UUID
   strategic_goal_id: UUID
+  strategic_objective_id?: UUID | null
   name: string
   description: string | null
   priority_level: PriorityLevel
@@ -249,6 +285,12 @@ export interface StrategicPlanWithRelations extends StrategicPlan {
 export interface StrategicGoalWithRelations extends StrategicGoal {
   strategic_plans: Pick<StrategicPlan, 'title'>
   initiatives?: InitiativeWithRelations[]
+  strategic_objectives?: StrategicObjectiveWithRelations[]
+}
+
+export interface StrategicObjectiveWithRelations extends StrategicObjective {
+  strategic_goals: Pick<StrategicGoal, 'title'>
+  strategic_deliverables?: StrategicDeliverable[]
 }
 
 export interface InitiativeWithRelations extends Initiative {

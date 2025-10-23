@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Select as UiSelect, SelectContent as UiSelectContent, SelectItem as UiSelectItem, SelectTrigger as UiSelectTrigger, SelectValue as UiSelectValue } from '@/components/ui/select'
 import {
   createInitiative,
   updateInitiative,
@@ -19,8 +21,10 @@ import {
   CouncilInitiativeLinkDialog,
   type CouncilLinkData,
 } from './CouncilInitiativeLinkDialog'
+import type { DeliverableWithContext } from '@/app/actions/strategic-deliverables'
 
 interface InitiativeFormProps {
+  planId: string
   goalId: string
   goalNumber: number
   goalTitle: string
@@ -33,6 +37,7 @@ interface InitiativeFormProps {
 }
 
 export function InitiativeForm({
+  planId,
   goalId,
   goalNumber,
   goalTitle,
@@ -48,6 +53,9 @@ export function InitiativeForm({
   )
   const [name, setName] = useState(initiative?.name || '')
   const [description, setDescription] = useState(initiative?.description || '')
+  const [objectiveId, setObjectiveId] = useState<string>('')
+  const [deliverables, setDeliverables] = useState<DeliverableWithContext[]>([])
+  const [selectedDeliverableId, setSelectedDeliverableId] = useState<string>('')
   const [rationale, setRationale] = useState(initiative?.rationale || '')
   const [priorityLevel, setPriorityLevel] = useState<PriorityLevel>(
     initiative?.priority_level || 'NEED'
@@ -61,11 +69,44 @@ export function InitiativeForm({
   const [responsibleParty, setResponsibleParty] = useState(
     initiative?.responsible_party || ''
   )
+  const [isKeyInitiative, setIsKeyInitiative] = useState(
+    initiative?.is_key_initiative || false
+  )
   const [isSaving, setIsSaving] = useState(false)
   const [showCouncilDialog, setShowCouncilDialog] = useState(false)
   const [pendingPriorityLevel, setPendingPriorityLevel] = useState<PriorityLevel | null>(null)
   const [councilLinkData, setCouncilLinkData] = useState<CouncilLinkData | undefined>()
   const { toast } = useToast()
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure client-side mount before rendering Radix Select to avoid hydration issues in Dialog
+  useEffect(() => setMounted(true), [])
+
+  // If priority is NEED on load and no council link data, show dialog
+  useEffect(() => {
+    if (mounted && priorityLevel === 'NEED' && !councilLinkData && !initiative) {
+      setShowCouncilDialog(true)
+    }
+  }, [mounted, priorityLevel, councilLinkData, initiative])
+
+  // Load deliverables for this plan and filter by this goal
+  // We only allow selecting deliverables that belong to the current goal
+  // to keep integrity with "Add initiative under this goal"
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const { getDeliverablesForPlan } = await import('@/app/actions/strategic-deliverables')
+        const all = await getDeliverablesForPlan(planId)
+        const filtered = all.filter((d) => d.strategic_goal_id === goalId)
+        // Sort by objective number
+        filtered.sort((a, b) => a.objective_number.localeCompare(b.objective_number, undefined, { numeric: true }))
+        setDeliverables(filtered)
+      } catch (e) {
+        console.error('Failed to load deliverables for plan', e)
+      }
+    }
+    if (mounted) load()
+  }, [planId, goalId, mounted])
 
   const handleAddOutcome = () => {
     setOutcomes([...outcomes, ''])
@@ -99,10 +140,10 @@ export function InitiativeForm({
         return
       }
 
-      if (!name.trim()) {
+      if (!selectedDeliverableId) {
         toast({
           title: 'Validation Error',
-          description: 'Initiative name is required',
+          description: 'Please select a deliverable for the initiative name',
           variant: 'destructive',
         })
         return
@@ -157,6 +198,7 @@ export function InitiativeForm({
           rank_within_priority: rankNumber,
           expected_outcomes: filteredOutcomes,
           responsible_party: responsibleParty.trim() || undefined,
+          is_key_initiative: isKeyInitiative,
         })
 
         toast({
@@ -167,6 +209,7 @@ export function InitiativeForm({
         // Create new initiative
         await createInitiative({
           strategic_goal_id: goalId,
+          strategic_objective_id: objectiveId || undefined,
           lead_department_id: departmentId,
           fiscal_year_id: fiscalYearId,
           initiative_number: initiativeNumber.trim(),
@@ -177,6 +220,7 @@ export function InitiativeForm({
           rank_within_priority: rankNumber,
           expected_outcomes: filteredOutcomes,
           responsible_party: responsibleParty.trim() || undefined,
+          is_key_initiative: isKeyInitiative,
         })
 
         toast({
@@ -224,18 +268,46 @@ export function InitiativeForm({
         </p>
       </div>
 
-      {/* Name */}
+      {/* Name from Deliverables */}
       <div>
         <Label htmlFor="name">Initiative Name *</Label>
-        <Input
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={isSaving}
-          placeholder="e.g., Emergency Response System Upgrade"
-          className="mt-1"
-          required
-        />
+        {mounted ? (
+          <UiSelect
+            key={`deliverables-select-${deliverables.length}`}
+            value={selectedDeliverableId}
+            onValueChange={(val) => {
+              setSelectedDeliverableId(val)
+              const d = deliverables.find((x) => x.id === val)
+              if (d) {
+                setName(d.title)
+                setObjectiveId(d.strategic_objective_id)
+              }
+            }}
+          >
+            <UiSelectTrigger className="mt-1">
+              <UiSelectValue placeholder={name || 'Select from deliverables...'} />
+            </UiSelectTrigger>
+            <UiSelectContent>
+              {deliverables.length === 0 ? (
+                <UiSelectItem value="__no_deliverables__" disabled>
+                  No deliverables available for this goal
+                </UiSelectItem>
+              ) : (
+                deliverables.map((d) => (
+                  <UiSelectItem key={d.id} value={d.id}>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-sm">{d.title}</span>
+                      <span className="text-xs text-gray-500">{d.objective_number}</span>
+                    </div>
+                  </UiSelectItem>
+                ))
+              )}
+            </UiSelectContent>
+          </UiSelect>
+        ) : (
+          <Input disabled placeholder="Loading deliverables..." className="mt-1" />
+        )}
+        <p className="mt-1 text-xs text-gray-500">Choose an existing deliverable title under this goal.</p>
       </div>
 
       {/* Priority Level */}
@@ -266,16 +338,6 @@ export function InitiativeForm({
             </div>
           ))}
         </RadioGroup>
-        {councilLinkData && councilLinkData.councilPriorities.length > 0 && (
-          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <p className="text-sm font-medium text-blue-900 mb-1">
-              Linked to Council Priorities:
-            </p>
-            <p className="text-sm text-blue-800">
-              {councilLinkData.councilPriorities.join(', ')}
-            </p>
-          </div>
-        )}
       </div>
 
       {/* Rank */}
@@ -385,6 +447,22 @@ export function InitiativeForm({
           Optional: Person or team responsible for this initiative
         </p>
       </div>
+
+      {/* Key Initiative */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="is_key_initiative"
+          checked={isKeyInitiative}
+          onCheckedChange={(checked) => setIsKeyInitiative(checked === true)}
+          disabled={isSaving}
+        />
+        <Label htmlFor="is_key_initiative" className="text-sm font-medium cursor-pointer">
+          Mark as Key Initiative
+        </Label>
+      </div>
+      <p className="text-xs text-gray-500 -mt-4 ml-6">
+        Key initiatives are highlighted in the strategic plan and reports
+      </p>
 
       {/* Form Actions */}
       <div className="flex justify-end gap-2 border-t border-gray-200 pt-4">

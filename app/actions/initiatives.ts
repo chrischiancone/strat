@@ -10,6 +10,7 @@ export type InitiativeStatus = 'not_started' | 'in_progress' | 'at_risk' | 'comp
 export interface Initiative {
   id: string
   strategic_goal_id: string
+  strategic_objective_id?: string | null
   lead_department_id: string
   fiscal_year_id: string
   initiative_number: string
@@ -21,6 +22,7 @@ export interface Initiative {
   expected_outcomes: string[]
   status: InitiativeStatus
   responsible_party: string | null
+  is_key_initiative: boolean
   financial_analysis: unknown
   roi_analysis: unknown
   total_year_1_cost: number
@@ -38,6 +40,7 @@ export interface Initiative {
 
 export interface CreateInitiativeInput {
   strategic_goal_id: string
+  strategic_objective_id?: string
   initiative_number: string
   name: string
   priority_level: PriorityLevel
@@ -46,6 +49,7 @@ export interface CreateInitiativeInput {
   rationale: string
   expected_outcomes: string[]
   responsible_party?: string
+  is_key_initiative?: boolean
   lead_department_id: string
   fiscal_year_id: string
 }
@@ -60,6 +64,7 @@ export interface UpdateInitiativeInput {
   rationale?: string
   expected_outcomes?: string[]
   responsible_party?: string
+  is_key_initiative?: boolean
   status?: InitiativeStatus
 }
 
@@ -77,12 +82,14 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
   }
 
   // Fetch initiatives with goal info using admin client to bypass RLS
+  // Note: is_key_initiative might not exist yet if migration not applied
   const { data, error } = await adminSupabase
     .from('initiatives')
     .select(
       `
       id,
       strategic_goal_id,
+      strategic_objective_id,
       lead_department_id,
       fiscal_year_id,
       initiative_number,
@@ -150,6 +157,7 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
   return (data as unknown as InitiativeQueryResult[] || []).map((init) => ({
     id: init.id,
     strategic_goal_id: init.strategic_goal_id,
+    strategic_objective_id: (init as any).strategic_objective_id ?? null,
     lead_department_id: init.lead_department_id,
     fiscal_year_id: init.fiscal_year_id,
     initiative_number: init.initiative_number,
@@ -163,6 +171,7 @@ export async function getInitiatives(planId: string): Promise<Initiative[]> {
       : [],
     status: init.status as InitiativeStatus,
     responsible_party: init.responsible_party,
+    is_key_initiative: (init as any).is_key_initiative ?? false,
     financial_analysis: init.financial_analysis,
     roi_analysis: init.roi_analysis,
     total_year_1_cost: init.total_year_1_cost,
@@ -195,12 +204,14 @@ export async function getInitiativesByGoal(
   }
 
   // Fetch initiatives for this goal using admin client to bypass RLS
+  // Note: is_key_initiative might not exist yet if migration not applied
   const { data, error } = await adminSupabase
     .from('initiatives')
     .select(
       `
       id,
       strategic_goal_id,
+      strategic_objective_id,
       lead_department_id,
       fiscal_year_id,
       initiative_number,
@@ -269,6 +280,7 @@ export async function getInitiativesByGoal(
   return (data as unknown as InitiativeQueryResult[] || []).map((init) => ({
     id: init.id,
     strategic_goal_id: init.strategic_goal_id,
+    strategic_objective_id: (init as any).strategic_objective_id ?? null,
     lead_department_id: init.lead_department_id,
     fiscal_year_id: init.fiscal_year_id,
     initiative_number: init.initiative_number,
@@ -282,6 +294,7 @@ export async function getInitiativesByGoal(
       : [],
     status: init.status as InitiativeStatus,
     responsible_party: init.responsible_party,
+    is_key_initiative: (init as any).is_key_initiative ?? false,
     financial_analysis: init.financial_analysis,
     roi_analysis: init.roi_analysis,
     total_year_1_cost: init.total_year_1_cost,
@@ -313,11 +326,25 @@ export async function createInitiative(
     throw new Error('Unauthorized')
   }
 
+  // If objective provided, derive goal id from objective
+  let goalIdToUse = input.strategic_goal_id
+  if (input.strategic_objective_id) {
+    const { data: obj, error: objErr } = await adminSupabase
+      .from('strategic_objectives')
+      .select('strategic_goal_id')
+      .eq('id', input.strategic_objective_id)
+      .single<{ strategic_goal_id: string }>()
+    if (objErr || !obj) {
+      throw new Error('Objective not found')
+    }
+    goalIdToUse = obj.strategic_goal_id
+  }
+
   // Get goal and plan info for permission checking using admin client
   const { data: goal } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plans!inner(department_id)')
-    .eq('id', input.strategic_goal_id)
+    .eq('id', goalIdToUse)
     .single()
 
   if (!goal) {
@@ -377,7 +404,8 @@ export async function createInitiative(
 
   // Create the initiative
   const newInitiative = {
-    strategic_goal_id: input.strategic_goal_id,
+    strategic_goal_id: goalIdToUse,
+    strategic_objective_id: input.strategic_objective_id || null,
     lead_department_id: input.lead_department_id,
     fiscal_year_id: input.fiscal_year_id,
     initiative_number: input.initiative_number,
@@ -388,6 +416,7 @@ export async function createInitiative(
     rationale: input.rationale,
     expected_outcomes: input.expected_outcomes,
     responsible_party: input.responsible_party || null,
+    is_key_initiative: input.is_key_initiative ?? false,
     status: 'not_started' as InitiativeStatus,
   }
 
@@ -412,7 +441,7 @@ export async function createInitiative(
   const { data: goalData } = await adminSupabase
     .from('strategic_goals')
     .select('strategic_plan_id')
-    .eq('id', input.strategic_goal_id)
+    .eq('id', goalIdToUse)
     .single<{ strategic_plan_id: string }>()
 
   if (goalData) {
@@ -497,6 +526,8 @@ export async function updateInitiative(
     updateData.expected_outcomes = input.expected_outcomes
   if (input.responsible_party !== undefined)
     updateData.responsible_party = input.responsible_party
+  if (input.is_key_initiative !== undefined)
+    updateData.is_key_initiative = input.is_key_initiative
   if (input.status !== undefined) updateData.status = input.status
 
   // Use admin client to bypass RLS since we've already validated permissions

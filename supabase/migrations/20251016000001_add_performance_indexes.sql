@@ -20,83 +20,69 @@ CREATE INDEX IF NOT EXISTS idx_users_created_at ON public.users(created_at DESC)
 
 -- Departments table indexes
 CREATE INDEX IF NOT EXISTS idx_departments_municipality_id ON public.departments(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_departments_parent_id ON public.departments(parent_department_id);
 CREATE INDEX IF NOT EXISTS idx_departments_is_active ON public.departments(is_active);
 
 -- Fiscal years table indexes
 CREATE INDEX IF NOT EXISTS idx_fiscal_years_municipality_id ON public.fiscal_years(municipality_id);
 CREATE INDEX IF NOT EXISTS idx_fiscal_years_start_date ON public.fiscal_years(start_date);
 CREATE INDEX IF NOT EXISTS idx_fiscal_years_end_date ON public.fiscal_years(end_date);
-CREATE INDEX IF NOT EXISTS idx_fiscal_years_is_active ON public.fiscal_years(is_active);
+CREATE INDEX IF NOT EXISTS idx_fiscal_years_is_current ON public.fiscal_years(is_current);
 
 -- ============================================
 -- Planning Tables Indexes
 -- ============================================
 
 -- Strategic plans table indexes
-CREATE INDEX IF NOT EXISTS idx_strategic_plans_municipality_id ON public.strategic_plans(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_strategic_plans_fiscal_year_id ON public.strategic_plans(fiscal_year_id);
+CREATE INDEX IF NOT EXISTS idx_strategic_plans_department_id ON public.strategic_plans(department_id);
+CREATE INDEX IF NOT EXISTS idx_strategic_plans_start_fiscal_year_id ON public.strategic_plans(start_fiscal_year_id);
 CREATE INDEX IF NOT EXISTS idx_strategic_plans_status ON public.strategic_plans(status);
 CREATE INDEX IF NOT EXISTS idx_strategic_plans_created_by ON public.strategic_plans(created_by);
 CREATE INDEX IF NOT EXISTS idx_strategic_plans_created_at ON public.strategic_plans(created_at DESC);
 
--- Goals table indexes  
-CREATE INDEX IF NOT EXISTS idx_goals_plan_id ON public.goals(plan_id);
-CREATE INDEX IF NOT EXISTS idx_goals_department_id ON public.goals(department_id);
-CREATE INDEX IF NOT EXISTS idx_goals_status ON public.goals(status);
-CREATE INDEX IF NOT EXISTS idx_goals_priority ON public.goals(priority);
-CREATE INDEX IF NOT EXISTS idx_goals_target_completion_date ON public.goals(target_completion_date);
+-- Strategic goals table indexes  
+CREATE INDEX IF NOT EXISTS idx_strategic_goals_plan_id ON public.strategic_goals(strategic_plan_id);
+CREATE INDEX IF NOT EXISTS idx_strategic_goals_goal_number ON public.strategic_goals(goal_number);
 
 -- Initiatives table indexes
-CREATE INDEX IF NOT EXISTS idx_initiatives_goal_id ON public.initiatives(goal_id);
-CREATE INDEX IF NOT EXISTS idx_initiatives_department_id ON public.initiatives(department_id);
+CREATE INDEX IF NOT EXISTS idx_initiatives_strategic_goal_id ON public.initiatives(strategic_goal_id);
+CREATE INDEX IF NOT EXISTS idx_initiatives_lead_department_id ON public.initiatives(lead_department_id);
 CREATE INDEX IF NOT EXISTS idx_initiatives_status ON public.initiatives(status);
-CREATE INDEX IF NOT EXISTS idx_initiatives_priority ON public.initiatives(priority);
-CREATE INDEX IF NOT EXISTS idx_initiatives_owner_id ON public.initiatives(owner_id);
-CREATE INDEX IF NOT EXISTS idx_initiatives_start_date ON public.initiatives(start_date);
-CREATE INDEX IF NOT EXISTS idx_initiatives_end_date ON public.initiatives(end_date);
+CREATE INDEX IF NOT EXISTS idx_initiatives_priority_level ON public.initiatives(priority_level);
+CREATE INDEX IF NOT EXISTS idx_initiatives_fiscal_year_id ON public.initiatives(fiscal_year_id);
 CREATE INDEX IF NOT EXISTS idx_initiatives_created_at ON public.initiatives(created_at DESC);
 
 -- Composite index for common initiative queries
-CREATE INDEX IF NOT EXISTS idx_initiatives_dept_status ON public.initiatives(department_id, status);
-CREATE INDEX IF NOT EXISTS idx_initiatives_goal_status ON public.initiatives(goal_id, status);
+CREATE INDEX IF NOT EXISTS idx_initiatives_dept_status ON public.initiatives(lead_department_id, status);
+CREATE INDEX IF NOT EXISTS idx_initiatives_goal_status ON public.initiatives(strategic_goal_id, status);
 
 -- ============================================
 -- Budget & Finance Indexes
 -- ============================================
 
--- Budget allocations table indexes
-CREATE INDEX IF NOT EXISTS idx_budget_allocations_initiative_id ON public.budget_allocations(initiative_id);
-CREATE INDEX IF NOT EXISTS idx_budget_allocations_fiscal_year_id ON public.budget_allocations(fiscal_year_id);
-CREATE INDEX IF NOT EXISTS idx_budget_allocations_category ON public.budget_allocations(category);
-CREATE INDEX IF NOT EXISTS idx_budget_allocations_status ON public.budget_allocations(status);
+-- Initiative budgets table indexes
+CREATE INDEX IF NOT EXISTS idx_initiative_budgets_initiative_id ON public.initiative_budgets(initiative_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_budgets_fiscal_year_id ON public.initiative_budgets(fiscal_year_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_budgets_category ON public.initiative_budgets(category);
+CREATE INDEX IF NOT EXISTS idx_initiative_budgets_funding_status ON public.initiative_budgets(funding_status);
 
 -- Composite index for budget queries
-CREATE INDEX IF NOT EXISTS idx_budget_alloc_fy_status ON public.budget_allocations(fiscal_year_id, status);
-
--- Funding sources table indexes
-CREATE INDEX IF NOT EXISTS idx_funding_sources_municipality_id ON public.funding_sources(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_funding_sources_type ON public.funding_sources(type);
-CREATE INDEX IF NOT EXISTS idx_funding_sources_is_active ON public.funding_sources(is_active);
-
--- Budget categories table indexes
-CREATE INDEX IF NOT EXISTS idx_budget_categories_municipality_id ON public.budget_categories(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_budget_categories_is_active ON public.budget_categories(is_active);
+CREATE INDEX IF NOT EXISTS idx_initiative_budgets_fy_status ON public.initiative_budgets(fiscal_year_id, funding_status);
 
 -- ============================================
 -- KPIs & Milestones Indexes
 -- ============================================
 
--- KPIs table indexes
-CREATE INDEX IF NOT EXISTS idx_kpis_initiative_id ON public.kpis(initiative_id);
-CREATE INDEX IF NOT EXISTS idx_kpis_status ON public.kpis(status);
-CREATE INDEX IF NOT EXISTS idx_kpis_target_date ON public.kpis(target_date);
+-- Initiative KPIs table indexes
+CREATE INDEX IF NOT EXISTS idx_initiative_kpis_initiative_id ON public.initiative_kpis(initiative_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_kpis_strategic_goal_id ON public.initiative_kpis(strategic_goal_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_kpis_strategic_plan_id ON public.initiative_kpis(strategic_plan_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_kpis_frequency ON public.initiative_kpis(measurement_frequency);
 
--- Milestones table indexes
-CREATE INDEX IF NOT EXISTS idx_milestones_initiative_id ON public.milestones(initiative_id);
-CREATE INDEX IF NOT EXISTS idx_milestones_status ON public.milestones(status);
-CREATE INDEX IF NOT EXISTS idx_milestones_due_date ON public.milestones(due_date);
-CREATE INDEX IF NOT EXISTS idx_milestones_completed_date ON public.milestones(completed_date);
+-- Quarterly milestones table indexes
+CREATE INDEX IF NOT EXISTS idx_quarterly_milestones_initiative_id ON public.quarterly_milestones(initiative_id);
+CREATE INDEX IF NOT EXISTS idx_quarterly_milestones_status ON public.quarterly_milestones(status);
+CREATE INDEX IF NOT EXISTS idx_quarterly_milestones_fiscal_year_id ON public.quarterly_milestones(fiscal_year_id);
+CREATE INDEX IF NOT EXISTS idx_quarterly_milestones_completion_date ON public.quarterly_milestones(completion_date);
 
 -- ============================================
 -- Supporting Tables Indexes
@@ -105,66 +91,74 @@ CREATE INDEX IF NOT EXISTS idx_milestones_completed_date ON public.milestones(co
 -- Comments table indexes
 CREATE INDEX IF NOT EXISTS idx_comments_entity_type ON public.comments(entity_type);
 CREATE INDEX IF NOT EXISTS idx_comments_entity_id ON public.comments(entity_id);
-CREATE INDEX IF NOT EXISTS idx_comments_user_id ON public.comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_comments_author_id ON public.comments(author_id);
 CREATE INDEX IF NOT EXISTS idx_comments_created_at ON public.comments(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_comments_is_resolved ON public.comments(is_resolved);
 
 -- Composite index for comment queries
 CREATE INDEX IF NOT EXISTS idx_comments_entity ON public.comments(entity_type, entity_id);
 
--- Attachments table indexes
-CREATE INDEX IF NOT EXISTS idx_attachments_entity_type ON public.attachments(entity_type);
-CREATE INDEX IF NOT EXISTS idx_attachments_entity_id ON public.attachments(entity_id);
-CREATE INDEX IF NOT EXISTS idx_attachments_uploaded_by ON public.attachments(uploaded_by);
-CREATE INDEX IF NOT EXISTS idx_attachments_created_at ON public.attachments(created_at DESC);
-
 -- Activity log table indexes
 CREATE INDEX IF NOT EXISTS idx_activity_log_user_id ON public.activity_log(user_id);
-CREATE INDEX IF NOT EXISTS idx_activity_log_entity_type ON public.activity_log(entity_type);
-CREATE INDEX IF NOT EXISTS idx_activity_log_entity_id ON public.activity_log(entity_id);
+CREATE INDEX IF NOT EXISTS idx_activity_log_resource_type ON public.activity_log(resource_type);
+CREATE INDEX IF NOT EXISTS idx_activity_log_resource_id ON public.activity_log(resource_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_action ON public.activity_log(action);
 CREATE INDEX IF NOT EXISTS idx_activity_log_created_at ON public.activity_log(created_at DESC);
 
 -- Composite indexes for activity log queries
-CREATE INDEX IF NOT EXISTS idx_activity_log_entity ON public.activity_log(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_activity_log_resource ON public.activity_log(resource_type, resource_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_user_date ON public.activity_log(user_id, created_at DESC);
 
 -- Notifications table indexes
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_type ON public.notifications(type);
-CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON public.notifications(is_read);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON public.notifications(read);
 CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON public.notifications(created_at DESC);
 
 -- Composite index for notification queries
-CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON public.notifications(user_id, is_read) WHERE is_read = false;
+CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON public.notifications(user_id, read) WHERE read = false;
 
--- Tags table indexes
-CREATE INDEX IF NOT EXISTS idx_tags_entity_type ON public.tags(entity_type);
-CREATE INDEX IF NOT EXISTS idx_tags_entity_id ON public.tags(entity_id);
-CREATE INDEX IF NOT EXISTS idx_tags_name ON public.tags(name);
+-- Initiative dependencies indexes
+CREATE INDEX IF NOT EXISTS idx_initiative_dependencies_initiative_id ON public.initiative_dependencies(initiative_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_dependencies_depends_on ON public.initiative_dependencies(depends_on_initiative_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_dependencies_critical ON public.initiative_dependencies(is_critical_path) WHERE is_critical_path = true;
+
+-- Initiative collaborators indexes
+CREATE INDEX IF NOT EXISTS idx_initiative_collaborators_initiative_id ON public.initiative_collaborators(initiative_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_collaborators_department_id ON public.initiative_collaborators(department_id);
+CREATE INDEX IF NOT EXISTS idx_initiative_collaborators_role ON public.initiative_collaborators(role);
 
 -- ============================================
 -- System Tables Indexes
 -- ============================================
 
--- Council goals table indexes (if exists)
+-- Council goals table indexes
 CREATE INDEX IF NOT EXISTS idx_council_goals_municipality_id ON public.council_goals(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_council_goals_fiscal_year_id ON public.council_goals(fiscal_year_id);
-CREATE INDEX IF NOT EXISTS idx_council_goals_status ON public.council_goals(status);
+CREATE INDEX IF NOT EXISTS idx_council_goals_category ON public.council_goals(category);
+CREATE INDEX IF NOT EXISTS idx_council_goals_is_active ON public.council_goals(is_active);
+CREATE INDEX IF NOT EXISTS idx_council_goals_sort_order ON public.council_goals(sort_order);
 
--- Dashboard messages table indexes (if exists)
-CREATE INDEX IF NOT EXISTS idx_dashboard_messages_municipality_id ON public.dashboard_messages(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_dashboard_messages_is_active ON public.dashboard_messages(is_active);
-CREATE INDEX IF NOT EXISTS idx_dashboard_messages_priority ON public.dashboard_messages(priority);
+-- Dashboard messages table indexes
+CREATE INDEX IF NOT EXISTS idx_dashboard_messages_location ON public.dashboard_messages(location);
+CREATE INDEX IF NOT EXISTS idx_dashboard_messages_bg_color ON public.dashboard_messages(bg_color);
 
--- Backups table indexes (if exists)
-CREATE INDEX IF NOT EXISTS idx_backups_municipality_id ON public.backups(municipality_id);
-CREATE INDEX IF NOT EXISTS idx_backups_created_by ON public.backups(created_by);
-CREATE INDEX IF NOT EXISTS idx_backups_created_at ON public.backups(created_at DESC);
+-- Collaboration sessions indexes
+CREATE INDEX IF NOT EXISTS idx_collaboration_sessions_resource ON public.collaboration_sessions(resource_id, resource_type);
+CREATE INDEX IF NOT EXISTS idx_collaboration_sessions_expires_at ON public.collaboration_sessions(expires_at);
 
--- AI analyses table indexes (if exists)
-CREATE INDEX IF NOT EXISTS idx_ai_analyses_entity_type ON public.ai_analyses(entity_type);
-CREATE INDEX IF NOT EXISTS idx_ai_analyses_entity_id ON public.ai_analyses(entity_id);
-CREATE INDEX IF NOT EXISTS idx_ai_analyses_created_at ON public.ai_analyses(created_at DESC);
+-- Live edits indexes
+CREATE INDEX IF NOT EXISTS idx_live_edits_session_id ON public.live_edits(session_id);
+CREATE INDEX IF NOT EXISTS idx_live_edits_resource ON public.live_edits(resource_id, resource_type);
+CREATE INDEX IF NOT EXISTS idx_live_edits_applied ON public.live_edits(applied);
+
+-- Audit logs indexes
+CREATE INDEX IF NOT EXISTS idx_audit_logs_table_record ON public.audit_logs(table_name, record_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_by ON public.audit_logs(changed_by);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_at ON public.audit_logs(changed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON public.audit_logs(action);
+
+-- Document embeddings indexes
+CREATE INDEX IF NOT EXISTS idx_document_embeddings_content ON public.document_embeddings(content_type, content_id);
 
 -- ============================================
 -- Full-text Search Indexes
@@ -173,8 +167,8 @@ CREATE INDEX IF NOT EXISTS idx_ai_analyses_created_at ON public.ai_analyses(crea
 -- Add GIN indexes for full-text search on text fields
 CREATE INDEX IF NOT EXISTS idx_initiatives_name_gin ON public.initiatives USING gin(to_tsvector('english', name));
 CREATE INDEX IF NOT EXISTS idx_initiatives_description_gin ON public.initiatives USING gin(to_tsvector('english', description));
-CREATE INDEX IF NOT EXISTS idx_goals_name_gin ON public.goals USING gin(to_tsvector('english', name));
-CREATE INDEX IF NOT EXISTS idx_strategic_plans_name_gin ON public.strategic_plans USING gin(to_tsvector('english', name));
+CREATE INDEX IF NOT EXISTS idx_strategic_goals_title_gin ON public.strategic_goals USING gin(to_tsvector('english', title));
+CREATE INDEX IF NOT EXISTS idx_strategic_plans_title_gin ON public.strategic_plans USING gin(to_tsvector('english', title));
 
 -- ============================================
 -- Analysis and Maintenance
@@ -185,6 +179,8 @@ ANALYZE;
 
 -- Add comments documenting the indexes
 COMMENT ON INDEX idx_initiatives_dept_status IS 'Composite index for filtering initiatives by department and status';
-COMMENT ON INDEX idx_budget_alloc_fy_status IS 'Composite index for budget queries filtered by fiscal year and status';
+COMMENT ON INDEX idx_initiatives_goal_status IS 'Composite index for filtering initiatives by goal and status';
+COMMENT ON INDEX idx_initiative_budgets_fy_status IS 'Composite index for budget queries filtered by fiscal year and status';
 COMMENT ON INDEX idx_notifications_user_unread IS 'Partial index for unread notifications per user - improves notification feed queries';
 COMMENT ON INDEX idx_initiatives_name_gin IS 'Full-text search index for initiative names';
+COMMENT ON INDEX idx_initiative_dependencies_critical IS 'Partial index for critical path dependencies';

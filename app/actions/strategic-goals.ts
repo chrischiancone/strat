@@ -252,6 +252,99 @@ export async function createStrategicGoal(
   return { id: data.id }
 }
 
+// Deep create: create a goal with nested objectives and deliverables atomically in the DB
+export async function createStrategicGoalDeep(input: {
+  strategic_plan_id: string
+  goal_number: number
+  title: string
+  description: string
+  city_priority_alignment: string
+  objectives: Array<{
+    objective_number?: string
+    title: string
+    description?: string
+    deliverables: Array<{
+      deliverable_number?: string
+      title: string
+      description?: string
+      target_date?: string
+      status?: 'not_started' | 'in_progress' | 'completed' | 'deferred'
+    }>
+  }>
+}): Promise<{ id: string }> {
+  const supabase = createServerSupabaseClient()
+  // Use the user-scoped client for RPC so auth.uid() is available inside the DB function
+
+  // Get current user
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser()
+
+  if (!currentUser) {
+    throw new Error('Unauthorized')
+  }
+
+  // Call RPC which handles authorization and atomic inserts
+  const { data, error } = await supabase.rpc('create_goal_with_children', {
+    p_plan_id: input.strategic_plan_id,
+    p_goal_number: input.goal_number,
+    p_title: input.title,
+    p_description: input.description,
+    p_city_priority_alignment: input.city_priority_alignment,
+    p_objectives: input.objectives as unknown as object,
+  })
+
+  if (error) {
+    console.error('createStrategicGoalDeep RPC error:', error)
+    throw new Error(error.message)
+  }
+
+  if (!data) {
+    throw new Error('No goal id returned from RPC')
+  }
+
+  // Revalidate paths
+  revalidatePath(`/plans/${input.strategic_plan_id}`)
+  revalidatePath(`/plans/${input.strategic_plan_id}/edit`)
+
+  return { id: data as string }
+}
+
+// Deep upsert children for an existing goal
+export async function upsertGoalChildrenDeep(input: {
+  goal_id: string
+  objectives: Array<{
+    objective_number: string
+    title: string
+    description?: string
+    deliverables: Array<{
+      deliverable_number: string
+      title: string
+      description?: string
+      target_date?: string
+      status?: 'not_started' | 'in_progress' | 'completed' | 'deferred'
+    }>
+  }>
+  delete_missing?: boolean
+}): Promise<void> {
+  const supabase = createServerSupabaseClient()
+
+  const { data: userData } = await supabase.auth.getUser()
+  if (!userData || !userData.user) throw new Error('Unauthorized')
+
+  // Call 3-arg version explicitly to avoid overload ambiguity
+  const { error } = await supabase.rpc('upsert_goal_children', {
+    p_goal_id: input.goal_id,
+    p_objectives: input.objectives as unknown as object,
+    p_delete_missing: input.delete_missing ?? false,
+  })
+
+  if (error) {
+    console.error('upsertGoalChildrenDeep RPC error:', error)
+    throw new Error(error.message)
+  }
+}
+
 export async function updateStrategicGoal(
   input: UpdateGoalInput
 ): Promise<void> {

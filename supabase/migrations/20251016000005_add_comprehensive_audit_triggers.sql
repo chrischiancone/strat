@@ -153,14 +153,13 @@ CREATE INDEX IF NOT EXISTS audit_logs_action_idx ON audit_logs(action);
 CREATE INDEX IF NOT EXISTS audit_logs_table_action_idx ON audit_logs(table_name, action);
 CREATE INDEX IF NOT EXISTS audit_logs_user_date_idx ON audit_logs(changed_by, changed_at DESC);
 
--- Partial indexes for common filtering scenarios
-CREATE INDEX IF NOT EXISTS audit_logs_recent_activity_idx 
-    ON audit_logs(changed_at DESC) 
-    WHERE changed_at > NOW() - INTERVAL '30 days';
-
+-- Partial index for common filtering scenarios
 CREATE INDEX IF NOT EXISTS audit_logs_user_activity_idx 
     ON audit_logs(changed_by, table_name, action) 
     WHERE changed_by IS NOT NULL;
+
+-- Note: We cannot use NOW() in partial indexes as it's not immutable.
+-- For recent activity queries, use the regular changed_at DESC index.
 
 -- =====================================================
 -- CREATE AUDIT LOG SUMMARY VIEW

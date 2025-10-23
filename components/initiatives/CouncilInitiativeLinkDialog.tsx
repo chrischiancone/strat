@@ -13,8 +13,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { CITY_PRIORITIES, type CityPriority } from '@/lib/constants/strategic-planning'
 import { Badge } from '@/components/ui/badge'
+import { getCouncilGoals, type CouncilGoal } from '@/app/actions/council-goals'
+import { Loader2 } from 'lucide-react'
 
 interface CouncilInitiativeLinkDialogProps {
   open: boolean
@@ -25,7 +26,7 @@ interface CouncilInitiativeLinkDialogProps {
 }
 
 export interface CouncilLinkData {
-  councilPriorities: CityPriority[]
+  selectedKeyPoints: { goalId: string; goalTitle: string; keyPoint: string }[]
   councilJustification: string
 }
 
@@ -36,33 +37,66 @@ export function CouncilInitiativeLinkDialog({
   onConfirm,
   initialData,
 }: CouncilInitiativeLinkDialogProps) {
-  const [selectedPriorities, setSelectedPriorities] = useState<CityPriority[]>(
-    initialData?.councilPriorities || []
+  const [councilGoals, setCouncilGoals] = useState<CouncilGoal[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedKeyPoints, setSelectedKeyPoints] = useState<{ goalId: string; goalTitle: string; keyPoint: string }[]>(
+    initialData?.selectedKeyPoints || []
   )
   const [justification, setJustification] = useState(
     initialData?.councilJustification || ''
   )
 
+  // Load council goals
+  useEffect(() => {
+    const loadGoals = async () => {
+      try {
+        setLoading(true)
+        const goals = await getCouncilGoals()
+        setCouncilGoals(goals)
+      } catch (error) {
+        console.error('Failed to load council goals:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    if (open) {
+      loadGoals()
+    }
+  }, [open])
+
   useEffect(() => {
     if (initialData) {
-      setSelectedPriorities(initialData.councilPriorities || [])
+      setSelectedKeyPoints(initialData.selectedKeyPoints || [])
       setJustification(initialData.councilJustification || '')
     }
   }, [initialData])
 
   const handleConfirm = () => {
     onConfirm({
-      councilPriorities: selectedPriorities,
+      selectedKeyPoints,
       councilJustification: justification,
     })
     onOpenChange(false)
   }
 
-  const handlePriorityToggle = (priority: CityPriority) => {
-    setSelectedPriorities((prev) =>
-      prev.includes(priority)
-        ? prev.filter((p) => p !== priority)
-        : [...prev, priority]
+  const handleKeyPointToggle = (goalId: string, goalTitle: string, keyPoint: string) => {
+    setSelectedKeyPoints((prev) => {
+      const exists = prev.find(
+        (item) => item.goalId === goalId && item.keyPoint === keyPoint
+      )
+      if (exists) {
+        return prev.filter(
+          (item) => !(item.goalId === goalId && item.keyPoint === keyPoint)
+        )
+      } else {
+        return [...prev, { goalId, goalTitle, keyPoint }]
+      }
+    })
+  }
+
+  const isKeyPointSelected = (goalId: string, keyPoint: string) => {
+    return selectedKeyPoints.some(
+      (item) => item.goalId === goalId && item.keyPoint === keyPoint
     )
   }
 
@@ -103,34 +137,53 @@ export function CouncilInitiativeLinkDialog({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* City Council Priorities Selection */}
+          {/* City Council Goals Selection */}
           <div>
             <Label className="text-base font-semibold mb-3 block">
-              Related Council Priorities <span className="text-red-500">*</span>
+              Related Council Goals <span className="text-red-500">*</span>
             </Label>
             <p className="text-sm text-gray-500 mb-3">
-              Select all council priorities that this initiative addresses:
+              Select all council goals and core values that this initiative addresses:
             </p>
-            <div className="space-y-2 border rounded-lg p-4 bg-gray-50">
-              {CITY_PRIORITIES.map((priority) => (
-                <div key={priority} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`priority-${priority}`}
-                    checked={selectedPriorities.includes(priority)}
-                    onCheckedChange={() => handlePriorityToggle(priority)}
-                  />
-                  <Label
-                    htmlFor={`priority-${priority}`}
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {priority}
-                  </Label>
-                </div>
-              ))}
-            </div>
-            {selectedPriorities.length === 0 && (
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              </div>
+            ) : (
+              <div className="space-y-4 border rounded-lg p-4 bg-gray-50 max-h-96 overflow-y-auto">
+                {councilGoals.map((goal) => (
+                  <div key={goal.id} className="border-b border-gray-200 last:border-0 pb-4 last:pb-0 mb-4 last:mb-0">
+                    <div className="mb-2">
+                      <h4 className="font-semibold text-sm text-gray-900">{goal.title}</h4>
+                      <p className="text-xs text-gray-600 mt-1">{goal.description}</p>
+                    </div>
+                    {goal.key_points && goal.key_points.length > 0 && (
+                      <div className="ml-2 space-y-2">
+                        {goal.key_points.map((point, idx) => (
+                          <div key={idx} className="flex items-start space-x-2">
+                            <Checkbox
+                              id={`keypoint-${goal.id}-${idx}`}
+                              checked={isKeyPointSelected(goal.id, point)}
+                              onCheckedChange={() => handleKeyPointToggle(goal.id, goal.title, point)}
+                              className="mt-0.5"
+                            />
+                            <Label
+                              htmlFor={`keypoint-${goal.id}-${idx}`}
+                              className="text-xs text-gray-700 cursor-pointer leading-relaxed"
+                            >
+                              {point}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {!loading && selectedKeyPoints.length === 0 && (
               <p className="text-sm text-amber-600 mt-2">
-                Please select at least one council priority
+                Please select at least one key point
               </p>
             )}
           </div>
@@ -184,7 +237,7 @@ export function CouncilInitiativeLinkDialog({
           <Button
             type="button"
             onClick={handleConfirm}
-            disabled={selectedPriorities.length === 0 || justification.trim() === ''}
+            disabled={loading || selectedKeyPoints.length === 0 || justification.trim() === ''}
           >
             Confirm & Continue
           </Button>

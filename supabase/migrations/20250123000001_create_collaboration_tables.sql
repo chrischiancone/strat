@@ -24,6 +24,9 @@ COMMENT ON TABLE collaboration_sessions IS 'Active collaboration sessions for re
 -- =====================================================
 -- COMMENTS
 -- =====================================================
+-- Drop existing comments table from earlier migration to recreate with enhanced features
+DROP TABLE IF EXISTS comments CASCADE;
+
 CREATE TABLE comments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     entity_id UUID NOT NULL,
@@ -99,7 +102,7 @@ CREATE INDEX activity_log_user_idx ON activity_log(user_id);
 CREATE INDEX activity_log_resource_idx ON activity_log(resource_id, resource_type);
 CREATE INDEX activity_log_created_idx ON activity_log(created_at DESC);
 
-COMMENT ON TABLE activity_feed IS 'Activity history for auditing and collaboration';
+COMMENT ON TABLE activity_log IS 'Activity history for auditing and collaboration';
 
 -- =====================================================
 -- LIVE EDITS (Operational Transform / CRDT)
@@ -142,5 +145,5 @@ CREATE TRIGGER comments_updated_at BEFORE UPDATE ON comments
 -- ALTER TABLE collaboration_sessions ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE activity_feed ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE activity_log ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE live_edits ENABLE ROW LEVEL SECURITY;

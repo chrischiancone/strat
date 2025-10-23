@@ -295,6 +295,7 @@ export function InitiativesSection({
           </DialogHeader>
           {selectedGoal && (
             <InitiativeForm
+              planId={planId}
               goalId={selectedGoal.id}
               goalNumber={selectedGoal.goal_number}
               goalTitle={selectedGoal.title}
@@ -323,6 +324,7 @@ export function InitiativesSection({
           </DialogHeader>
           {editingInitiative && (
             <InitiativeForm
+              planId={planId}
               goalId={editingInitiative.strategic_goal_id}
               goalNumber={editingInitiative.goal?.goal_number || 0}
               goalTitle={editingInitiative.goal?.title || ''}

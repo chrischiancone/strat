@@ -75,7 +75,7 @@ export async function getFinanceInitiativeBudgets(
   // Get user profile
   const { data: profile } = await supabase
     .from('users')
-    .select('role, municipality_id')
+    .select('role, municipality_id, department_id')
     .eq('id', user.id)
     .single()
 
@@ -86,13 +86,15 @@ export async function getFinanceInitiativeBudgets(
   type Profile = {
     role: string
     municipality_id: string
+    department_id: string | null
   }
 
   const typedProfile = profile as unknown as Profile
 
-  // Only Finance Director and Admin can access
-  if (typedProfile.role !== 'finance' && typedProfile.role !== 'admin') {
-    throw new Error('Access denied: Finance role required')
+  // Check role-based access: finance, admin, city_manager, department_director
+  const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
+  if (!allowedRoles.includes(typedProfile.role)) {
+    throw new Error('Access denied: Insufficient permissions')
   }
 
   // Build the query for initiatives with budgets
@@ -220,6 +222,14 @@ export async function getFinanceInitiativeBudgets(
     budget_validated_by: init.budget_validated_by,
     budget_validated_at: init.budget_validated_at,
   }))
+
+  // Apply department filtering based on role
+  if (typedProfile.role === 'department_director' && typedProfile.department_id) {
+    // Department directors only see their own department
+    transformedInitiatives = transformedInitiatives.filter((init) =>
+      init.department_id === typedProfile.department_id
+    )
+  }
 
   // Apply client-side filters
   if (filters.department_ids && filters.department_ids.length > 0) {
@@ -392,7 +402,7 @@ export async function getFinanceBudgetExportData(
   // Get user profile
   const { data: profile } = await supabase
     .from('users')
-    .select('role, municipality_id')
+    .select('role, municipality_id, department_id')
     .eq('id', user.id)
     .single()
 
@@ -403,13 +413,15 @@ export async function getFinanceBudgetExportData(
   type Profile = {
     role: string
     municipality_id: string
+    department_id: string | null
   }
 
   const typedProfile = profile as unknown as Profile
 
-  // Only Finance Director and Admin can access
-  if (typedProfile.role !== 'finance' && typedProfile.role !== 'admin') {
-    throw new Error('Access denied: Finance role required')
+  // Check role-based access: finance, admin, city_manager, department_director
+  const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
+  if (!allowedRoles.includes(typedProfile.role)) {
+    throw new Error('Access denied: Insufficient permissions')
   }
 
   // Get ALL initiatives (no pagination for export)
@@ -527,6 +539,14 @@ export async function getFinanceBudgetExportData(
     budget_validated_by: init.budget_validated_by,
     budget_validated_at: init.budget_validated_at,
   }))
+
+  // Apply department filtering based on role
+  if (typedProfile.role === 'department_director' && typedProfile.department_id) {
+    // Department directors only see their own department
+    transformedInitiatives = transformedInitiatives.filter((init) =>
+      init.department_id === typedProfile.department_id
+    )
+  }
 
   // Apply client-side filters
   if (filters.department_ids && filters.department_ids.length > 0) {

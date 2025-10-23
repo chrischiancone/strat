@@ -20,14 +20,24 @@ export default async function FinanceDashboardPage() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('role')
+    .select('role, department_id')
     .eq('id', user.id)
-    .single<{ role: string }>()
+    .single<{ role: string; department_id: string | null }>()
 
   const allowedRoles = ['finance', 'admin', 'city_manager', 'department_director']
   if (!profile || !allowedRoles.includes(profile.role)) {
     notFound()
   }
+
+  // Get user-friendly role description
+  const roleDescriptions: Record<string, string> = {
+    department_director: 'Review and validate initiative budgets for your department',
+    finance: 'Review and validate initiative budgets across all departments',
+    admin: 'Review and validate initiative budgets across all departments',
+    city_manager: 'Review and validate initiative budgets across all departments'
+  }
+
+  const pageDescription = roleDescriptions[profile.role] || 'Review and validate initiative budgets'
 
   // Fetch data for filters
   const [fiscalYears, departments] = await Promise.all([getFiscalYears(), getDepartments()])
@@ -40,7 +50,7 @@ export default async function FinanceDashboardPage() {
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">Initiative Budgets</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Review and validate initiative budgets across all departments
+              {pageDescription}
             </p>
           </div>
           <div className="flex gap-2">

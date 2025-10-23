@@ -5,12 +5,15 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Select as UiSelect, SelectContent as UiSelectContent, SelectItem as UiSelectItem, SelectTrigger as UiSelectTrigger, SelectValue as UiSelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { createInitiative, type PriorityLevel } from '@/app/actions/initiatives'
+import type { DeliverableWithContext } from '@/app/actions/strategic-deliverables'
 import { useToast } from '@/hooks/use-toast'
 import { X, Plus, DollarSign, FileText, Target } from 'lucide-react'
 import {
@@ -41,6 +44,7 @@ interface AddInitiativeFormProps {
   planId: string
   goals: StrategicGoal[]
   selectedGoalId?: string
+  selectedObjectiveId?: string
   departmentId: string
   fiscalYears: FiscalYear[]
 }
@@ -49,6 +53,7 @@ export function AddInitiativeForm({
   planId,
   goals,
   selectedGoalId,
+  selectedObjectiveId,
   departmentId,
   fiscalYears
 }: AddInitiativeFormProps) {
@@ -59,11 +64,15 @@ export function AddInitiativeForm({
   const [selectedGoal, setSelectedGoal] = useState<string>(selectedGoalId || '')
   const [initiativeNumber, setInitiativeNumber] = useState('')
   const [name, setName] = useState('')
+  const [objectiveId, setObjectiveId] = useState<string>(selectedObjectiveId || '')
+  const [deliverables, setDeliverables] = useState<DeliverableWithContext[]>([])
+  const [selectedDeliverableId, setSelectedDeliverableId] = useState<string>('')
   const [description, setDescription] = useState('')
   const [rationale, setRationale] = useState('')
   const [priorityLevel, setPriorityLevel] = useState<PriorityLevel>('NEED')
   const [rank, setRank] = useState('1')
   const [responsibleParty, setResponsibleParty] = useState('')
+  const [isKeyInitiative, setIsKeyInitiative] = useState(false)
   
   // Expected outcomes
   const [outcomes, setOutcomes] = useState<string[]>([''])
@@ -95,6 +104,23 @@ export function AddInitiativeForm({
       }
     }
   }, [selectedGoal, goals])
+
+  // Load deliverables for this plan
+  useEffect(() => {
+    const loadDeliverables = async () => {
+      try {
+        const { getDeliverablesForPlan } = await import('@/app/actions/strategic-deliverables')
+        const data = await getDeliverablesForPlan(planId)
+        // Sort by objective number
+        data.sort((a, b) => a.objective_number.localeCompare(b.objective_number, undefined, { numeric: true }))
+        setDeliverables(data)
+      } catch (err) {
+        console.error('Failed to load deliverables for plan:', err)
+      }
+    }
+    loadDeliverables()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planId])
 
   // Get current fiscal year as default
   const currentFiscalYear = fiscalYears.find(fy => fy.is_current) || fiscalYears[0]
@@ -207,6 +233,7 @@ export function AddInitiativeForm({
       // Create the initiative
       await createInitiative({
         strategic_goal_id: selectedGoal,
+        strategic_objective_id: objectiveId || undefined,
         lead_department_id: departmentId,
         fiscal_year_id: currentFiscalYear?.id || '',
         initiative_number: initiativeNumber.trim(),
@@ -217,6 +244,7 @@ export function AddInitiativeForm({
         rank_within_priority: rankNumber,
         expected_outcomes: filteredOutcomes,
         responsible_party: responsibleParty.trim() || undefined,
+        is_key_initiative: isKeyInitiative,
       })
 
       toast({
@@ -349,13 +377,41 @@ export function AddInitiativeForm({
             <Label htmlFor="name">
               Initiative Name <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Implement Digital Customer Service Portal"
-              className="mt-1"
-            />
+            <UiSelect
+              value={selectedDeliverableId}
+              onValueChange={(val) => {
+                setSelectedDeliverableId(val)
+                const d = deliverables.find((x) => x.id === val)
+                if (d) {
+                  setName(d.title)
+                  setSelectedGoal(d.strategic_goal_id)
+                  setObjectiveId(d.strategic_objective_id)
+                }
+              }}
+            >
+              <UiSelectTrigger className="mt-1">
+                <UiSelectValue placeholder="Select from deliverables..." />
+              </UiSelectTrigger>
+              <UiSelectContent>
+                {deliverables.length === 0 ? (
+                  <UiSelectItem value="__no_deliverables__" disabled>
+                    No deliverables available
+                  </UiSelectItem>
+                ) : (
+                  deliverables.map((d) => (
+                    <UiSelectItem key={d.id} value={d.id}>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm">{d.title}</span>
+                        <span className="text-xs text-gray-500">G{d.goal_number} • {d.goal_title} • {d.objective_number}</span>
+                      </div>
+                    </UiSelectItem>
+                  ))
+                )}
+              </UiSelectContent>
+            </UiSelect>
+            <p className="text-xs text-gray-500 mt-1">
+              Choose from existing deliverables for this department. The selected goal will update automatically.
+            </p>
           </div>
 
           <div>
@@ -418,16 +474,6 @@ export function AddInitiativeForm({
                 </Label>
               </div>
             </RadioGroup>
-            {councilLinkData && councilLinkData.councilPriorities.length > 0 && (
-              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-sm font-medium text-blue-900 mb-1">
-                  Linked to Council Priorities:
-                </p>
-                <p className="text-sm text-blue-800">
-                  {councilLinkData.councilPriorities.join(', ')}
-                </p>
-              </div>
-            )}
           </div>
 
           <div>
@@ -439,6 +485,22 @@ export function AddInitiativeForm({
               placeholder="e.g., IT Department, John Smith"
               className="mt-1"
             />
+          </div>
+
+          <div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isKeyInitiative"
+                checked={isKeyInitiative}
+                onCheckedChange={(checked) => setIsKeyInitiative(checked === true)}
+              />
+              <Label htmlFor="isKeyInitiative" className="text-sm font-medium cursor-pointer">
+                Mark as Key Initiative
+              </Label>
+            </div>
+            <p className="text-xs text-gray-500 mt-1 ml-6">
+              Key initiatives are highlighted in the strategic plan and reports
+            </p>
           </div>
         </CardContent>
       </Card>

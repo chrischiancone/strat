@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { GoalCard } from './GoalCard'
-import { GoalForm } from './GoalForm'
+import { GoalCardNew } from './GoalCardNew'
+import { GoalFormNew } from './GoalFormNew'
 import {
   getStrategicGoals,
   reorderStrategicGoals,
@@ -64,8 +64,8 @@ export function GoalsSection({ planId }: GoalsSectionProps) {
     loadGoals()
   }
 
-  const handleDelete = () => {
-    loadGoals()
+  const handleDelete = async () => {
+    await loadGoals()
   }
 
   const handleGenerateGoals = async () => {
@@ -222,7 +222,7 @@ export function GoalsSection({ planId }: GoalsSectionProps) {
         ) : (
           <div className="space-y-4">
             {goals.map((goal, index) => (
-              <GoalCard
+              <GoalCardNew
                 key={goal.id}
                 goal={goal}
                 onEdit={() => setEditingGoal(goal)}
@@ -246,7 +246,7 @@ export function GoalsSection({ planId }: GoalsSectionProps) {
               Create a new strategic goal for this plan
             </DialogDescription>
           </DialogHeader>
-          <GoalForm
+          <GoalFormNew
             planId={planId}
             nextGoalNumber={nextGoalNumber}
             onSuccess={handleCreateSuccess}
@@ -265,7 +265,7 @@ export function GoalsSection({ planId }: GoalsSectionProps) {
             </DialogDescription>
           </DialogHeader>
           {editingGoal && (
-            <GoalForm
+            <GoalFormNew
               planId={planId}
               goal={editingGoal}
               onSuccess={handleEditSuccess}

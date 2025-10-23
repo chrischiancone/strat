@@ -57,7 +57,7 @@ CREATE TRIGGER council_goals_updated_at BEFORE UPDATE ON council_goals
 -- =====================================================
 -- SEED DATA FOR CARROLLTON
 -- =====================================================
-INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
+INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order, created_by)
 SELECT 
     m.id as municipality_id,
     'core_value' as category,
@@ -72,10 +72,11 @@ SELECT
         'Provide professional and courteous service',
         'Provide opportunities for a healthy lifestyle'
     ] as key_points,
-    1 as sort_order
+    1 as sort_order,
+    '00000000-0000-0000-0000-000000000001'::uuid as created_by
 FROM municipalities m WHERE m.name = 'City of Carrollton';
 
-INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
+INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order, created_by)
 SELECT 
     m.id as municipality_id,
     'core_value' as category,
@@ -87,10 +88,11 @@ SELECT
         'Leverage technology to improve our effectiveness and efficiency',
         'Adapt business practices to respond to changing conditions'
     ] as key_points,
-    2 as sort_order
+    2 as sort_order,
+    '00000000-0000-0000-0000-000000000001'::uuid as created_by
 FROM municipalities m WHERE m.name = 'City of Carrollton';
 
-INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
+INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order, created_by)
 SELECT 
     m.id as municipality_id,
     'core_value' as category,
@@ -102,10 +104,11 @@ SELECT
         'Attract and retain a diverse, motivated, and qualified team',
         'Invest in the professional development of our employees'
     ] as key_points,
-    3 as sort_order
+    3 as sort_order,
+    '00000000-0000-0000-0000-000000000001'::uuid as created_by
 FROM municipalities m WHERE m.name = 'City of Carrollton';
 
-INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order)
+INSERT INTO council_goals (municipality_id, category, title, description, key_points, sort_order, created_by)
 SELECT 
     m.id as municipality_id,
     'core_value' as category,
@@ -118,5 +121,6 @@ SELECT
         'Manage infrastructure with fiduciary care',
         'Ensure City services are an optimal value'
     ] as key_points,
-    4 as sort_order
+    4 as sort_order,
+    '00000000-0000-0000-0000-000000000001'::uuid as created_by
 FROM municipalities m WHERE m.name = 'City of Carrollton';

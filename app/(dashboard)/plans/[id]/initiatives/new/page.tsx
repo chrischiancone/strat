@@ -14,12 +14,13 @@ interface PageProps {
   }>
   searchParams: Promise<{
     goalId?: string
+    objectiveId?: string
   }>
 }
 
 export default async function AddInitiativePage({ params, searchParams }: PageProps) {
   const { id: planId } = await params
-  const { goalId } = await searchParams
+  const { goalId, objectiveId } = await searchParams
 
   // Verify user has access
   const supabase = createServerSupabaseClient()
@@ -131,6 +132,7 @@ export default async function AddInitiativePage({ params, searchParams }: PagePr
               planId={planId}
               goals={goals}
               selectedGoalId={goalId}
+              selectedObjectiveId={objectiveId}
               departmentId={profile.department_id!}
               fiscalYears={fiscalYears}
             />

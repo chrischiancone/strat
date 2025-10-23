@@ -51,10 +51,12 @@ export function GoalCard({
     setIsDeleting(true)
     try {
       await deleteStrategicGoal(goal.id)
+      setShowDeleteDialog(false)
       toast({
         title: 'Deleted',
         description: 'Goal deleted successfully',
       })
+      // Call onDelete after successful deletion to refresh the list
       onDelete()
     } catch (error) {
       toast({
@@ -63,9 +65,9 @@ export function GoalCard({
           error instanceof Error ? error.message : 'Failed to delete goal',
         variant: 'destructive',
       })
+      setShowDeleteDialog(false)
     } finally {
       setIsDeleting(false)
-      setShowDeleteDialog(false)
     }
   }
 
