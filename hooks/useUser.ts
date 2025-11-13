@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
+/**
+ * User profile data structure
+ */
 interface UserProfile {
   id: string
   email: string
@@ -11,12 +14,46 @@ interface UserProfile {
   department_id: string | null
 }
 
+/**
+ * Return type for useUser hook
+ */
 interface UseUser {
+  /** Current user profile, or null if not authenticated */
   user: UserProfile | null
+  /** Whether user data is currently being fetched */
   isLoading: boolean
+  /** Error message if user fetch failed */
   error: string | null
 }
 
+/**
+ * React hook to fetch and manage current user profile.
+ * 
+ * This hook:
+ * - Fetches authenticated user from Supabase Auth
+ * - Retrieves user profile from `public.users` table
+ * - Implements retry logic for schema/permission errors
+ * - Listens for auth state changes (sign in/out, token refresh)
+ * - Handles errors gracefully with user-friendly messages
+ * 
+ * @returns Object containing user profile, loading state, and error
+ * 
+ * @example
+ * ```tsx
+ * 'use client'
+ * import { useUser } from '@/hooks/useUser'
+ * 
+ * export function UserProfile() {
+ *   const { user, isLoading, error } = useUser()
+ *   
+ *   if (isLoading) return <div>Loading...</div>
+ *   if (error) return <div>Error: {error}</div>
+ *   if (!user) return <div>Not authenticated</div>
+ *   
+ *   return <div>Welcome, {user.full_name}!</div>
+ * }
+ * ```
+ */
 export function useUser(): UseUser {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -64,10 +101,32 @@ export function useUser(): UseUser {
           
           if (profileError) {
             console.error('Profile fetch error:', profileError)
-            retries--
-            if (retries > 0) {
-              // Wait a bit before retrying (exponential backoff)
-              await new Promise(resolve => setTimeout(resolve, 1000 * (4 - retries)))
+            // Check for specific error types
+            if (profileError.message?.includes('schema') || profileError.message?.includes('permission')) {
+              // This might be a timing issue - wait a bit longer and retry
+              retries--
+              if (retries > 0) {
+                await new Promise(resolve => setTimeout(resolve, 2000 * (4 - retries)))
+              } else {
+                // Last retry failed - set a user-friendly error
+                if (mounted) {
+                  setError('Unable to load user profile. Please refresh the page.')
+                  setUser(null)
+                }
+                return
+              }
+            } else {
+              retries--
+              if (retries > 0) {
+                // Wait a bit before retrying (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * (4 - retries)))
+              } else {
+                if (mounted) {
+                  setError(profileError.message || 'Failed to load user profile')
+                  setUser(null)
+                }
+                return
+              }
             }
           } else {
             break
@@ -89,7 +148,13 @@ export function useUser(): UseUser {
       } catch (err) {
         console.error('Failed to fetch user:', err)
         if (mounted) {
-          setError(err instanceof Error ? err.message : 'Failed to fetch user')
+          const errorMessage = err instanceof Error ? err.message : 'Failed to fetch user'
+          // Provide more helpful error messages
+          if (errorMessage.includes('schema') || errorMessage.includes('permission')) {
+            setError('Database connection issue. Please refresh the page or contact support.')
+          } else {
+            setError(errorMessage)
+          }
           setUser(null)
         }
       } finally {

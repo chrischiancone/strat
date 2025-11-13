@@ -5,7 +5,7 @@
 -- COLLABORATION SESSIONS
 -- =====================================================
 CREATE TABLE collaboration_sessions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     resource_id UUID NOT NULL,
     resource_type TEXT NOT NULL,
     participants JSONB DEFAULT '[]'::jsonb,
@@ -28,7 +28,7 @@ COMMENT ON TABLE collaboration_sessions IS 'Active collaboration sessions for re
 DROP TABLE IF EXISTS comments CASCADE;
 
 CREATE TABLE comments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     entity_id UUID NOT NULL,
     entity_type TEXT NOT NULL,
     parent_comment_id UUID REFERENCES comments(id) ON DELETE CASCADE,
@@ -57,7 +57,7 @@ COMMENT ON TABLE comments IS 'Comments and discussions on resources';
 -- NOTIFICATIONS
 -- =====================================================
 CREATE TABLE notifications (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     type TEXT NOT NULL,
     title TEXT NOT NULL,
@@ -87,7 +87,7 @@ COMMENT ON TABLE notifications IS 'User notifications for collaboration events';
 -- ACTIVITY LOG
 -- =====================================================
 CREATE TABLE activity_log (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     resource_id UUID,
@@ -108,7 +108,7 @@ COMMENT ON TABLE activity_log IS 'Activity history for auditing and collaboratio
 -- LIVE EDITS (Operational Transform / CRDT)
 -- =====================================================
 CREATE TABLE live_edits (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID NOT NULL REFERENCES collaboration_sessions(id) ON DELETE CASCADE,
     editor_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     resource_id UUID NOT NULL,

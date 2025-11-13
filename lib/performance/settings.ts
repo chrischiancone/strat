@@ -1,5 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Validate and normalize Supabase URL
+function getSupabaseUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!url) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is required. Check your .env.local file.')
+  }
+  
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`
+  }
+  
+  return url
+}
+
 export interface PerformanceSettings {
   caching: {
     enabled: boolean
@@ -86,9 +101,17 @@ export async function getPerformanceSettings(): Promise<PerformanceSettings> {
   }
 
   try {
+    const supabaseUrl = getSupabaseUrl()
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    
+    if (!serviceRoleKey) {
+      console.warn('SUPABASE_SERVICE_ROLE_KEY is missing. Using default performance settings.')
+      return DEFAULT_SETTINGS
+    }
+    
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      serviceRoleKey
     )
 
     const { data } = await supabase

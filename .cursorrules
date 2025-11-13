@@ -1,0 +1,294 @@
+# Cursor Rules - Full Stack Application Development
+
+## Context Management
+- Use `/clear` frequently between tasks to maintain focus
+- This file is automatically loaded—do not re-read it manually
+- Load additional files only when actively needed
+- Use subagents early for complex problems to preserve main context
+
+## Project Structure
+```
+.claude/
+├── commands/           # Slash commands
+│   ├── agents/        # Agent personas
+│   ├── BMad/tasks/    # BMad Method workflows
+│   ├── design-principles.md
+│   ├── brand-styles.md
+│   └── shadcn-review.md
+└── design-review-agent.md
+
+components/
+├── ui/               # Reusable UI components (shadcn/ui)
+├── features/         # Feature-specific components
+├── layouts/          # Layout components
+└── providers/        # Context providers
+```
+
+## Development Workflow
+
+### Explore-Plan-Code Pattern
+1. **Explore**: Read relevant files without making changes
+2. **Plan**: Create explicit implementation plan
+3. **Code**: Implement solution incrementally
+4. **Verify**: Test changes and confirm success
+5. **Commit**: Use conventional commit messages
+
+### Tool Usage Guidelines
+- **Parallel Execution**: Execute independent tools simultaneously
+- **Sequential Execution**: Chain tools when dependencies exist
+- **Tool Selection**:
+  - `Read`: View file contents
+  - `Edit`: Precise string replacements
+  - `Write`: New files or complete rewrites
+  - `Bash`: Terminal operations
+  - `Grep`: Content search
+  - `Glob`: File pattern matching
+
+## Frontend Development
+
+### Component Architecture
+- Single Responsibility Principle
+- Composition over Inheritance
+- Props Interface Definition
+- Error Boundaries
+- Memoization when needed
+
+### shadcn/ui Components
+- Located in `src/components/ui/`
+- Built on Radix UI primitives
+- Tailwind CSS v4 with CSS variables
+- Lucide React icons
+- Use MCP tools for discovery:
+  - `mcp__shadcn__search_items_in_registries`
+  - `mcp__shadcn__view_items_in_registries`
+  - `mcp__shadcn__get_item_examples_from_registries`
+
+### TypeScript Standards
+```typescript
+// Strict type checking enabled
+{
+  "strict": true,
+  "noImplicitAny": true,
+  "strictNullChecks": true,
+  "strictFunctionTypes": true
+}
+```
+
+### Performance Optimization
+- Code splitting (route-based, component-based)
+- Lazy loading with React.lazy()
+- Memoization (React.memo, useMemo, useCallback)
+- Image optimization (Next/Image, WebP)
+- Bundle analysis
+
+## Backend Development
+
+### API Design
+```
+GET    /api/v1/resources       # List
+GET    /api/v1/resources/:id   # Get
+POST   /api/v1/resources       # Create
+PUT    /api/v1/resources/:id   # Update (full)
+PATCH  /api/v1/resources/:id   # Update (partial)
+DELETE /api/v1/resources/:id   # Delete
+```
+
+### Error Handling
+```typescript
+class AppError extends Error {
+  constructor(
+    public statusCode: number,
+    public code: string,
+    message: string,
+    public isOperational = true
+  ) {
+    super(message);
+  }
+}
+```
+
+### Security Requirements
+- Password hashing (bcrypt/argon2)
+- JWT with expiration
+- Input validation & sanitization
+- SQL injection prevention (parameterized queries)
+- XSS prevention (output encoding)
+- CSRF protection
+- Security headers (helmet)
+
+## Database Design
+
+### Schema Principles
+- Normalization (3NF typically)
+- Strategic denormalization for performance
+- Proper indexing strategy
+- Foreign key constraints
+- Soft deletes when appropriate
+
+### Migration Strategy
+- Version-controlled migrations
+- Rollback support
+- Environment-specific migrations
+
+## Testing Strategy
+
+### Test-Driven Development
+1. Write tests first and confirm failure
+2. Implement code incrementally
+3. Run tests after each change
+4. Refactor with confidence
+
+### Testing Pyramid
+- Many unit tests
+- Some integration tests
+- Few E2E tests
+
+### Coverage Target
+- 80%+ for critical paths
+- Focus on business logic
+
+## Design Validation
+
+### Quick Visual Check (After Frontend Changes)
+1. Navigate to affected pages with `mcp__playwright__browser_navigate`
+2. Verify against design principles and brand styles
+3. Take screenshot with `mcp__playwright__browser_take_screenshot`
+4. Check console for errors
+5. Capture accessibility snapshot
+
+### Comprehensive Review
+- Use `/design-review-agent` for thorough validation
+- Before finalizing PRs with visual changes
+- For accessibility and responsiveness testing
+
+## Git Workflow
+
+### Commit Convention
+```
+feat(scope): add new feature
+fix(scope): bug fix
+docs(scope): documentation changes
+style(scope): formatting changes
+refactor(scope): code refactoring
+test(scope): add tests
+chore(scope): maintenance tasks
+```
+
+### Branch Strategy
+- Feature branches from main/develop
+- Descriptive names: `feature/user-auth`, `fix/login-bug`
+- Use PR templates and require reviews
+
+## Common Commands
+
+### Development
+```bash
+npm install          # Install dependencies
+npm run dev          # Start development
+npm run build        # Build for production
+npm run lint         # Run linting
+npm test            # Run tests
+npm test -- --coverage  # Test with coverage
+```
+
+### Git Operations
+```bash
+git checkout -b feature/name
+git add . && git commit -m "type(scope): message"
+gh pr create --title "Title" --body "Description"
+```
+
+### Claude Code Commands
+```bash
+/clear              # Clear context between tasks
+/agents             # List available subagents
+/design-review-agent  # Design validation
+/shadcn-review      # Component review
+```
+
+## Code Quality Standards
+
+### Linting & Formatting
+- ESLint for code quality
+- Prettier for formatting
+- Pre-commit hooks
+- CI/CD integration
+
+### Documentation Requirements
+- JSDoc for functions
+- README for setup and usage
+- API documentation (OpenAPI/Swagger)
+- Architecture Decision Records (ADRs)
+
+### Code Review Checklist
+- [ ] Requirements met
+- [ ] Tests written and passing
+- [ ] Security considerations addressed
+- [ ] Performance impact assessed
+- [ ] Documentation updated
+- [ ] Accessibility checked
+- [ ] Error handling implemented
+- [ ] Logging added
+
+## Performance Guidelines
+
+### Frontend
+- Code splitting
+- Tree shaking
+- Lazy loading
+- CDN for static assets
+- Memoization
+
+### Backend
+- Caching (Redis)
+- Database optimization
+- Connection pooling
+- Async processing
+- Load balancing
+
+## Monitoring & Observability
+
+### Logging
+- Structured logging (JSON format)
+- Log levels: ERROR, WARN, INFO, DEBUG
+- Include context (request ID, user ID)
+- Centralized log management
+
+### Health Checks
+```typescript
+app.get('/health', async (req, res) => {
+  const health = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    checks: {
+      database: await checkDatabase(),
+      redis: await checkRedis()
+    }
+  };
+  res.status(200).json(health);
+});
+```
+
+## Accessibility Standards
+- WCAG AA compliance target
+- Semantic HTML
+- ARIA when needed
+- Keyboard navigation
+- Screen reader testing
+- Color contrast (4.5:1 ratio)
+
+## Environment Management
+- Never commit .env files
+- Use .env.example as template
+- Secrets management in production
+- Feature flags for progressive rollout
+
+## Critical Reminders
+1. **Start Simple**: Don't over-engineer early
+2. **Security First**: Never compromise on security
+3. **Test Thoroughly**: Tests save time long-term
+4. **Document Well**: Future you will thank you
+5. **Monitor Everything**: Can't improve what you don't measure
+6. **Use MCP Tools**: Leverage browser automation and component discovery
+7. **Clear Context**: Use /clear between tasks to maintain focus

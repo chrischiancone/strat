@@ -1,0 +1,44 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: postgrest
+    url: http://postgrest:3000
+    routes:
+      - name: postgrest
+        paths:
+          - /rest
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: gotrue
+    url: http://gotrue:9999
+    routes:
+      - name: auth
+        paths:
+          - /auth
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: storage
+    url: http://storage:5000
+    routes:
+      - name: storage
+        paths:
+          - /storage
+        strip_path: true
+    plugins:
+      - name: cors
+
+  - name: realtime
+    url: http://realtime:4000
+    routes:
+      - name: realtime
+        paths:
+          - /realtime
+        strip_path: true
+    plugins:
+      - name: cors
+

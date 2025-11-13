@@ -1,19 +1,66 @@
 /**
  * Security utilities and input validation helpers
+ * 
+ * Provides comprehensive security functions including:
+ * - Input validation and sanitization
+ * - Rate limiting
+ * - Security audit logging
+ * - XSS and SQL injection prevention
  */
 
 import { logger } from './logger'
 import { createError } from './errorHandler'
 
-// Input sanitization utilities
+/**
+ * Input validation and sanitization utilities
+ * 
+ * All methods are static and can be used without instantiation.
+ * 
+ * @example
+ * ```ts
+ * if (!InputValidator.isValidEmail(email)) {
+ *   throw new Error('Invalid email')
+ * }
+ * 
+ * const sanitized = InputValidator.sanitizeString(userInput, 100)
+ * ```
+ */
 export class InputValidator {
-  // Email validation with security considerations
+  /**
+   * Validates email address format and length.
+   * 
+   * @param email - Email address to validate
+   * @returns True if email is valid, false otherwise
+   * 
+   * @example
+   * ```ts
+   * InputValidator.isValidEmail('user@example.com') // true
+   * InputValidator.isValidEmail('invalid') // false
+   * ```
+   */
   static isValidEmail(email: string): boolean {
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
     return emailRegex.test(email) && email.length <= 254
   }
 
-  // SQL injection prevention for string inputs
+  /**
+   * Sanitizes string input to prevent SQL injection and control character issues.
+   * 
+   * Removes:
+   * - Null bytes (\0)
+   * - Control characters (0x00-0x1F, 0x7F)
+   * - Leading/trailing whitespace
+   * 
+   * @param input - String to sanitize
+   * @param maxLength - Maximum allowed length (default: 1000)
+   * @returns Sanitized string
+   * @throws ValidationError if input exceeds maxLength
+   * 
+   * @example
+   * ```ts
+   * const safe = InputValidator.sanitizeString(userInput, 500)
+   * ```
+   */
   static sanitizeString(input: string, maxLength = 1000): string {
     if (typeof input !== 'string') {
       throw createError.validation('Input must be a string')

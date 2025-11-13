@@ -9,13 +9,43 @@ import { createError } from '@/lib/errorHandler'
 import { headers } from 'next/headers'
 import { getSecuritySettingsForAuth } from './settings'
 
+/**
+ * Result of a sign-in attempt
+ */
 export interface SignInResult {
+  /** Whether the sign-in was successful */
   success?: boolean
+  /** Error message if sign-in failed */
   error?: string
+  /** Whether 2FA setup is required */
   requiresTwoFactorSetup?: boolean
+  /** Redirect URL if 2FA setup is needed */
   redirectTo?: string
 }
 
+/**
+ * Authenticates a user with email and password.
+ * 
+ * This server action:
+ * - Validates input (email format, required fields)
+ * - Applies rate limiting based on security settings
+ * - Authenticates via Supabase Auth
+ * - Logs security events for audit
+ * - Checks for 2FA requirements
+ * 
+ * @param formData - Form data containing email and password
+ * @returns SignInResult indicating success or error
+ * 
+ * @example
+ * ```ts
+ * // In a form action
+ * <form action={signIn}>
+ *   <input name="email" type="email" />
+ *   <input name="password" type="password" />
+ *   <button type="submit">Sign In</button>
+ * </form>
+ * ```
+ */
 export async function signIn(formData: FormData): Promise<SignInResult> {
   const email = formData.get('email') as string
   const password = formData.get('password') as string

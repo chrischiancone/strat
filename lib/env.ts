@@ -8,13 +8,25 @@
 import { z } from 'zod'
 
 /**
+ * Normalize Supabase URL - add https:// if missing
+ */
+function normalizeSupabaseUrl(url: string): string {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`
+  }
+  return url
+}
+
+/**
  * Schema for environment variables
  * - Required variables will cause app to fail startup if missing
  * - Optional variables can be undefined
  */
 const envSchema = z.object({
   // Supabase (Required)
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url('Invalid Supabase URL'),
+  NEXT_PUBLIC_SUPABASE_URL: z.string()
+    .transform(normalizeSupabaseUrl)
+    .pipe(z.string().url('Invalid Supabase URL')),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'Supabase service role key is required'),
 

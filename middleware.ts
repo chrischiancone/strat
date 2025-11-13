@@ -49,11 +49,34 @@ function isRateLimited(clientIP: string, path: string, maxRequests: number): boo
   return false
 }
 
+// Validate and normalize Supabase URL
+function getSupabaseUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!url) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is required. Check your .env.local file.')
+  }
+  
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`
+  }
+  
+  return url
+}
+
 async function getSecuritySettingsEdge() {
   try {
+    const supabaseUrl = getSupabaseUrl()
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    
+    if (!serviceRoleKey) {
+      logger.warn('SUPABASE_SERVICE_ROLE_KEY is missing. Security settings will use defaults.')
+      return securitySettingsSchema.parse(undefined)
+    }
+    
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      serviceRoleKey
     )
     const { data } = await supabase
       .from('municipalities')
@@ -121,9 +144,19 @@ async function handleCollaborationAPIAuth(request: NextRequest): Promise<NextRes
     const token = authHeader.substring(7) // Remove 'Bearer ' prefix
 
     // Verify token with Supabase
+    const supabaseUrl = getSupabaseUrl()
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    
+    if (!serviceRoleKey) {
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      )
+    }
+    
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      serviceRoleKey
     )
 
     const { data: { user }, error } = await supabase.auth.getUser(token)
@@ -242,11 +275,13 @@ export async function middleware(request: NextRequest) {
     // }
 
     // Apply rate limiting to sensitive endpoints (respect settings)
+    // Skip rate limiting for localhost in development
+    const isLocalhost = clientIP === '127.0.0.1' || clientIP === '::1' || clientIP === 'unknown' || clientIP.startsWith('172.')
     const sensitiveEndpoints = ['/api/auth', '/login', '/signup', '/api/collaboration']
     const isSensitiveEndpoint = sensitiveEndpoints.some(endpoint => path.startsWith(endpoint))
     const maxRequests = perfSettings.optimization.max_concurrent_requests
     
-    if (isSensitiveEndpoint && isRateLimited(clientIP, path, maxRequests)) {
+    if (isSensitiveEndpoint && !isLocalhost && isRateLimited(clientIP, path, maxRequests)) {
       logger.warn('Rate limit exceeded', {
         clientIP,
         path,

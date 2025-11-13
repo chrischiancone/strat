@@ -2,6 +2,21 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { Database } from '@/types/database'
 
+// Validate and normalize Supabase URL
+function getSupabaseUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!url) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is required. Check your .env.local file.')
+  }
+  
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`
+  }
+  
+  return url
+}
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -9,9 +24,18 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
+  // Validate environment variables
+  const supabaseUrl = getSupabaseUrl()
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!supabaseAnonKey) {
+    console.error('❌ NEXT_PUBLIC_SUPABASE_ANON_KEY is missing. Check your .env.local file.')
+    return response
+  }
+
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {

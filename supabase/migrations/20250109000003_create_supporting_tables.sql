@@ -5,7 +5,7 @@
 -- 8. INITIATIVE BUDGETS (Normalized financial tracking)
 -- =====================================================
 CREATE TABLE initiative_budgets (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     initiative_id UUID NOT NULL REFERENCES initiatives(id) ON DELETE CASCADE,
     fiscal_year_id UUID NOT NULL REFERENCES fiscal_years(id) ON DELETE RESTRICT,
     category TEXT NOT NULL,
@@ -28,7 +28,7 @@ COMMENT ON TABLE initiative_budgets IS 'Normalized budget entries for aggregatio
 -- 9. INITIATIVE KPIs (Performance metrics)
 -- =====================================================
 CREATE TABLE initiative_kpis (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     initiative_id UUID REFERENCES initiatives(id) ON DELETE CASCADE,
     strategic_goal_id UUID REFERENCES strategic_goals(id) ON DELETE CASCADE,
     strategic_plan_id UUID REFERENCES strategic_plans(id) ON DELETE CASCADE,
@@ -61,7 +61,7 @@ COMMENT ON TABLE initiative_kpis IS 'Performance metrics at initiative, goal, or
 -- 10. QUARTERLY MILESTONES
 -- =====================================================
 CREATE TABLE quarterly_milestones (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     initiative_id UUID NOT NULL REFERENCES initiatives(id) ON DELETE CASCADE,
     fiscal_year_id UUID NOT NULL REFERENCES fiscal_years(id) ON DELETE RESTRICT,
     quarter INTEGER NOT NULL,
@@ -87,7 +87,7 @@ COMMENT ON TABLE quarterly_milestones IS 'Implementation timeline tracking';
 -- 11. INITIATIVE DEPENDENCIES (Many-to-many)
 -- =====================================================
 CREATE TABLE initiative_dependencies (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     initiative_id UUID NOT NULL REFERENCES initiatives(id) ON DELETE CASCADE,
     depends_on_initiative_id UUID NOT NULL REFERENCES initiatives(id) ON DELETE CASCADE,
     dependency_type TEXT,
@@ -109,7 +109,7 @@ COMMENT ON TABLE initiative_dependencies IS 'Initiative prerequisite relationshi
 -- 12. INITIATIVE COLLABORATORS (Cross-departmental)
 -- =====================================================
 CREATE TABLE initiative_collaborators (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     initiative_id UUID NOT NULL REFERENCES initiatives(id) ON DELETE CASCADE,
     department_id UUID NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
     role TEXT NOT NULL,

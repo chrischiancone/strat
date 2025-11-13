@@ -5,7 +5,7 @@
 -- 5. STRATEGIC PLANS
 -- =====================================================
 CREATE TABLE strategic_plans (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     department_id UUID NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
     start_fiscal_year_id UUID NOT NULL REFERENCES fiscal_years(id) ON DELETE RESTRICT,
     end_fiscal_year_id UUID NOT NULL REFERENCES fiscal_years(id) ON DELETE RESTRICT,
@@ -38,7 +38,7 @@ COMMENT ON TABLE strategic_plans IS '3-year strategic planning documents';
 -- 6. STRATEGIC GOALS
 -- =====================================================
 CREATE TABLE strategic_goals (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     strategic_plan_id UUID NOT NULL REFERENCES strategic_plans(id) ON DELETE CASCADE,
     goal_number INTEGER NOT NULL,
     title TEXT NOT NULL,
@@ -60,7 +60,7 @@ COMMENT ON TABLE strategic_goals IS 'Major strategic goals (3-5 per plan)';
 -- 7. INITIATIVES
 -- =====================================================
 CREATE TABLE initiatives (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     strategic_goal_id UUID NOT NULL REFERENCES strategic_goals(id) ON DELETE CASCADE,
     lead_department_id UUID NOT NULL REFERENCES departments(id) ON DELETE RESTRICT,
     fiscal_year_id UUID NOT NULL REFERENCES fiscal_years(id) ON DELETE RESTRICT,

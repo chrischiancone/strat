@@ -2,14 +2,14 @@
 -- Part 1: Foundation tables (municipalities, departments, fiscal_years, users)
 
 -- Enable necessary extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Note: gen_random_uuid() is built-in to PostgreSQL 13+ and doesn't require extensions
 CREATE EXTENSION IF NOT EXISTS "vector";
 
 -- =====================================================
 -- 1. MUNICIPALITIES
 -- =====================================================
 CREATE TABLE municipalities (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     slug TEXT NOT NULL,
     state TEXT NOT NULL,
@@ -27,7 +27,7 @@ COMMENT ON TABLE municipalities IS 'Municipal governments using the strategic pl
 -- 2. DEPARTMENTS
 -- =====================================================
 CREATE TABLE departments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     municipality_id UUID NOT NULL REFERENCES municipalities(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     slug TEXT NOT NULL,
@@ -51,7 +51,7 @@ COMMENT ON TABLE departments IS 'City departments that create strategic plans';
 -- 3. FISCAL YEARS
 -- =====================================================
 CREATE TABLE fiscal_years (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     municipality_id UUID NOT NULL REFERENCES municipalities(id) ON DELETE CASCADE,
     year INTEGER NOT NULL,
     start_date DATE NOT NULL,

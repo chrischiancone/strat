@@ -5,6 +5,30 @@ import { useRouter } from 'next/navigation'
 import { signIn } from '@/app/actions/auth'
 import { InputValidator } from '@/lib/security'
 
+/**
+ * Login form component with client-side validation and error handling.
+ * 
+ * Features:
+ * - Email and password validation
+ * - Client-side error display
+ * - Loading states
+ * - Automatic redirect on success
+ * - Handles 2FA setup requirements
+ * 
+ * @example
+ * ```tsx
+ * import { LoginForm } from '@/components/auth/LoginForm'
+ * 
+ * export default function LoginPage() {
+ *   return (
+ *     <div>
+ *       <h1>Sign In</h1>
+ *       <LoginForm />
+ *     </div>
+ *   )
+ * }
+ * ```
+ */
 export function LoginForm() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)

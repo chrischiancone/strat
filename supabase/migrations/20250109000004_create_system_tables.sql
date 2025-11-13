@@ -5,7 +5,7 @@
 -- 13. AUDIT LOGS
 -- =====================================================
 CREATE TABLE audit_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     table_name TEXT NOT NULL,
     record_id UUID NOT NULL,
     action TEXT NOT NULL,
@@ -28,7 +28,7 @@ COMMENT ON TABLE audit_logs IS 'Comprehensive audit trail for all changes';
 -- 14. DOCUMENT EMBEDDINGS (RAG/AI with pgvector)
 -- =====================================================
 CREATE TABLE document_embeddings (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_type TEXT NOT NULL,
     content_id UUID NOT NULL,
     content_text TEXT NOT NULL,
@@ -50,7 +50,7 @@ COMMENT ON TABLE document_embeddings IS 'Vector embeddings for semantic search a
 -- 15. COMMENTS (Collaborative feedback)
 -- =====================================================
 CREATE TABLE comments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     entity_type TEXT NOT NULL,
     entity_id UUID NOT NULL,
     parent_comment_id UUID REFERENCES comments(id) ON DELETE CASCADE,

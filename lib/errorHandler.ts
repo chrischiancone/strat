@@ -1,5 +1,28 @@
 /**
- * Centralized error handling system for the Strategic Planning application
+ * Centralized error handling system for the Strategic Planning application.
+ * 
+ * Provides:
+ * - Custom error types with user-friendly messages
+ * - Error normalization from various sources
+ * - Sentry integration for production error tracking
+ * - Consistent error handling across server and client
+ * 
+ * @example
+ * ```ts
+ * import { createError, handleError } from '@/lib/errorHandler'
+ * 
+ * // In a Server Action
+ * try {
+ *   // ... operation
+ * } catch (error) {
+ *   return handleError.server(error, { userId, action: 'createPlan' })
+ * }
+ * 
+ * // Throw custom error
+ * if (!authorized) {
+ *   throw createError.authorization('Access denied')
+ * }
+ * ```
  */
 
 import { logger, LogContext } from './logger'
