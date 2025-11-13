@@ -47,7 +47,7 @@ function getSupabaseUrl(): string {
  *     supabase.from('plans').select('*').then(({ data }) => setData(data))
  *   }, [])
  *   
- *   return <div>{/* render data */}</div>
+ *   return <div>{data && <div>Render your data here</div>}</div>
  * }
  * ```
  */

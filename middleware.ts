@@ -64,14 +64,29 @@ function getSupabaseUrl(): string {
   return url
 }
 
+// Cache security settings in memory to avoid database queries on every request
+let cachedSecuritySettings: ReturnType<typeof securitySettingsSchema.parse> | null = null
+let securitySettingsExpiry: number = 0
+const SECURITY_SETTINGS_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
 async function getSecuritySettingsEdge() {
+  const now = Date.now()
+  
+  // Return cached settings if still valid
+  if (cachedSecuritySettings && now < securitySettingsExpiry) {
+    return cachedSecuritySettings
+  }
+
   try {
     const supabaseUrl = getSupabaseUrl()
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     
     if (!serviceRoleKey) {
       logger.warn('SUPABASE_SERVICE_ROLE_KEY is missing. Security settings will use defaults.')
-      return securitySettingsSchema.parse(undefined)
+      const defaults = securitySettingsSchema.parse(undefined)
+      cachedSecuritySettings = defaults
+      securitySettingsExpiry = now + SECURITY_SETTINGS_CACHE_TTL
+      return defaults
     }
     
     const supabase = createClient(
@@ -85,10 +100,19 @@ async function getSecuritySettingsEdge() {
       .limit(1)
       .maybeSingle<{ settings: any }>()
     const existing = (data?.settings?.security as unknown) || undefined
-    return securitySettingsSchema.parse(existing)
+    const settings = securitySettingsSchema.parse(existing)
+    
+    // Cache the settings
+    cachedSecuritySettings = settings
+    securitySettingsExpiry = now + SECURITY_SETTINGS_CACHE_TTL
+    
+    return settings
   } catch (e) {
     logger.warn('Failed to load security settings in middleware, using defaults')
-    return securitySettingsSchema.parse(undefined)
+    const defaults = securitySettingsSchema.parse(undefined)
+    cachedSecuritySettings = defaults
+    securitySettingsExpiry = now + SECURITY_SETTINGS_CACHE_TTL
+    return defaults
   }
 }
 

@@ -1,0 +1,28 @@
+{
+  "components/plans/EnvironmentalScanForm.tsx -> react-markdown": {
+    "id": 23167,
+    "files": [
+      "static/chunks/3167.4dcd0f0020326dd9.js"
+    ]
+  },
+  "components/plans/GoalsSection.tsx -> @/app/actions/strategic-goals": {
+    "id": 28550,
+    "files": []
+  },
+  "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
+    "id": 80485,
+    "files": []
+  },
+  "node_modules/@supabase/functions-js/dist/module/helper.js -> @supabase/node-fetch": {
+    "id": 80485,
+    "files": []
+  },
+  "node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js -> @supabase/node-fetch": {
+    "id": 80485,
+    "files": []
+  },
+  "node_modules/@supabase/storage-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
+    "id": 80485,
+    "files": []
+  }
+}
